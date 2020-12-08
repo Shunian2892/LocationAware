@@ -8,7 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 
 /**
@@ -18,6 +20,7 @@ import org.osmdroid.views.MapView;
  */
 public class MapFragment extends Fragment {
     MapView map;
+    IMapController controller;
 
     public MapFragment() {
         // Required empty public constructor
@@ -47,6 +50,13 @@ public class MapFragment extends Fragment {
         map = (MapView) v.findViewById(R.id.osm_view);
         map.setUseDataConnection(true);
         map.setTileSource(TileSourceFactory.MAPNIK);
+
+        //Zoom in with pinching
+        map.setMultiTouchControls(true);
+        map.setBuiltInZoomControls(true);
+
+        controller = map.getController();
+        controller.setZoom(14);
 
         // Inflate the layout for this fragment
         return v;

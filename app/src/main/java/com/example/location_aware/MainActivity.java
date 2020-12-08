@@ -16,11 +16,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         fragmentManager = getSupportFragmentManager();
-        if(fragmentManager.findFragmentById(R.id.osm_view) == null){
+        if(fragmentManager.findFragmentById(R.id.map_fragment) == null){
             mapFragment = new MapFragment();
-            fragmentManager.beginTransaction().add(R.id.osm_view, mapFragment).commit();
+            fragmentManager.beginTransaction().add(R.id.map_fragment, mapFragment).commit();
         } else {
-            mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.osm_view);
+            mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
         }
     }
 }
