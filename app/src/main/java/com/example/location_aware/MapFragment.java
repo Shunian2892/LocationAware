@@ -1,11 +1,17 @@
 package com.example.location_aware;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationManager;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +19,11 @@ import android.view.ViewGroup;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +33,7 @@ import org.osmdroid.views.MapView;
 public class MapFragment extends Fragment {
     MapView map;
     IMapController controller;
+    LocationService manager;
 
     public MapFragment() {
         // Required empty public constructor
@@ -65,6 +75,27 @@ public class MapFragment extends Fragment {
 
         controller = map.getController();
         controller.setZoom(14);
+
+        GpsMyLocationProvider myLocationProvider = new GpsMyLocationProvider(getActivity());
+        MyLocationNewOverlay locationOverlay = new MyLocationNewOverlay(myLocationProvider, map);
+        locationOverlay.enableMyLocation();
+        locationOverlay.enableFollowLocation();
+
+        GeoPoint startLocation =
+                new GeoPoint(51.5719, 4.7683);
+
+        controller.setCenter(startLocation);
+
+        manager = new LocationService();
+
+//        locationOverlay.runOnFirstFix(new Runnable() {
+//            @Override
+//            public void run() {
+//                map.getOverlays().clear();
+//                map.getOverlays().add(locationOverlay);
+//                controller.animateTo(locationOverlay.getMyLocation());
+//            }
+//        });
 
         return v;
     }
