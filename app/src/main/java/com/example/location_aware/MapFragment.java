@@ -1,14 +1,17 @@
 package com.example.location_aware;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
@@ -45,20 +48,24 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        //Load/initialise osmdroid configuration
+        Context context = getActivity().getApplicationContext();
+        Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
+
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
         map = (MapView) v.findViewById(R.id.osm_view);
         map.setUseDataConnection(true);
         map.setTileSource(TileSourceFactory.MAPNIK);
 
-        //Zoom in with pinching
-        map.setMultiTouchControls(true);
-        map.setBuiltInZoomControls(true);
+//        //Zoom in with pinching
+//        map.setMultiTouchControls(true);
+//        map.setBuiltInZoomControls(true);
 
         controller = map.getController();
         controller.setZoom(14);
 
-        // Inflate the layout for this fragment
         return v;
     }
 }
