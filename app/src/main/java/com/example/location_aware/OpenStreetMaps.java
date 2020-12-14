@@ -13,5 +13,4 @@ public class OpenStreetMaps {
         route.setPoints(points);
         mapView.getOverlayManager().add(route);
     }
-
 }

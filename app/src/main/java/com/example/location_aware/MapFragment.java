@@ -43,6 +43,7 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,7 +64,9 @@ public class MapFragment extends Fragment {
     private GpsMyLocationProvider myLocationProvider;
     private MyLocationNewOverlay myLocationNewOverlay;
 
-
+    private ArrayList<GeoPoint> points;
+    private OpenStreetMaps osm;
+    private GeoPoint oldPoint, newPoint;
 
     public MapFragment() {
         // Required empty public constructor
@@ -113,6 +116,9 @@ public class MapFragment extends Fragment {
         myLocationNewOverlay.enableMyLocation();
         myLocationNewOverlay.enableFollowLocation();
 
+        points = new ArrayList<>();
+        osm = new OpenStreetMaps();
+
         //Check for GPS permission on first use
         if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -128,6 +134,7 @@ public class MapFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         //Get location
         getLocation();
+        addLocations();
     }
 
     /**
@@ -138,7 +145,8 @@ public class MapFragment extends Fragment {
 
         listener = location -> {
             //Get current location and set a new GeoPoint with the current latitude and longitude. Set point in center of screen
-            GeoPoint newPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+            oldPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+            newPoint = oldPoint;
             controller.setCenter(newPoint);
 
             //Make new marker for the new location, delete old marker, and display new marker on map
@@ -154,6 +162,15 @@ public class MapFragment extends Fragment {
             manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
         }
+    }
+
+    public void addLocations(){
+        points.add(new GeoPoint(51.5897, 4.7616));
+        points.add(new GeoPoint(51.5890, 4.7758));
+        points.add(new GeoPoint(51.5957, 4.7795));
+        points.add(new GeoPoint(51.5859, 4.7924));
+
+        osm.drawRoute(map, points);
     }
 }
 
