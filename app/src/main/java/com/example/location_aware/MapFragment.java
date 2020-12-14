@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.Image;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.preference.PreferenceManager;
@@ -36,6 +38,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
@@ -49,12 +52,18 @@ import java.util.Locale;
  * create an instance of this fragment.
  */
 public class MapFragment extends Fragment {
-    MapView map;
-    IMapController controller;
-    LocationService manager;
-    GeoPoint startLocation;
-    FusedLocationProviderClient locationProviderClient;
-    Context context;
+    private Context context;
+
+    private MapView map;
+    private IMapController controller;
+    private LocationManager manager;
+    private LocationListener listener;
+
+    private Marker currentLocation;
+    private GpsMyLocationProvider myLocationProvider;
+    private MyLocationNewOverlay myLocationNewOverlay;
+
+
 
     public MapFragment() {
         // Required empty public constructor
@@ -77,9 +86,7 @@ public class MapFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //Load/initialise osmdroid configuration
         context = getActivity().getApplicationContext();
         Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
@@ -90,70 +97,64 @@ public class MapFragment extends Fragment {
         map.setUseDataConnection(true);
         map.setTileSource(TileSourceFactory.MAPNIK);
 
-//        //Zoom in with pinching
-//        map.setMultiTouchControls(true);
-//        map.setBuiltInZoomControls(true);
-
+        //Set mapcontroller
         controller = map.getController();
         controller.setZoom(14);
 
-        GpsMyLocationProvider myLocationProvider = new GpsMyLocationProvider(getActivity());
-        MyLocationNewOverlay locationOverlay = new MyLocationNewOverlay(myLocationProvider, map);
-        locationOverlay.enableMyLocation();
-        locationOverlay.enableFollowLocation();
+        //Zoom in with pinching
+        map.setMultiTouchControls(true);
+        map.setBuiltInZoomControls(true);
 
-        locationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+        //Set GPS location provider
+        myLocationProvider = new GpsMyLocationProvider(getActivity());
 
-        getLocation();
+        //Set location overlay to show location on map
+        myLocationNewOverlay = new MyLocationNewOverlay(myLocationProvider, map);
+        myLocationNewOverlay.enableMyLocation();
+        myLocationNewOverlay.enableFollowLocation();
 
-//        if(myLocationProvider.getLastKnownLocation() == null){
-//            System.out.println("location is null");
-//            startLocation = new GeoPoint(51.5719, 4.7683);
-//            controller.setCenter(startLocation);
-//        } else {
-//            System.out.println("location is: " + myLocationProvider.getLastKnownLocation());
-//            startLocation = new GeoPoint(myLocationProvider.getLastKnownLocation());
-//        }
-
-//        locationOverlay.runOnFirstFix(new Runnable() {
-//            @Override
-//            public void run() {
-//                map.getOverlays().clear();
-//                map.getOverlays().add(locationOverlay);
-//                controller.animateTo(locationOverlay.getMyLocation());
-//            }
-//        });
-
-        return v;
-    }
-
-    public void getLocation() {
+        //Check for GPS permission on first use
         if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION}, 44);
-            return;
         }
 
-        locationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                //startLocation = new GeoPoint(51.5719, 4.7683);
-                Location location = task.getResult();
-                if (location != null) {
-                    try {
-                        Geocoder coder = new Geocoder(context, Locale.getDefault());
-                        List<Address> addressList = coder.getFromLocation(location.getLatitude(),
-                                location.getLongitude(),
-                                1);
+        return v;
+    }
 
-                        Log.d("Lat", "Latitude: " + addressList.get(0).getLatitude());
-                        Log.d("Lon", "Longitude: " + addressList.get(0).getLongitude());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        //Get location
+        getLocation();
+    }
+
+    /**
+     * Get the user location and show it on the map.
+     */
+    public void getLocation() {
+        manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+        listener = location -> {
+            //Get current location and set a new GeoPoint with the current latitude and longitude. Set point in center of screen
+            GeoPoint newPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+            controller.setCenter(newPoint);
+
+            //Make new marker for the new location, delete old marker, and display new marker on map
+            Marker newPosition = new Marker(map);
+            newPosition.setPosition(newPoint);
+            map.getOverlays().remove(currentLocation);
+            currentLocation = newPosition;
+            map.getOverlays().add(newPosition);
+        };
+
+        //If GPS permission is granted, keep checking for location changes. If so, update marker
+        if(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
+        }
     }
 }
+
+
