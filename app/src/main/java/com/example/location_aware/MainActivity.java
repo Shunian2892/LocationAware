@@ -82,15 +82,15 @@ public class MainActivity extends AppCompatActivity {
                     startPoint = streetMaps.createGeoPoint(MainActivity.this, startLocation);
                     endPoint = streetMaps.createGeoPoint(MainActivity.this, endLocation);
                     drawRoute(startPoint, endPoint);
+                    startRoute.setEnabled(false);
+                    startRoute.setImageResource(R.drawable.start_route_disabled);
+                    stopRoute.setEnabled(true);
+                    stopRoute.setImageResource(R.drawable.stop_route);
+                    Toast.makeText(MainActivity.this, "Starting route! A moment please...", Toast.LENGTH_LONG).show();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "Please type in a start/end point!", Toast.LENGTH_LONG).show();
                 }
-
-                startRoute.setEnabled(false);
-                startRoute.setImageResource(R.drawable.start_route_disabled);
-                stopRoute.setEnabled(true);
-                stopRoute.setImageResource(R.drawable.stop_route);
-                Toast.makeText(MainActivity.this, "Starting route! A moment please...", Toast.LENGTH_LONG).show();
             }
         });
 
