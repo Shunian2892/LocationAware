@@ -105,7 +105,7 @@ public class MapFragment extends Fragment {
 
         //Set mapcontroller
         controller = map.getController();
-        controller.setZoom(14);
+        controller.setZoom(18);
         Data.getInstance().setMapController(controller);
 
         //Zoom in with pinching

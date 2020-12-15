@@ -57,8 +57,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 currentLocation = Data.getInstance().getCurrentLocation();
                 mapController = Data.getInstance().getMapController();
-                mapController.setCenter(currentLocation);
-                System.out.println(currentLocation.toString());
+                mapController.animateTo(currentLocation);
             }
         });
 
@@ -83,9 +82,6 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 MethodItem clickedMethod = (MethodItem) adapterView.getItemAtPosition(position);
                 String clickedItemName = clickedMethod.getMethodName();
-
-                // TODO: 15-12-2020 Debug purposes, can be removed later
-                Toast.makeText(MainActivity.this, clickedItemName + " selected", Toast.LENGTH_SHORT).show();
 
                 switch (clickedItemName){
                     case "Walking":
@@ -140,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
                 startRoute.setEnabled(true);
                 startRoute.setImageResource(R.drawable.start_route);
                 Toast.makeText(MainActivity.this, "Stopping route! A moment please...", Toast.LENGTH_LONG).show();
-
             }
         });
     }
