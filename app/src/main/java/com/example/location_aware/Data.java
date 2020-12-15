@@ -3,6 +3,7 @@ package com.example.location_aware;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class Data {
     private GeoPoint currentLocation;
     private ArrayList<GeoPoint> geoPointsList;
     private String routeMethod;
-    private OpenRouteService route;
+    private Polyline routeLine;
 
     public static Data getInstance(){
         if(data == null){
@@ -82,11 +83,11 @@ public class Data {
         this.routeMethod = routeMethod;
     }
 
-    public OpenRouteService getRoute() {
-        return route;
+    public Polyline getRouteLine() {
+        return routeLine;
     }
 
-    public void setRoute(OpenRouteService route) {
-        this.route = route;
+    public void setRouteLine(Polyline routeLine) {
+        this.routeLine = routeLine;
     }
 }
