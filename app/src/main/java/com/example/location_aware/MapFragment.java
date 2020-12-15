@@ -66,7 +66,8 @@ public class MapFragment extends Fragment {
 
     private ArrayList<GeoPoint> points;
     private OpenStreetMaps osm;
-    private GeoPoint oldPoint, newPoint;
+    private GeoPoint startPoint, newPoint;
+    private boolean firstLocationSet;
 
     public MapFragment() {
         // Required empty public constructor
@@ -86,7 +87,6 @@ public class MapFragment extends Fragment {
 
         return fragment;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -114,10 +114,11 @@ public class MapFragment extends Fragment {
         //Set location overlay to show location on map
         myLocationNewOverlay = new MyLocationNewOverlay(myLocationProvider, map);
         myLocationNewOverlay.enableMyLocation();
-        myLocationNewOverlay.enableFollowLocation();
+        myLocationNewOverlay.disableFollowLocation();
 
         points = new ArrayList<>();
         osm = new OpenStreetMaps();
+        firstLocationSet = false;
 
         //Check for GPS permission on first use
         if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(),
@@ -144,10 +145,16 @@ public class MapFragment extends Fragment {
         manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         listener = location -> {
-            //Get current location and set a new GeoPoint with the current latitude and longitude. Set point in center of screen
-            oldPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-            newPoint = oldPoint;
-            controller.setCenter(newPoint);
+            if(!firstLocationSet){
+                //Get current location and set a new GeoPoint with the current latitude and longitude. Set point in center of screen
+                startPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                controller.setCenter(startPoint);
+                firstLocationSet = true;
+                newPoint = startPoint;
+            } else {
+                //Update new current location without centering the map
+                newPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+            }
 
             //Make new marker for the new location, delete old marker, and display new marker on map
             Marker newPosition = new Marker(map);
