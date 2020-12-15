@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private IMapController mapController;
     private GeoPoint currentLocation;
     private OpenRouteService routeService;
+    private OpenStreetMaps streetMaps;
 
     private ArrayList<MethodItem> methods;
     private MethodAdapter methodAdapter;
@@ -63,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
         mapView = Data.getInstance().getMapView();
         routeService = new OpenRouteService(mapView);
+        Data.getInstance().setRouteService(routeService);
+        streetMaps = Data.getInstance().getStreetMaps();
 
         startRoute = findViewById(R.id.start_route_button);
         stopRoute = findViewById(R.id.stop_route_button);
@@ -122,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 startRoute.setImageResource(R.drawable.start_route_disabled);
                 stopRoute.setEnabled(true);
                 stopRoute.setImageResource(R.drawable.stop_route);
+                Toast.makeText(MainActivity.this, "Starting route! A moment please...", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -135,6 +139,8 @@ public class MainActivity extends AppCompatActivity {
                 stopRoute.setImageResource(R.drawable.stop_route_disabled);
                 startRoute.setEnabled(true);
                 startRoute.setImageResource(R.drawable.start_route);
+                Toast.makeText(MainActivity.this, "Stopping route! A moment please...", Toast.LENGTH_LONG).show();
+
             }
         });
     }
@@ -163,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
      * Delete route from map
      */
     private void clearRoute(){
-        mapView.getOverlayManager().remove(Data.getInstance().getRouteLine());
+        streetMaps.clearRoute();
     }
 
 }

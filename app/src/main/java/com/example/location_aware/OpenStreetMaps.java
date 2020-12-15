@@ -8,8 +8,13 @@ import java.util.ArrayList;
 
 public class OpenStreetMaps {
     private Polyline route;
+    private MapView mapView;
 
-    public void drawRoute(MapView mapView, ArrayList<GeoPoint> points){
+    public OpenStreetMaps(){
+        this.mapView = Data.getInstance().getMapView();
+    }
+
+    public void drawRoute(ArrayList<GeoPoint> points){
         route = new Polyline();
         route.setPoints(points);
         Data.getInstance().setRouteLine(route);
@@ -17,6 +22,6 @@ public class OpenStreetMaps {
     }
 
     public void clearRoute(){
-
+        mapView.getOverlayManager().remove(route);
     }
 }

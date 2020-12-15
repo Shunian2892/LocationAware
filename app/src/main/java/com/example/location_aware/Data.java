@@ -17,6 +17,8 @@ public class Data {
     private ArrayList<GeoPoint> geoPointsList;
     private String routeMethod;
     private Polyline routeLine;
+    private OpenStreetMaps streetMaps;
+    private OpenRouteService routeService;
 
     public static Data getInstance(){
         if(data == null){
@@ -89,5 +91,21 @@ public class Data {
 
     public void setRouteLine(Polyline routeLine) {
         this.routeLine = routeLine;
+    }
+
+    public OpenStreetMaps getStreetMaps() {
+        return streetMaps;
+    }
+
+    public void setStreetMaps(OpenStreetMaps streetMaps) {
+        this.streetMaps = streetMaps;
+    }
+
+    public OpenRouteService getRouteService() {
+        return routeService;
+    }
+
+    public void setRouteService(OpenRouteService routeService) {
+        this.routeService = routeService;
     }
 }

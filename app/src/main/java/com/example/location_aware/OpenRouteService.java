@@ -37,6 +37,7 @@ public class OpenRouteService {
         this.port = 8000;
         this.isConnected = false;
         this.openStreetMaps = new OpenStreetMaps();
+        Data.getInstance().setStreetMaps(openStreetMaps);
         this.mapView = mapView;
 
         Connect();
@@ -83,7 +84,7 @@ public class OpenRouteService {
                                     points.add(point);
                                 }
 
-                                openStreetMaps.drawRoute(mapView, points);
+                                openStreetMaps.drawRoute(points);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
