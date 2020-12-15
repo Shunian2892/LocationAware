@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
         }
-        
+
         setCenter = findViewById(R.id.centerMap);
         setCenter.setOnClickListener(new View.OnClickListener() {
             @Override

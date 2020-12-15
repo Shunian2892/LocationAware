@@ -5,12 +5,15 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.util.ArrayList;
+
 public class Data {
     private static Data data;
     private MyLocationNewOverlay myLocationNewOverlay;
     private MapView mapView;
     private IMapController mapController;
     private GeoPoint currentLocation;
+    private ArrayList<GeoPoint> geoPointsList;
 
     public static Data getInstance(){
         if(data == null){
@@ -59,5 +62,13 @@ public class Data {
 
     public void setCurrentLocation(GeoPoint currentLocation) {
         this.currentLocation = currentLocation;
+    }
+
+    public ArrayList<GeoPoint> getGeoPointsList() {
+        return geoPointsList;
+    }
+
+    public void setGeoPointsList(ArrayList<GeoPoint> geoPointsList) {
+        this.geoPointsList = geoPointsList;
     }
 }

@@ -69,6 +69,8 @@ public class MapFragment extends Fragment {
     private GeoPoint startPoint, newPoint;
     private boolean firstLocationSet;
 
+    private OpenRouteService routeService;
+
     public MapFragment() {
         // Required empty public constructor
     }
@@ -123,6 +125,8 @@ public class MapFragment extends Fragment {
         osm = new OpenStreetMaps();
         firstLocationSet = false;
 
+        routeService = new OpenRouteService(map);
+
         //Check for GPS permission on first use
         if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -139,6 +143,7 @@ public class MapFragment extends Fragment {
         //Get location
         getLocation();
         addLocations();
+        routeService.getRoute(new GeoPoint(51.5897, 4.7616), new GeoPoint(51.5957, 4.7795), "driving-car");
     }
 
     /**
@@ -182,7 +187,7 @@ public class MapFragment extends Fragment {
         points.add(new GeoPoint(51.5957, 4.7795));
         points.add(new GeoPoint(51.5859, 4.7924));
 
-        osm.drawRoute(map, points);
+        Data.getInstance().setGeoPointsList(points);
     }
 }
 

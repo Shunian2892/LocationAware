@@ -83,8 +83,7 @@ public class OpenRouteService {
                                     points.add(point);
                                 }
 
-//                                openStreetMaps.drawRoute(mapView, points);
-
+                                openStreetMaps.drawRoute(mapView, points);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
