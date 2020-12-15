@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -16,23 +17,26 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
-    private FloatingActionButton setCenter;
     private MapView mapView;
     private IMapController mapController;
-    private GeoPoint currentLocation;
+    private GeoPoint currentLocation, startPoint, endPoint;
     private OpenRouteService routeService;
     private OpenStreetMaps streetMaps;
 
+    private ImageButton startRoute, stopRoute;
+    private FloatingActionButton setCenter;
+    private EditText startLocationInput, endLocationInput;
+    private Spinner methodChoices;
     private ArrayList<MethodItem> methods;
     private MethodAdapter methodAdapter;
-    private Spinner methodChoices;
-    private ImageButton startRoute, stopRoute;
+
     private boolean clicked;
 
     @Override
@@ -50,73 +54,38 @@ public class MainActivity extends AppCompatActivity {
 
         clicked = false;
 
-        //Initialise floating action button and onClickListener
-        setCenter = findViewById(R.id.centerMap);
-        setCenter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentLocation = Data.getInstance().getCurrentLocation();
-                mapController = Data.getInstance().getMapController();
-                mapController.animateTo(currentLocation);
-            }
-        });
-
         mapView = Data.getInstance().getMapView();
         routeService = new OpenRouteService(mapView);
         Data.getInstance().setRouteService(routeService);
         streetMaps = Data.getInstance().getStreetMaps();
 
+        //Initialize buttons
         startRoute = findViewById(R.id.start_route_button);
         stopRoute = findViewById(R.id.stop_route_button);
         stopRoute.setEnabled(false);
+        setCenter = findViewById(R.id.centerMap);
 
-        //Initialise arraylist with different methods
-        initSpinnerList();
-        methodChoices = findViewById(R.id.spinner);
+        //Initialize EditText box
+        startLocationInput = findViewById(R.id.start_location);
+        endLocationInput = findViewById(R.id.end_location);
 
-        //Set adapter to the spinner and a setOnItemSelectedListener.
-        methodAdapter = new MethodAdapter(this, methods);
-        methodChoices.setAdapter(methodAdapter);
-        methodChoices.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                MethodItem clickedMethod = (MethodItem) adapterView.getItemAtPosition(position);
-                String clickedItemName = clickedMethod.getMethodName();
-
-                switch (clickedItemName){
-                    case "Walking":
-                        Data.getInstance().setRouteMethod("foot-walking");
-                        if(clicked){
-                            drawRoute();
-                        }
-                        break;
-                    case "Cycling":
-                        Data.getInstance().setRouteMethod("cycling-regular");
-                        if(clicked){
-                            drawRoute();
-                        }
-                        break;
-                    case "Driving":
-                        Data.getInstance().setRouteMethod("driving-car");
-                        if(clicked){
-                            drawRoute();
-                        }
-                        break;
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                //Do nothing
-            }
-        });
-
+        //Set OnClickListeners
         //Set clicked boolean on true and draw route
         startRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 clicked = true;
-                drawRoute();
+                String startLocation = startLocationInput.getText().toString();
+                String endLocation = endLocationInput.getText().toString();
+
+                try {
+                    startPoint = streetMaps.createGeoPoint(MainActivity.this, startLocation);
+                    endPoint = streetMaps.createGeoPoint(MainActivity.this, endLocation);
+                    drawRoute(startPoint, endPoint);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 startRoute.setEnabled(false);
                 startRoute.setImageResource(R.drawable.start_route_disabled);
                 stopRoute.setEnabled(true);
@@ -138,6 +107,56 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Stopping route! A moment please...", Toast.LENGTH_LONG).show();
             }
         });
+
+        setCenter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentLocation = Data.getInstance().getCurrentLocation();
+                mapController = Data.getInstance().getMapController();
+                mapController.animateTo(currentLocation);
+            }
+        });
+
+        //Initialise arraylist with different methods
+        initSpinnerList();
+        methodChoices = findViewById(R.id.spinner);
+
+        //Set adapter to the spinner and a setOnItemSelectedListener.
+        methodAdapter = new MethodAdapter(this, methods);
+        methodChoices.setAdapter(methodAdapter);
+        methodChoices.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                MethodItem clickedMethod = (MethodItem) adapterView.getItemAtPosition(position);
+                String clickedItemName = clickedMethod.getMethodName();
+
+                switch (clickedItemName){
+                    case "Walking":
+                        Data.getInstance().setRouteMethod("foot-walking");
+                        if(clicked){
+                            drawRoute(startPoint, endPoint);
+                        }
+                        break;
+                    case "Cycling":
+                        Data.getInstance().setRouteMethod("cycling-regular");
+                        if(clicked){
+                            drawRoute(startPoint, endPoint);
+                        }
+                        break;
+                    case "Driving":
+                        Data.getInstance().setRouteMethod("driving-car");
+                        if(clicked){
+                            drawRoute(startPoint, endPoint);
+                        }
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                //Do nothing
+            }
+        });
     }
 
     /**
@@ -153,10 +172,10 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Clear any already drawn routes and draw a new route on map
      */
-    private void drawRoute(){
+    private void drawRoute(GeoPoint startPoint, GeoPoint endPoint){
         clearRoute();
-        routeService.getRoute(new GeoPoint(51.5897, 4.7616),
-            new GeoPoint(51.5957, 4.7795),
+        routeService.getRoute(startPoint,
+            endPoint,
             Data.getInstance().getRouteMethod());
     }
 
@@ -166,5 +185,4 @@ public class MainActivity extends AppCompatActivity {
     private void clearRoute(){
         streetMaps.clearRoute();
     }
-
 }

@@ -1,10 +1,17 @@
 package com.example.location_aware;
 
+import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
+
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Polyline;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class OpenStreetMaps {
     private Polyline route;
@@ -23,5 +30,15 @@ public class OpenStreetMaps {
 
     public void clearRoute(){
         mapView.getOverlayManager().remove(route);
+    }
+
+    public GeoPoint createGeoPoint(Context context, String myLocation) throws IOException {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        List<Address> addresses = geocoder.getFromLocationName(myLocation, 1);
+        Address address = addresses.get(0);
+        double longitude = address.getLongitude();
+        double latitude = address.getLatitude();
+        GeoPoint newPoint = new GeoPoint(latitude, longitude);
+        return newPoint;
     }
 }
