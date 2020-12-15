@@ -14,6 +14,8 @@ public class Data {
     private IMapController mapController;
     private GeoPoint currentLocation;
     private ArrayList<GeoPoint> geoPointsList;
+    private String routeMethod;
+    private OpenRouteService route;
 
     public static Data getInstance(){
         if(data == null){
@@ -70,5 +72,21 @@ public class Data {
 
     public void setGeoPointsList(ArrayList<GeoPoint> geoPointsList) {
         this.geoPointsList = geoPointsList;
+    }
+
+    public String getRouteMethod() {
+        return routeMethod;
+    }
+
+    public void setRouteMethod(String routeMethod) {
+        this.routeMethod = routeMethod;
+    }
+
+    public OpenRouteService getRoute() {
+        return route;
+    }
+
+    public void setRoute(OpenRouteService route) {
+        this.route = route;
     }
 }

@@ -143,7 +143,6 @@ public class MapFragment extends Fragment {
         //Get location
         getLocation();
         addLocations();
-        routeService.getRoute(new GeoPoint(51.5897, 4.7616), new GeoPoint(51.5957, 4.7795), "driving-car");
     }
 
     /**
