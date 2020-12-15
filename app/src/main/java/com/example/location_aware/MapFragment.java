@@ -99,10 +99,12 @@ public class MapFragment extends Fragment {
         map = (MapView) v.findViewById(R.id.osm_view);
         map.setUseDataConnection(true);
         map.setTileSource(TileSourceFactory.MAPNIK);
+        Data.getInstance().setMapView(map);
 
         //Set mapcontroller
         controller = map.getController();
         controller.setZoom(14);
+        Data.getInstance().setMapController(controller);
 
         //Zoom in with pinching
         map.setMultiTouchControls(true);
@@ -115,6 +117,7 @@ public class MapFragment extends Fragment {
         myLocationNewOverlay = new MyLocationNewOverlay(myLocationProvider, map);
         myLocationNewOverlay.enableMyLocation();
         myLocationNewOverlay.disableFollowLocation();
+        Data.getInstance().setMyLocationNewOverlay(myLocationNewOverlay);
 
         points = new ArrayList<>();
         osm = new OpenStreetMaps();
@@ -155,6 +158,8 @@ public class MapFragment extends Fragment {
                 //Update new current location without centering the map
                 newPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
             }
+
+            Data.getInstance().setCurrentLocation(newPoint);
 
             //Make new marker for the new location, delete old marker, and display new marker on map
             Marker newPosition = new Marker(map);
