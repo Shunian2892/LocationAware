@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_map"
+        android:enabled="true"
+        android:title="Map"
+        android:icon="@drawable/compass"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_list"
+        android:enabled="true"
+        android:title="Locations"
+        android:icon="@drawable/route"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_makeRoute"
+        android:enabled="true"
+        android:title="MakeRoute"
+        android:icon="@drawable/build"
+        app:showAsAction="ifRoom"/>
+</menu>

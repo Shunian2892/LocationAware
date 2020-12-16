@@ -24,7 +24,7 @@ import org.osmdroid.views.MapView;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements SetRoute {
+public class MainActivity extends AppCompatActivity {
 
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
@@ -48,25 +48,17 @@ public class MainActivity extends AppCompatActivity implements SetRoute {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
         fragmentManager = getSupportFragmentManager();
+
         if(fragmentManager.findFragmentById(R.id.map_fragment) == null){
             mapFragment = new MapFragment();
-            fragmentManager.beginTransaction().add(R.id.map_fragment, mapFragment).commit();
+            fragmentManager.beginTransaction().add(R.id.fragment_container, mapFragment).commit();
         } else {
             mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
         }
-        if(fragmentManager.findFragmentById(R.id.list_fragment) == null){
-            routeRV = new RouteRV();
-            routeRV.setRoute(this);
-            fragmentManager.beginTransaction().add(R.id.list_fragment, routeRV).commit();
-        } else {
-            routeRV = (RouteRV) fragmentManager.findFragmentById(R.id.list_fragment);
-            routeRV.setRoute(this);
-        }
+        setContentView(R.layout.activity_main);
 
-        clicked = false;
+        /*clicked = false;
 
         mapView = Data.getInstance().getMapView();
         routeService = new OpenRouteService(mapView);
@@ -173,22 +165,22 @@ public class MainActivity extends AppCompatActivity implements SetRoute {
             public void onNothingSelected(AdapterView<?> adapterView) {
                 //Do nothing
             }
-        });
+        });*/
     }
 
     /**
      * Initialise different methods in the methods list
      */
-    private void initSpinnerList(){
+    /*private void initSpinnerList(){
         methods = new ArrayList<>();
         methods.add(new MethodItem("Walking", R.drawable.walking));
         methods.add(new MethodItem("Cycling", R.drawable.bike));
         methods.add(new MethodItem("Driving", R.drawable.car));
     }
 
-    /**
+    *//**
      * Clear any already drawn routes and draw a new route on map
-     */
+     *//*
     private void drawRoute(GeoPoint startPoint, GeoPoint endPoint){
         clearRoute();
         routeService.getRoute(startPoint,
@@ -201,9 +193,9 @@ public class MainActivity extends AppCompatActivity implements SetRoute {
         routeService.getRoute(geoPoints,Data.getInstance().getRouteMethod(),"en");
     }
 
-    /**
+    *//**
      * Delete route from map
-     */
+     *//*
     private void clearRoute(){
         streetMaps.clearRoute();
     }
@@ -220,9 +212,9 @@ public class MainActivity extends AppCompatActivity implements SetRoute {
         drawRoute(geoPoints);
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(MainActivity.this, "Please type in a start/end point!", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "Please chose a valid route", Toast.LENGTH_LONG).show();
         }
 
-    }
+    }*/
 
 }
