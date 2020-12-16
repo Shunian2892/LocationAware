@@ -10,8 +10,8 @@ class RouteManager {
         init();
     }
     public void init(){
-        this.routeList.add(new Route("station",new String[]{"Breda station","Breda belgieplein"}));
-        this.routeList.add(new Route("a",new String[]{"1","2","3"}));
+        this.routeList.add(new Route("station",new String[]{"Breda station","Breda belgieplein","Breda Hogeschool Avans"}));
+        this.routeList.add(new Route("a",new String[]{"Breda station","Breda belgieplein"}));
         this.routeList.add(new Route("b",new String[]{"4","5","6"}));
         this.routeList.add(new Route("c",new String[]{"7","8","9"}));
         this.routeList.add(new Route("d",new String[]{"10","11","12"}));

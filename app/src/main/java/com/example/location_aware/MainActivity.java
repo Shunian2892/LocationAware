@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.RouteRV;
+import com.example.location_aware.RouteRecyclerView.SetRoute;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.osmdroid.api.IMapController;
@@ -22,7 +24,7 @@ import org.osmdroid.views.MapView;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements setRoute {
+public class MainActivity extends AppCompatActivity implements SetRoute {
 
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements setRoute {
     private MethodAdapter methodAdapter;
     private RouteRV routeRV;
 
+
     private boolean clicked;
 
     @Override
@@ -53,6 +56,14 @@ public class MainActivity extends AppCompatActivity implements setRoute {
             fragmentManager.beginTransaction().add(R.id.map_fragment, mapFragment).commit();
         } else {
             mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
+        }
+        if(fragmentManager.findFragmentById(R.id.list_fragment) == null){
+            routeRV = new RouteRV();
+            routeRV.setRoute(this);
+            fragmentManager.beginTransaction().add(R.id.list_fragment, routeRV).commit();
+        } else {
+            routeRV = (RouteRV) fragmentManager.findFragmentById(R.id.list_fragment);
+            routeRV.setRoute(this);
         }
 
         clicked = false;
@@ -71,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements setRoute {
         //Initialize EditText box
         startLocationInput = findViewById(R.id.start_location);
         endLocationInput = findViewById(R.id.end_location);
+
 
         //Set OnClickListeners
         //Set clicked boolean on true and draw route
@@ -114,17 +126,10 @@ public class MainActivity extends AppCompatActivity implements setRoute {
         setCenter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fm = getSupportFragmentManager();
-                if(fm.findFragmentById(R.id.route_rv) == null){
-                    routeRV = new RouteRV(MainActivity.this,MainActivity.this);
-                }else{
-                    routeRV = (RouteRV) fm.findFragmentById(R.id.route_rv);
-                }
-                fm.beginTransaction().replace(R.id.map_fragment,routeRV).commit();
 
-                /*currentLocation = Data.getInstance().getCurrentLocation();
+                currentLocation = Data.getInstance().getCurrentLocation();
                 mapController = Data.getInstance().getMapController();
-                mapController.animateTo(currentLocation);*/
+                mapController.animateTo(currentLocation);
 
             }
         });
@@ -191,6 +196,11 @@ public class MainActivity extends AppCompatActivity implements setRoute {
             Data.getInstance().getRouteMethod());
     }
 
+    private void drawRoute(GeoPoint[] geoPoints){
+        clearRoute();
+        routeService.getRoute(geoPoints,Data.getInstance().getRouteMethod(),"en");
+    }
+
     /**
      * Delete route from map
      */
@@ -200,22 +210,19 @@ public class MainActivity extends AppCompatActivity implements setRoute {
 
     @Override
     public void setRouteCoord(Route route) {
-        String startLocation = route.getPlaces()[0];
-        String endLocation = route.getPlaces()[1];
-
+        GeoPoint[] geoPoints = new GeoPoint[route.getPlaces().length];
         try {
-            startPoint = streetMaps.createGeoPoint(MainActivity.this, startLocation);
-            endPoint = streetMaps.createGeoPoint(MainActivity.this, endLocation);
-            drawRoute(startPoint, endPoint);
-            startRoute.setEnabled(false);
-            startRoute.setImageResource(R.drawable.start_route_disabled);
-            stopRoute.setEnabled(true);
-            stopRoute.setImageResource(R.drawable.stop_route);
-            Toast.makeText(MainActivity.this, "Starting route! A moment please...", Toast.LENGTH_LONG).show();
+        for (int i =0; i<geoPoints.length;i++) {
+            geoPoints[i] = streetMaps.createGeoPoint(MainActivity.this,route.getPlaces()[i]);
+            Log.d("MainRouteCoord", geoPoints[i].toIntString());
+        }
+        clearRoute();
+        drawRoute(geoPoints);
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(MainActivity.this, "Please type in a start/end point!", Toast.LENGTH_LONG).show();
         }
+
     }
 
 }

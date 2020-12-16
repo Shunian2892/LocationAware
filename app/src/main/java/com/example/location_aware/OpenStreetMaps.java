@@ -1,11 +1,13 @@
 package com.example.location_aware;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 
 import java.io.IOException;
@@ -40,5 +42,11 @@ public class OpenStreetMaps {
         double latitude = address.getLatitude();
         GeoPoint newPoint = new GeoPoint(latitude, longitude);
         return newPoint;
+    }
+    public void drawMarker(MapView mapView, GeoPoint point, Drawable icon){
+        Marker marker = new Marker(mapView);
+        marker.setPosition(point);
+        marker.setIcon(icon);
+        mapView.getOverlays().add(marker);
     }
 }
