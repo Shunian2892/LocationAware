@@ -101,14 +101,14 @@ public class OpenRouteService {
                 post(requestBody).addHeader("Authorization", apiKey).build();
         return request;
     }
-    public void getRoute(GeoPoint[] waypoints, String method,String language) {
+    public void getRoute(ArrayList<GeoPoint> waypoints, String method,String language) {
         if (this.isConnected) {
             ArrayList<GeoPoint> points = new ArrayList<>();
-            double[][] coordinates = new double[waypoints.length][2];
+            double[][] coordinates = new double[waypoints.size()][2];
 
-            for (int i = 0; i < waypoints.length; i++) {
-                coordinates[i][0] = waypoints[i].getLongitude();
-                coordinates[i][1] = waypoints[i].getLatitude();
+            for (int i = 0; i < waypoints.size(); i++) {
+                coordinates[i][0] = waypoints.get(i).getLongitude();
+                coordinates[i][1] = waypoints.get(i).getLatitude();
             }
 
             client.newCall(createPostRequest(method, "{\"coordinates\":" + Arrays.deepToString(coordinates) + ",\"language\":\"" + language + "\"}"))

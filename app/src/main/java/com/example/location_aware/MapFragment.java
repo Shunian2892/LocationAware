@@ -40,7 +40,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MapFragment extends Fragment implements SetRoute {
+public class MapFragment extends Fragment implements SetRoute{
     private Context context;
 
     private MapView map;
@@ -91,9 +91,6 @@ public class MapFragment extends Fragment implements SetRoute {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
         createMap(v);
-        routeService = new OpenRouteService(map);
-        Data.getInstance().setRouteService(routeService);
-        streetMaps = Data.getInstance().getStreetMaps();
 
 
         clicked = false;
@@ -123,18 +120,6 @@ public class MapFragment extends Fragment implements SetRoute {
         methods.add(new MethodItem("Driving", R.drawable.car));
     }
 
-    private void drawRoute(GeoPoint startPoint, GeoPoint endPoint){
-        clearRoute();
-        routeService.getRoute(startPoint,
-                endPoint,
-                Data.getInstance().getRouteMethod());
-    }
-
-    private void drawRoute(GeoPoint[] geoPoints){
-        clearRoute();
-        routeService.getRoute(geoPoints,Data.getInstance().getRouteMethod(),"en");
-    }
-
     /**
      * Delete route from map
      */
@@ -158,9 +143,11 @@ public class MapFragment extends Fragment implements SetRoute {
                 String endLocation = endLocationInput.getText().toString();
 
                 try {
-                    startPoint = streetMaps.createGeoPoint(getActivity().getApplicationContext(), startLocation);
-                    endPoint = streetMaps.createGeoPoint(getActivity().getApplicationContext(), endLocation);
-                    drawRoute(startPoint, endPoint);
+                    startPoint = streetMaps.createGeoPoint(getContext(), startLocation);
+                    endPoint = streetMaps.createGeoPoint(getContext(), endLocation);
+                    Log.d("ONCLICK MapFragment", startPoint + " " + endPoint);
+                    Log.d("DataONCLICK mapfragment", Data.getInstance().getStreetMaps().toString());
+                    drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
                     startRoute.setEnabled(false);
                     startRoute.setImageResource(R.drawable.start_route_disabled);
                     stopRoute.setEnabled(true);
@@ -213,19 +200,19 @@ public class MapFragment extends Fragment implements SetRoute {
                     case "Walking":
                         Data.getInstance().setRouteMethod("foot-walking");
                         if(clicked){
-                            drawRoute(startPoint, endPoint);
+                            drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
                         }
                         break;
                     case "Cycling":
                         Data.getInstance().setRouteMethod("cycling-regular");
                         if(clicked){
-                            drawRoute(startPoint, endPoint);
+                            drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
                         }
                         break;
                     case "Driving":
                         Data.getInstance().setRouteMethod("driving-car");
                         if(clicked){
-                            drawRoute(startPoint, endPoint);
+                            drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
                         }
                         break;
                 }
@@ -245,6 +232,9 @@ public class MapFragment extends Fragment implements SetRoute {
         manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         listener = location -> {
+            if(getView()== null){
+                return;
+            }
             if(!firstLocationSet){
                 //Get current location and set a new GeoPoint with the current latitude and longitude. Set point in center of screen
                 startMarker = new GeoPoint(location.getLatitude(), location.getLongitude());
@@ -287,6 +277,10 @@ public class MapFragment extends Fragment implements SetRoute {
         map.setTileSource(TileSourceFactory.MAPNIK);
         Data.getInstance().setMapView(map);
 
+        routeService = new OpenRouteService(map);
+        Data.getInstance().setRouteService(routeService);
+        streetMaps = Data.getInstance().getStreetMaps();
+
         //Set mapcontroller
         controller = map.getController();
         controller.setZoom(18);
@@ -318,22 +312,30 @@ public class MapFragment extends Fragment implements SetRoute {
                     Manifest.permission.ACCESS_COARSE_LOCATION}, 44);
         }
     }
+    public void drawRoute(GeoPoint start, GeoPoint end, String method){
+        clearRoute();
+        routeService.getRoute(start, end, method);
+    }
 
     @Override
     public void setRouteCoord(Route route) {
-        GeoPoint[] geoPoints = new GeoPoint[route.getPlaces().length];
+        Log.d("MainActivity Rote", route.getStringPlaces());
+        ArrayList<GeoPoint> geoPoints = new ArrayList<>();
         try {
-            for (int i =0; i<geoPoints.length;i++) {
-                geoPoints[i] = streetMaps.createGeoPoint(getContext(),route.getPlaces()[i]);
-                Log.d("MainRouteCoord", geoPoints[i].toIntString());
+            for (int i =0; i<route.getPlaces().length;i++) {
+                geoPoints.add(streetMaps.createGeoPoint(context,route.getPlaces()[i]));
             }
-            clearRoute();
-            drawRoute(geoPoints);
+            streetMaps.clearRoute();
+            routeService.getRoute(geoPoints,Data.getInstance().getRouteMethod(),"en");
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(getContext(), "Please chose a valid route", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Please chose a valid route", Toast.LENGTH_LONG).show();
         }
     }
+    public SetRoute getSetRoute(){
+        return this;
+    }
+
 }
 
 

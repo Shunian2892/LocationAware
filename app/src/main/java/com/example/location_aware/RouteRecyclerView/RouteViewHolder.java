@@ -1,5 +1,6 @@
 package com.example.location_aware.RouteRecyclerView;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,5 +26,6 @@ class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
     @Override
     public void onClick(View view) {
         clickListener.OnItemClick(getAdapterPosition());
+        Log.d("ROUTEVH clicklistener", getAdapterPosition()+"");
     }
 }

@@ -1,5 +1,7 @@
 package com.example.location_aware;
 
+import com.example.location_aware.RouteRecyclerView.Route;
+
 import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -19,6 +21,7 @@ public class Data {
     private Polyline routeLine;
     private OpenStreetMaps streetMaps;
     private OpenRouteService routeService;
+    private Route route;
 
     public static Data getInstance(){
         if(data == null){
@@ -107,5 +110,13 @@ public class Data {
 
     public void setRouteService(OpenRouteService routeService) {
         this.routeService = routeService;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
     }
 }

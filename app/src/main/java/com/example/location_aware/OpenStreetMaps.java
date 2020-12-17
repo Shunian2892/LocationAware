@@ -4,6 +4,9 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.util.Log;
+
+import com.example.location_aware.RouteRecyclerView.Route;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -18,9 +21,11 @@ import java.util.Locale;
 public class OpenStreetMaps {
     private Polyline route;
     private MapView mapView;
+    private OpenRouteService routeService;
 
     public OpenStreetMaps(){
         this.mapView = Data.getInstance().getMapView();
+        this.routeService = Data.getInstance().getRouteService();
     }
 
     public void drawRoute(ArrayList<GeoPoint> points){
@@ -29,6 +34,8 @@ public class OpenStreetMaps {
         Data.getInstance().setRouteLine(route);
         mapView.getOverlayManager().add(route);
     }
+
+
 
     public void clearRoute(){
         mapView.getOverlayManager().remove(route);

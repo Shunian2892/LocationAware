@@ -56,6 +56,8 @@ public class RouteRV extends Fragment implements OnItemClickListener {
     @Override
     public void OnItemClick(int clickedPosition) {
         Route route = routeList.get(clickedPosition);
+        Data.getInstance().getStreetMaps().clearRoute();
+        Data.getInstance().setRoute(route);
         Toast.makeText(this.context,route.getStringPlaces(),Toast.LENGTH_LONG).show();
         setRoute.setRouteCoord(route);
     }
