@@ -1,4 +1,4 @@
-package com.example.location_aware;
+package com.example.location_aware.methodSpinner;
 
 /**
  * Makes a new MethodItem object which can be put as an item in the combobox.

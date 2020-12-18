@@ -2,7 +2,7 @@ package com.example.location_aware.RouteRecyclerView;
 
 import java.util.ArrayList;
 
-class RouteManager {
+public class RouteManager {
     private ArrayList<Route> routeList;
 
     public RouteManager(){

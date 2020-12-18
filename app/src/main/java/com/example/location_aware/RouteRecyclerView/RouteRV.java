@@ -45,8 +45,10 @@ public class RouteRV extends Fragment implements OnItemClickListener {
         routeList = new ArrayList<>();
         this.routeRv = v.findViewById(R.id.route_rv);
         this.routeManager = new RouteManager();
+        Data.getInstance().setRouteManager(routeManager);
         this.routeList = this.routeManager.getRouteList();
         this.routeAdapter = new RouteAdapter(this, this.routeList);
+        Data.getInstance().setRouteAdapter(routeAdapter);
         this.routeRv.setLayoutManager(new LinearLayoutManager(this.context));
         this.routeRv.setAdapter(this.routeAdapter);
         return v;
@@ -56,7 +58,9 @@ public class RouteRV extends Fragment implements OnItemClickListener {
     @Override
     public void OnItemClick(int clickedPosition) {
         Route route = routeList.get(clickedPosition);
-        Toast.makeText(this.context,route.getStringPlaces(),Toast.LENGTH_LONG).show();
+        Data.getInstance().getStreetMaps().clearRoute();
+        Data.getInstance().setRoute(route);
+//        Toast.makeText(this.context,route.getStringPlaces(),Toast.LENGTH_LONG).show();
         setRoute.setRouteCoord(route);
     }
 }
