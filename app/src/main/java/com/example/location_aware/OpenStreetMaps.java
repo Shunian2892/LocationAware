@@ -35,21 +35,32 @@ public class OpenStreetMaps {
         mapView.getOverlayManager().add(route);
     }
 
-
-
     public void clearRoute(){
         mapView.getOverlayManager().remove(route);
     }
 
-    public GeoPoint createGeoPoint(Context context, String myLocation) throws IOException {
-        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
-        List<Address> addresses = geocoder.getFromLocationName(myLocation, 1);
-        Address address = addresses.get(0);
-        double longitude = address.getLongitude();
-        double latitude = address.getLatitude();
-        GeoPoint newPoint = new GeoPoint(latitude, longitude);
+    public GeoPoint createGeoPoint(Context context, String myLocation) {
+        GeoPoint newPoint = null;
+        Geocoder geocoder;
+        List<Address> addresses;
+
+        try{
+            geocoder = new Geocoder(context, Locale.getDefault());
+
+            addresses = geocoder.getFromLocationName(myLocation, 1);
+
+            if(addresses.size() == 1){
+                Address address = addresses.get(0);
+                double longitude = address.getLongitude();
+                double latitude = address.getLatitude();
+                newPoint = new GeoPoint(latitude, longitude);
+            }
+        } catch (IOException e){
+            return newPoint;
+        }
         return newPoint;
     }
+
     public void drawMarker(MapView mapView, GeoPoint point, Drawable icon){
         Marker marker = new Marker(mapView);
         marker.setPosition(point);

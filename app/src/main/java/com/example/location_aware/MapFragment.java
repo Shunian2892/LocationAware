@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.SetRoute;
+import com.example.location_aware.methodSpinner.MethodAdapter;
+import com.example.location_aware.methodSpinner.MethodItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.osmdroid.api.IMapController;
@@ -92,7 +94,6 @@ public class MapFragment extends Fragment implements SetRoute{
 
         createMap(v);
 
-
         clicked = false;
         //Initialize buttons
         startRoute = v.findViewById(R.id.start_route_button);
@@ -120,13 +121,6 @@ public class MapFragment extends Fragment implements SetRoute{
         methods.add(new MethodItem("Driving", R.drawable.car));
     }
 
-    /**
-     * Delete route from map
-     */
-    private void clearRoute(){
-        streetMaps.clearRoute();
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -142,9 +136,20 @@ public class MapFragment extends Fragment implements SetRoute{
                 String startLocation = startLocationInput.getText().toString();
                 String endLocation = endLocationInput.getText().toString();
 
-                try {
-                    startPoint = streetMaps.createGeoPoint(getContext(), startLocation);
-                    endPoint = streetMaps.createGeoPoint(getContext(), endLocation);
+                startPoint = streetMaps.createGeoPoint(getContext(), startLocation);
+                endPoint = streetMaps.createGeoPoint(getContext(), endLocation);
+
+                if(startPoint == null && endPoint == null){
+                    Toast.makeText(getContext(), "Please type in a (valid) start/end point!", Toast.LENGTH_LONG).show();
+                }
+                 else if(startPoint == null || endPoint == null){
+                    if (startPoint == null){
+                        Toast.makeText(getContext(), "Please type in a (valid) start point!", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), "Please type in a (valid) end point!", Toast.LENGTH_LONG).show();
+                    }
+                }
+                else {
                     Log.d("ONCLICK MapFragment", startPoint + " " + endPoint);
                     Log.d("DataONCLICK mapfragment", Data.getInstance().getStreetMaps().toString());
                     drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
@@ -153,9 +158,6 @@ public class MapFragment extends Fragment implements SetRoute{
                     stopRoute.setEnabled(true);
                     stopRoute.setImageResource(R.drawable.stop_route);
                     Toast.makeText(getContext(), "Starting route! A moment please...", Toast.LENGTH_LONG).show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getContext(), "Please type in a start/end point!", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -165,7 +167,7 @@ public class MapFragment extends Fragment implements SetRoute{
             @Override
             public void onClick(View view) {
                 clicked = false;
-                clearRoute();
+                streetMaps.clearRoute();
                 stopRoute.setEnabled(false);
                 stopRoute.setImageResource(R.drawable.stop_route_disabled);
                 startRoute.setEnabled(true);
@@ -177,11 +179,9 @@ public class MapFragment extends Fragment implements SetRoute{
         setCenter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 currentLocation = Data.getInstance().getCurrentLocation();
                 mapController = Data.getInstance().getMapController();
                 mapController.animateTo(currentLocation);
-
             }
         });
 
@@ -313,25 +313,30 @@ public class MapFragment extends Fragment implements SetRoute{
         }
     }
     public void drawRoute(GeoPoint start, GeoPoint end, String method){
-        clearRoute();
+        streetMaps.clearRoute();
         routeService.getRoute(start, end, method);
     }
 
     @Override
     public void setRouteCoord(Route route) {
-        Log.d("MainActivity Rote", route.getStringPlaces());
+        //Log.d("MainActivity Rote", route.getStringPlaces());
         ArrayList<GeoPoint> geoPoints = new ArrayList<>();
-        try {
-            for (int i =0; i<route.getPlaces().length;i++) {
-                geoPoints.add(streetMaps.createGeoPoint(context,route.getPlaces()[i]));
+
+        if(!route.isOwnMade()){
+            if(geoPoints == null){
+                Toast.makeText(context, "Please chose a valid route", Toast.LENGTH_LONG).show();
+            } else {
+                for (int i =0; i<route.getPlaces().length;i++) {
+                    geoPoints.add(streetMaps.createGeoPoint(context, route.getPlaces()[i]));
+                }
             }
-            streetMaps.clearRoute();
-            routeService.getRoute(geoPoints,Data.getInstance().getRouteMethod(),"en");
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(context, "Please chose a valid route", Toast.LENGTH_LONG).show();
+        } else {
+            geoPoints = route.getGeoPoints();
         }
+        streetMaps.clearRoute();
+        routeService.getRoute(geoPoints, Data.getInstance().getRouteMethod(), "en");
     }
+
     public SetRoute getSetRoute(){
         return this;
     }

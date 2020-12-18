@@ -11,7 +11,7 @@ import com.example.location_aware.R;
 
 import java.util.ArrayList;
 
-class RouteAdapter extends RecyclerView.Adapter<RouteViewHolder> {
+public class RouteAdapter extends RecyclerView.Adapter<RouteViewHolder> {
     private ArrayList<Route> routeList;
     private OnItemClickListener listener;
 
