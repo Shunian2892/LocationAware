@@ -131,6 +131,7 @@ public class OwnRouteFragment extends Fragment {
                         Route route = new Route(name, newPoints);
                         routeManager.AddRoute(route);
                         routeAdapter.notifyDataSetChanged();
+                        Toast.makeText(getContext(), "Route is created!", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getContext(), "Please add multiple location!", Toast.LENGTH_LONG).show();
                     }
@@ -138,12 +139,11 @@ public class OwnRouteFragment extends Fragment {
                     Toast.makeText(getContext(), "Please type in a name!", Toast.LENGTH_LONG).show();
                 }
 
-//                newPoints.clear();
-//                locationNames.clear();
-//                routeName.setText("");
-//                newLocation.setText("");
-//                adapter.notifyDataSetChanged();
-                Toast.makeText(getContext(), "Route is created!", Toast.LENGTH_LONG).show();
+                newPoints.clear();
+                locationNames.clear();
+                routeName.setText("");
+                newLocation.setText("");
+                adapter.notifyDataSetChanged();
             }
         });
     }

@@ -152,6 +152,7 @@ public class MapFragment extends Fragment implements SetRoute{
                 else {
                     Log.d("ONCLICK MapFragment", startPoint + " " + endPoint);
                     Log.d("DataONCLICK mapfragment", Data.getInstance().getStreetMaps().toString());
+                    streetMaps.clearRoute();
                     drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
                     startRoute.setEnabled(false);
                     startRoute.setImageResource(R.drawable.start_route_disabled);
@@ -200,18 +201,21 @@ public class MapFragment extends Fragment implements SetRoute{
                     case "Walking":
                         Data.getInstance().setRouteMethod("foot-walking");
                         if(clicked){
+                            streetMaps.clearRoute();
                             drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
                         }
                         break;
                     case "Cycling":
                         Data.getInstance().setRouteMethod("cycling-regular");
                         if(clicked){
+                            streetMaps.clearRoute();
                             drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
                         }
                         break;
                     case "Driving":
                         Data.getInstance().setRouteMethod("driving-car");
                         if(clicked){
+                            streetMaps.clearRoute();
                             drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
                         }
                         break;
@@ -313,7 +317,6 @@ public class MapFragment extends Fragment implements SetRoute{
         }
     }
     public void drawRoute(GeoPoint start, GeoPoint end, String method){
-        streetMaps.clearRoute();
         routeService.getRoute(start, end, method);
     }
 

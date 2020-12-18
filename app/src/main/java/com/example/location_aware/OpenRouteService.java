@@ -141,6 +141,7 @@ public class OpenRouteService {
                              /*   for (GeoPoint point : waypoints) {
                                     openStreetMaps.drawMarker(mapView, point, context.getResources().getDrawable(R.drawable.waypoint_marker));
                                 }*/
+                                openStreetMaps.clearRoute();
                                 openStreetMaps.drawRoute(points);
                             } catch (JSONException e) {
                                 e.printStackTrace();
