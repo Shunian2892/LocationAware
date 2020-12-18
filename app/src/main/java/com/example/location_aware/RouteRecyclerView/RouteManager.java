@@ -7,7 +7,7 @@ public class RouteManager {
 
     public RouteManager(){
         this.routeList = new ArrayList<>();
-        init();
+        //init();
     }
     public void init(){
         this.routeList.add(new Route("station",new String[]{"Breda station","Breda belgieplein","Breda Hogeschool Avans"}));

@@ -129,7 +129,7 @@ public class OwnRouteFragment extends Fragment {
                 if(!name.equals("")){
                     if(newPoints.size() >= 2){
                         Route route = new Route(name, newPoints);
-                        routeManager.AddRoute(route);
+                        Data.getInstance().addRoute(route);
                         routeAdapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(getContext(), "Please add multiple location!", Toast.LENGTH_LONG).show();

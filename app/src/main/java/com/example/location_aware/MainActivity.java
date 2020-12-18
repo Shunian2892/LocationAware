@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -13,10 +15,13 @@ import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.RouteRV;
 import com.example.location_aware.RouteRecyclerView.SetRoute;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.osmdroid.util.GeoPoint;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,12 +32,14 @@ public class MainActivity extends AppCompatActivity {
     private OwnRouteFragment ownRouteFragment;
     private OpenStreetMaps streetMaps;
     private OpenRouteService routeService;
+    private ArrayList<Route> routeList;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        loadData();
         fragmentManager = getSupportFragmentManager();
         setMapFragment();
         setRouteFragment();
@@ -86,11 +93,14 @@ public class MainActivity extends AppCompatActivity {
     public void setRouteFragment(){
         if(fragmentManager.findFragmentById(R.id.route_rv_fragment) == null){
             routeRV = new RouteRV();
+
             routeRV.setRoute(mapFragment.getSetRoute());
             fragmentManager.beginTransaction().add(R.id.fragment_container,routeRV).commit();
         }else{
             routeRV = (RouteRV) fragmentManager.findFragmentById(R.id.route_rv_fragment);
         }
+        //routeRV.saveData();
+        //routeRV.loadData();
         fragmentManager.beginTransaction().hide(routeRV).commit();
     }
 
@@ -104,5 +114,19 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager.beginTransaction().hide(ownRouteFragment).commit();
     }
 
+
+
+    public void loadData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String jsonList = sharedPreferences.getString("route list",null);
+        Type type = new TypeToken<ArrayList<Route>>(){}.getType();
+        routeList = gson.fromJson(jsonList,type);
+
+        if(routeList == null){
+            routeList = new ArrayList<>();
+        }
+        Data.getInstance().setRouteList(routeList);
+    }
 
 }
