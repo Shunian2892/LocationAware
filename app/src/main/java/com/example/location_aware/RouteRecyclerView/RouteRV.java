@@ -1,6 +1,7 @@
 package com.example.location_aware.RouteRecyclerView;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,14 +14,18 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.location_aware.Data;
 import com.example.location_aware.OpenStreetMaps;
 import com.example.location_aware.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.osmdroid.config.Configuration;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class RouteRV extends Fragment implements OnItemClickListener {
@@ -31,6 +36,7 @@ public class RouteRV extends Fragment implements OnItemClickListener {
     private ViewGroup container;
     private Context context;
     private SetRoute setRoute;
+    private Button saveButton;
 
     public void setRoute(SetRoute setRoute){
         this.setRoute = setRoute;
@@ -42,18 +48,39 @@ public class RouteRV extends Fragment implements OnItemClickListener {
         context = getActivity().getApplicationContext();
         Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
         View v = inflater.inflate(R.layout.fragment_route_r_v, container, false);
-        routeList = new ArrayList<>();
+
+        routeList = Data.getInstance().getRouteList();
+
+
+      /*  this.routeManager = new RouteManager();
+        Data.getInstance().setRouteManager(routeManager);*/
+        //routeList = this.routeManager.getRouteList();
+
         this.routeRv = v.findViewById(R.id.route_rv);
-        this.routeManager = new RouteManager();
-        Data.getInstance().setRouteManager(routeManager);
-        this.routeList = this.routeManager.getRouteList();
         this.routeAdapter = new RouteAdapter(this, this.routeList);
         Data.getInstance().setRouteAdapter(routeAdapter);
         this.routeRv.setLayoutManager(new LinearLayoutManager(this.context));
         this.routeRv.setAdapter(this.routeAdapter);
+
+        this.saveButton = v.findViewById(R.id.save_button);
+        this.saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveData();
+            }
+        });
         return v;
     }
 
+    public void saveData(){
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences("shared preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String jsonList = gson.toJson(routeList);
+        editor.putString("route list",jsonList);
+        editor.apply();
+    }
 
     @Override
     public void OnItemClick(int clickedPosition) {
