@@ -27,6 +27,7 @@ public class Data {
     private RouteManager routeManager;
     private RouteAdapter routeAdapter;
     private ArrayList<Route> routeList;
+    private ArrayList<String> nameList;
 
     public static Data getInstance(){
         if(data == null){
@@ -151,5 +152,13 @@ public class Data {
 
     public void addRoute(Route route){
         this.routeList.add(route);
+    }
+
+    public ArrayList<String> getNameList() {
+        return nameList;
+    }
+
+    public void setNameList(ArrayList<String> nameList) {
+        this.nameList = nameList;
     }
 }

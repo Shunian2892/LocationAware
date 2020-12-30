@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private OpenStreetMaps streetMaps;
     private OpenRouteService routeService;
     private ArrayList<Route> routeList;
+    private ArrayList<String> nameList;
 
 
     @Override
@@ -126,7 +127,17 @@ public class MainActivity extends AppCompatActivity {
         if(routeList == null){
             routeList = new ArrayList<>();
         }
+
         Data.getInstance().setRouteList(routeList);
+
+        String jsonNames = sharedPreferences.getString("location name list",null);
+        Type nameType = new TypeToken<ArrayList<String>>(){}.getType();
+        nameList = gson.fromJson(jsonNames,nameType);
+
+        if(nameList == null){
+            nameList = new ArrayList<>();
+        }
+        Data.getInstance().setNameList(nameList);
     }
 
 }

@@ -51,7 +51,6 @@ public class GeofenceSetup {
                     ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_ACCESS_REQUEST_CODE);
                 } else {
                     ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_ACCESS_REQUEST_CODE);
-
                 }
             }
         } else {
@@ -76,7 +75,7 @@ public class GeofenceSetup {
         geofencingClient.addGeofences(geofencingRequest,pendingIntent).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Log.d("GeofencingSetup", "Geofence "+ geofence.getRequestId() + " is added");
+                Log.d("GeofencingSetup", "/////////////////////////Geofence "+ geofence.getRequestId() + " is added");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

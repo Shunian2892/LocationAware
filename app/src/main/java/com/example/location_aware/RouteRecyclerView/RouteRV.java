@@ -71,7 +71,6 @@ public class RouteRV extends Fragment implements OnItemClickListener {
         });
         return v;
     }
-
     public void saveData(){
 
         SharedPreferences sharedPreferences = context.getSharedPreferences("shared preferences", Context.MODE_PRIVATE);

@@ -94,6 +94,10 @@ public class MapFragment extends Fragment implements SetRoute{
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
         createMap(v);
+        streetMaps = Data.getInstance().getStreetMaps();
+        streetMaps.drawMarker(map,new GeoPoint(51.603063987023894, 4.785269550366492),getResources().getDrawable(R.drawable.location));
+        GeofenceSetup setupexe = new GeofenceSetup(getContext(), getActivity());
+        setupexe.setUpGeofencing();
 
         clicked = false;
         //Initialize buttons
@@ -284,7 +288,6 @@ public class MapFragment extends Fragment implements SetRoute{
 
         routeService = new OpenRouteService(map);
         Data.getInstance().setRouteService(routeService);
-        streetMaps = Data.getInstance().getStreetMaps();
 
         //Set mapcontroller
         controller = map.getController();
@@ -316,10 +319,8 @@ public class MapFragment extends Fragment implements SetRoute{
             ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION}, 44);
         }
-        Marker marker = new Marker(map);
-        marker.setPosition(new GeoPoint(51.603063987023894, 4.785269550366492));
-        GeofenceSetup setupexe = new GeofenceSetup(getContext(), getActivity());
-        setupexe.setUpGeofencing();
+
+
     }
     public void drawRoute(GeoPoint start, GeoPoint end, String method){
         routeService.getRoute(start, end, method);
