@@ -8,6 +8,7 @@ public class Route {
     private String name;
     private String[] places;
     private ArrayList<GeoPoint> geoPoints;
+    private ArrayList<String> locationNames;
     private boolean isOwnMade;
 
     public Route(String name, String[] places){
@@ -16,10 +17,11 @@ public class Route {
         this.isOwnMade = false;
     }
 
-    public Route(String name, ArrayList<GeoPoint> geoPoints){
-        this.geoPoints =geoPoints;
+    public Route(String name, ArrayList<GeoPoint> geoPoints, ArrayList<String> locationNames){
+        this.geoPoints = geoPoints;
         this.name = name;
         this.isOwnMade = true;
+        this.locationNames = locationNames;
 
     }
 
@@ -49,11 +51,19 @@ public class Route {
 
     public String getStringPlaces(){
         String stringPlace = "";
-        for (String place: places) {
+        for (int i = 0; i < places.length;i++) {
             stringPlace +=" ";
-            stringPlace += place;
+            stringPlace += places[i];
         }
         return stringPlace;
+    }
+    public String getStringLocationNames(){
+        String names ="";
+        for (String name: locationNames) {
+            names += name + " ";
+
+        }
+        return names;
     }
 
     public boolean isOwnMade() {

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.location_aware.R;
 
 class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    public TextView routeName;
+    public TextView routeName, places;
     public ImageView routeImage;
     public OnItemClickListener clickListener;
 
@@ -19,6 +19,7 @@ class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
         super(itemView);
         routeImage = itemView.findViewById(R.id.route_list_item_image);
         routeName = itemView.findViewById(R.id.route_list_item_name);
+        places = itemView.findViewById(R.id.route_list_item_places);
         clickListener = listener;
         itemView.setOnClickListener(this);
     }

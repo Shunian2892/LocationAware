@@ -128,8 +128,7 @@ public class OwnRouteFragment extends Fragment {
                 String name = routeName.getText().toString();
                 if(!name.equals("")){
                     if(newPoints.size() >= 2){
-                        Route route = new Route(name, newPoints);
-                        Data.getInstance().addRoute(route);
+                        Data.getInstance().addRoute(new Route(name, newPoints, locationNames));
                         routeAdapter.notifyDataSetChanged();
                         Toast.makeText(getContext(), "Route is created!", Toast.LENGTH_LONG).show();
                     } else {
@@ -139,8 +138,8 @@ public class OwnRouteFragment extends Fragment {
                     Toast.makeText(getContext(), "Please type in a name!", Toast.LENGTH_LONG).show();
                 }
 
-                newPoints.clear();
-                locationNames.clear();
+                newPoints = new ArrayList<>();
+                locationNames = new ArrayList<>();
                 routeName.setText("");
                 newLocation.setText("");
                 adapter.notifyDataSetChanged();

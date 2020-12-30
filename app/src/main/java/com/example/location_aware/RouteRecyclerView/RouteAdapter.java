@@ -33,6 +33,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteViewHolder> {
         Route route = this.routeList.get(position);
         holder.routeName.setText(route.getName());
         holder.routeImage.setImageResource(R.drawable.location);
+        holder.places.setText(route.getStringLocationNames());
 
     }
 
