@@ -11,6 +11,10 @@
         android:theme="@style/Theme.Location_Aware"
         android:usesCleartextTraffic="true">
 
+        <meta-data
+            android:name="com.google.android.nearby.messages.API_KEY"
+            android:value="AIzaSyCruxOQvSGBaZOCaGyj3ol-iozp0tbHC18" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

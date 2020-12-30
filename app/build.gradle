@@ -48,4 +48,6 @@ dependencies {
     // GSON
     implementation 'com.google.code.gson:gson:2.8.6'
 
+    //Nearby
+    implementation 'com.google.android.gms:play-services-nearby:17.0.0'
 }

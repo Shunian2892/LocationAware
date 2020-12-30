@@ -54,7 +54,6 @@ public class MapFragment extends Fragment implements SetRoute{
     private GpsMyLocationProvider myLocationProvider;
     private MyLocationNewOverlay myLocationNewOverlay;
 
-
     private ArrayList<GeoPoint> points;
     private OpenStreetMaps osm;
     private GeoPoint startPoint, newMarker, endPoint, currentLocation,startMarker;
@@ -69,9 +68,10 @@ public class MapFragment extends Fragment implements SetRoute{
     private IMapController mapController;
     private MethodAdapter methodAdapter;
 
-
     private OpenRouteService routeService;
     private Boolean clicked;
+
+    private LANearby nearby;
 
     public MapFragment() {
         // Required empty public constructor
@@ -115,22 +115,15 @@ public class MapFragment extends Fragment implements SetRoute{
 
         return v;
     }
-    /**
-     * Initialise different methods in the methods list
-     */
-    private void initSpinnerList(){
-        methods = new ArrayList<>();
-        methods.add(new MethodItem("Walking", R.drawable.walking));
-        methods.add(new MethodItem("Cycling", R.drawable.bike));
-        methods.add(new MethodItem("Driving", R.drawable.car));
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        nearby = new LANearby(getActivity());
         //Get location
         getLocation();
-        addLocations();
+
+        //addLocations();
         //Set OnClickListeners
         //Set clicked boolean on true and draw route
         startRoute.setOnClickListener(new View.OnClickListener() {
@@ -190,8 +183,6 @@ public class MapFragment extends Fragment implements SetRoute{
             }
         });
 
-
-
         //Set adapter to the spinner and a setOnItemSelectedListener.
         methodAdapter = new MethodAdapter(getContext(), methods);
         methodChoices.setAdapter(methodAdapter);
@@ -233,52 +224,6 @@ public class MapFragment extends Fragment implements SetRoute{
         });
     }
 
-    /**
-     * Get the user location and show it on the map.
-     */
-    public void getLocation() {
-        manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-
-        listener = location -> {
-            if(getView()== null){
-                return;
-            }
-            if(!firstLocationSet){
-                //Get current location and set a new GeoPoint with the current latitude and longitude. Set point in center of screen
-                startMarker = new GeoPoint(location.getLatitude(), location.getLongitude());
-                controller.setCenter(startMarker);
-                firstLocationSet = true;
-                newMarker = startMarker;
-            } else {
-                //Update new current location without centering the map
-                newMarker = new GeoPoint(location.getLatitude(), location.getLongitude());
-            }
-
-            Data.getInstance().setCurrentLocation(newMarker);
-
-            //Make new marker for the new location, delete old marker, and display new marker on map
-            Marker newPosition = new Marker(map);
-            newPosition.setPosition(newMarker);
-            map.getOverlays().remove(currentLocationMarker);
-            currentLocationMarker = newPosition;
-            map.getOverlays().add(newPosition);
-        };
-
-        //If GPS permission is granted, keep checking for location changes. If so, update marker
-        if(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
-            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
-        }
-    }
-
-    public void addLocations(){
-        points.add(new GeoPoint(51.5897, 4.7616));
-        points.add(new GeoPoint(51.5890, 4.7758));
-        points.add(new GeoPoint(51.5957, 4.7795));
-        points.add(new GeoPoint(51.5859, 4.7924));
-
-        Data.getInstance().setGeoPointsList(points);
-    }
     public void createMap(View view){
         map = (MapView) view.findViewById(R.id.osm_view);
         map.setUseDataConnection(true);
@@ -318,9 +263,77 @@ public class MapFragment extends Fragment implements SetRoute{
             ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION}, 44);
         }
-
-
     }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        nearby.stopListening();
+    }
+
+    /**
+     * Initialise different methods in the methods list
+     */
+    private void initSpinnerList(){
+        methods = new ArrayList<>();
+        methods.add(new MethodItem("Walking", R.drawable.walking));
+        methods.add(new MethodItem("Cycling", R.drawable.bike));
+        methods.add(new MethodItem("Driving", R.drawable.car));
+    }
+
+    /**
+     * Get the user location and show it on the map.
+     */
+    public void getLocation() {
+        manager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+        listener = location -> {
+            if(getView()== null){
+                return;
+            }
+            if(!firstLocationSet){
+                //Get current location and set a new GeoPoint with the current latitude and longitude. Set point in center of screen
+                startMarker = new GeoPoint(location.getLatitude(), location.getLongitude());
+                controller.setCenter(startMarker);
+                firstLocationSet = true;
+                newMarker = startMarker;
+            } else {
+                //Update new current location without centering the map
+                newMarker = new GeoPoint(location.getLatitude(), location.getLongitude());
+            }
+
+            Data.getInstance().setCurrentLocation(newMarker);
+
+            //Make new marker for the new location, delete old marker, and display new marker on map
+            Marker newPosition = new Marker(map);
+            newPosition.setPosition(newMarker);
+            map.getOverlays().remove(currentLocationMarker);
+            currentLocationMarker = newPosition;
+            map.getOverlays().add(newPosition);
+
+            nearby.setMessage(newMarker.toString());
+            System.out.println("LANearby coordinates ~~~~~~~~~~~~~~~~ " + Data.getInstance().getCurrentLocation().toString());
+
+            nearby.startListening();
+        };
+
+        //If GPS permission is granted, keep checking for location changes. If so, update marker
+        if(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
+        }
+    }
+
+//    public void addLocations(){
+//        points.add(new GeoPoint(51.5897, 4.7616));
+//        points.add(new GeoPoint(51.5890, 4.7758));
+//        points.add(new GeoPoint(51.5957, 4.7795));
+//        points.add(new GeoPoint(51.5859, 4.7924));
+//
+//        Data.getInstance().setGeoPointsList(points);
+//    }
+
     public void drawRoute(GeoPoint start, GeoPoint end, String method){
         routeService.getRoute(start, end, method);
     }

@@ -31,11 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private MapFragment mapFragment;
     private RouteRV routeRV;
     private OwnRouteFragment ownRouteFragment;
-    private OpenStreetMaps streetMaps;
-    private OpenRouteService routeService;
     private ArrayList<Route> routeList;
     private HashMap<String,ArrayList<String>> nameList;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,16 +44,13 @@ public class MainActivity extends AppCompatActivity {
         setRouteFragment();
         setOwnRouteFragment();
 
-        streetMaps = Data.getInstance().getStreetMaps();
-        routeService = Data.getInstance().getRouteService();
         setContentView(R.layout.activity_main);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
         Data.getInstance().setRouteHashMap(new HashMap<>());
-
-
     }
+
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
@@ -83,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             };
+
     public void setMapFragment(){
         if(fragmentManager.findFragmentById(R.id.map_fragment) == null){
             mapFragment= new MapFragment();
@@ -117,8 +112,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager.beginTransaction().hide(ownRouteFragment).commit();
     }
 
-
-
     public void loadData(){
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", Context.MODE_PRIVATE);
         Gson gson = new Gson();
@@ -138,9 +131,6 @@ public class MainActivity extends AppCompatActivity {
         TypeToken<HashMap<String, ArrayList<String>>> nameToken = new TypeToken<HashMap<String, ArrayList<String>>>(){};
         nameList = new Gson().fromJson(jsonNames, nameToken.getType());
 
-//        if(nameList == null){
-//            nameList = new HashMap<String, ArrayList<String>>();
-//        }
         Data.getInstance().setRouteHashMap(nameList);
     }
 
