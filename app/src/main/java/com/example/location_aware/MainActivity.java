@@ -133,14 +133,14 @@ public class MainActivity extends AppCompatActivity {
         Data.getInstance().setRouteList(routeList);
 
         SharedPreferences hmSharedPref = getSharedPreferences("hashmap", Context.MODE_PRIVATE);
-        Gson gson2 = new Gson();
-        String jsonNames = hmSharedPref.getString("location name list",null);
-        Type nameType = new TypeToken<HashMap<String, ArrayList<String>>>(){}.getType();
-        nameList = gson2.fromJson(jsonNames,nameType);
+        String defValue = new Gson().toJson(new HashMap<String, ArrayList<String>>());
+        String jsonNames = hmSharedPref.getString("location name list", defValue);
+        TypeToken<HashMap<String, ArrayList<String>>> nameToken = new TypeToken<HashMap<String, ArrayList<String>>>(){};
+        nameList = new Gson().fromJson(jsonNames, nameToken.getType());
 
-        if(nameList == null){
-            nameList = new HashMap<String, ArrayList<String>>();
-        }
+//        if(nameList == null){
+//            nameList = new HashMap<String, ArrayList<String>>();
+//        }
         Data.getInstance().setRouteHashMap(nameList);
     }
 

@@ -32,10 +32,17 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RouteViewHolder holder, int position) {
         Route route = this.routeList.get(position);
+
+        Route routeClicked = Data.getInstance().getRouteList().get(position);
+
         holder.routeName.setText(route.getName());
         holder.routeImage.setImageResource(R.drawable.location);
-        holder.places.setText(Data.getInstance().getRouteHashMap().get(route.getName()).toString());
 
+        if(Data.getInstance().getRouteHashMap().get(routeClicked.getName()) == null){
+            holder.places.setText("");
+        } else {
+            holder.places.setText(Data.getInstance().getRouteHashMap().get(routeClicked.getName()).toString());
+        }
     }
 
     @Override

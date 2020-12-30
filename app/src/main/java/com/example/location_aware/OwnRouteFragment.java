@@ -119,29 +119,29 @@ public class OwnRouteFragment extends Fragment {
                     Toast.makeText(getContext(), "Please type in a name!", Toast.LENGTH_LONG).show();
                 }
 
-                saveData();
+                //saveData();
                 newPoints = new ArrayList<>();
-                locationNames = new ArrayList<>();
+                locationNames.clear();
                 routeName.setText("");
                 newLocation.setText("");
                 adapter.notifyDataSetChanged();
             }
         });
     }
-    public void saveData(){
-
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("shared preferences", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String jsonList = gson.toJson(newPoints);
-        editor.putString("route list",jsonList);
-        editor.apply();
-
-        SharedPreferences hashMapPref = getContext().getSharedPreferences("hashmap", Context.MODE_PRIVATE);
-        SharedPreferences.Editor hmEditor = hashMapPref.edit();
-        Gson hmGson = new Gson();
-        String jsonNames = hmGson.toJson(Data.getInstance().getRouteHashMap());
-        hmEditor.putString("location name list",jsonNames);
-        hmEditor.apply();
-    }
+//    public void saveData(){
+//
+//        SharedPreferences sharedPreferences = getContext().getSharedPreferences("shared preferences", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        Gson gson = new Gson();
+//        String jsonList = gson.toJson(newPoints);
+//        editor.putString("route list",jsonList);
+//        editor.apply();
+//
+//        SharedPreferences hashMapPref = getContext().getSharedPreferences("hashmap", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor hmEditor = hashMapPref.edit();
+//        Gson hmGson = new Gson();
+//        String jsonNames = hmGson.toJson(Data.getInstance().getRouteHashMap());
+//        hmEditor.putString("location name list",jsonNames);
+//        hmEditor.apply();
+//    }
 }
