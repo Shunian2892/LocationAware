@@ -1,14 +1,16 @@
 package com.example.location_aware.RouteRecyclerView;
 
+import com.example.location_aware.Data;
+
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Route {
     private String name;
     private String[] places;
     private ArrayList<GeoPoint> geoPoints;
-    private ArrayList<String> locationNames;
     private boolean isOwnMade;
 
     public Route(String name, String[] places){
@@ -17,11 +19,10 @@ public class Route {
         this.isOwnMade = false;
     }
 
-    public Route(String name, ArrayList<GeoPoint> geoPoints, ArrayList<String> locationNames){
+    public Route(String name, ArrayList<GeoPoint> geoPoints){
         this.geoPoints = geoPoints;
         this.name = name;
         this.isOwnMade = true;
-        this.locationNames = locationNames;
 
     }
 
@@ -58,6 +59,8 @@ public class Route {
         return stringPlace;
     }
     public String getStringLocationNames(){
+        HashMap<String, ArrayList<String>> routeHashmap = Data.getInstance().getRouteHashMap();
+        ArrayList<String> locationNames = routeHashmap.get(name);
         String names ="";
         for (String name: locationNames) {
             names += name + " ";

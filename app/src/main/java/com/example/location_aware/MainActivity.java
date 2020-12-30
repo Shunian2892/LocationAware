@@ -23,6 +23,7 @@ import org.osmdroid.util.GeoPoint;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private OpenStreetMaps streetMaps;
     private OpenRouteService routeService;
     private ArrayList<Route> routeList;
-    private ArrayList<String> nameList;
+    private HashMap<String,ArrayList<String>> nameList;
 
 
     @Override
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
+        Data.getInstance().setRouteHashMap(new HashMap<>());
 
 
     }
@@ -130,14 +132,16 @@ public class MainActivity extends AppCompatActivity {
 
         Data.getInstance().setRouteList(routeList);
 
-        String jsonNames = sharedPreferences.getString("location name list",null);
-        Type nameType = new TypeToken<ArrayList<String>>(){}.getType();
-        nameList = gson.fromJson(jsonNames,nameType);
+        SharedPreferences hmSharedPref = getSharedPreferences("hashmap", Context.MODE_PRIVATE);
+        Gson gson2 = new Gson();
+        String jsonNames = hmSharedPref.getString("location name list",null);
+        Type nameType = new TypeToken<HashMap<String, ArrayList<String>>>(){}.getType();
+        nameList = gson2.fromJson(jsonNames,nameType);
 
         if(nameList == null){
-            nameList = new ArrayList<>();
+            nameList = new HashMap<String, ArrayList<String>>();
         }
-        Data.getInstance().setNameList(nameList);
+        Data.getInstance().setRouteHashMap(nameList);
     }
 
 }

@@ -107,7 +107,9 @@ public class OwnRouteFragment extends Fragment {
                 String name = routeName.getText().toString();
                 if(!name.equals("")){
                     if(newPoints.size() >= 2){
-                        Data.getInstance().addRoute(new Route(name, newPoints, locationNames));
+                        Route route = new Route(name, newPoints);
+                        Data.getInstance().addRoute(route);
+                        Data.getInstance().addToRouteHashMap(route.getName(), locationNames);
                         routeAdapter.notifyDataSetChanged();
                         Toast.makeText(getContext(), "Route is created!", Toast.LENGTH_LONG).show();
                     } else {
@@ -132,9 +134,14 @@ public class OwnRouteFragment extends Fragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
         String jsonList = gson.toJson(newPoints);
-        String jsonNames = gson.toJson(locationNames);
         editor.putString("route list",jsonList);
-        editor.putString("location name list",jsonNames);
         editor.apply();
+
+        SharedPreferences hashMapPref = getContext().getSharedPreferences("hashmap", Context.MODE_PRIVATE);
+        SharedPreferences.Editor hmEditor = hashMapPref.edit();
+        Gson hmGson = new Gson();
+        String jsonNames = hmGson.toJson(Data.getInstance().getRouteHashMap());
+        hmEditor.putString("location name list",jsonNames);
+        hmEditor.apply();
     }
 }

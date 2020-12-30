@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.location_aware.Data;
 import com.example.location_aware.R;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteViewHolder> {
         Route route = this.routeList.get(position);
         holder.routeName.setText(route.getName());
         holder.routeImage.setImageResource(R.drawable.location);
-        holder.places.setText(route.getStringLocationNames());
+        holder.places.setText(Data.getInstance().getRouteHashMap().get(route.getName()).toString());
 
     }
 

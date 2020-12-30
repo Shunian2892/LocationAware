@@ -66,12 +66,12 @@ public class RouteRV extends Fragment implements OnItemClickListener {
         this.saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveData();
+                //saveData();
             }
         });
         return v;
     }
-    public void saveData(){
+ /*   public void saveData(){
 
         SharedPreferences sharedPreferences = context.getSharedPreferences("shared preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -79,7 +79,7 @@ public class RouteRV extends Fragment implements OnItemClickListener {
         String jsonList = gson.toJson(routeList);
         editor.putString("route list",jsonList);
         editor.apply();
-    }
+    }*/
 
     @Override
     public void OnItemClick(int clickedPosition) {

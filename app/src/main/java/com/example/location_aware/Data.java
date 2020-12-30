@@ -11,6 +11,7 @@ import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Data {
     private static Data data;
@@ -28,6 +29,7 @@ public class Data {
     private RouteAdapter routeAdapter;
     private ArrayList<Route> routeList;
     private ArrayList<String> nameList;
+    private HashMap<String, ArrayList<String>> routeHashMap;
 
     public static Data getInstance(){
         if(data == null){
@@ -140,6 +142,17 @@ public class Data {
 
     public void setRouteAdapter(RouteAdapter routeAdapter) {
         this.routeAdapter = routeAdapter;
+    }
+
+    public HashMap<String, ArrayList<String>> getRouteHashMap() {
+        return routeHashMap;
+    }
+
+    public void setRouteHashMap(HashMap<String, ArrayList<String>> routeHashMap) {
+        this.routeHashMap = routeHashMap;
+    }
+    public void addToRouteHashMap(String route, ArrayList<String> locations){
+        this.routeHashMap.put(route,locations);
     }
 
     public ArrayList<Route> getRouteList() {
