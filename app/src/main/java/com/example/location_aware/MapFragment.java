@@ -24,7 +24,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.location_aware.Geofencing.GeofenceSetup;
+import com.example.location_aware.geofencing.GeofenceSetup;
 import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.SetRoute;
 import com.example.location_aware.methodSpinner.MethodAdapter;
@@ -40,7 +40,6 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MapFragment extends Fragment implements SetRoute{
@@ -96,7 +95,7 @@ public class MapFragment extends Fragment implements SetRoute{
         createMap(v);
         streetMaps = Data.getInstance().getStreetMaps();
         streetMaps.drawMarker(map,new GeoPoint(51.603063987023894, 4.785269550366492),getResources().getDrawable(R.drawable.location));
-        GeofenceSetup setupexe = new GeofenceSetup(getContext(), getActivity());
+        GeofenceSetup setupexe = new GeofenceSetup(getActivity().getApplicationContext(), getActivity());
         setupexe.setUpGeofencing();
 
         clicked = false;

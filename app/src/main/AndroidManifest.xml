@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".Geofencing.GeofenceBroadcastReceiver"/>
+        <receiver android:name=".geofencing.GeoFenceBroadcastReceiver"/>
 
     </application>
 
@@ -29,6 +29,7 @@
 <!--    Location provider-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
 <!--    Internet access-->
     <uses-permission android:name="android.permission.INTERNET" />

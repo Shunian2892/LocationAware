@@ -1,4 +1,4 @@
-package com.example.location_aware.Geofencing;
+package com.example.location_aware.geofencing;
 
 import android.Manifest;
 import android.app.Activity;
@@ -36,6 +36,8 @@ public class GeofenceSetup {
     public void setUpGeofencing(){
         checkFineLocationPermission();
 
+        Log.d("GeofenceSetup", "setUp geofencing.......");
+
         geofencingClient = LocationServices.getGeofencingClient(context);
         geofenceHelper = new GeofenceHelper(context);
 
@@ -61,7 +63,7 @@ public class GeofenceSetup {
 
     private void addFences() {
         GeoPoint curio = new GeoPoint(51.603063987023894, 4.785269550366492);
-        addGeoFence(curio,100,curio.toString());
+        addGeoFence(curio,100, "curio");
     }
 
     private void addGeoFence(GeoPoint geoPoint, float radius, String id){

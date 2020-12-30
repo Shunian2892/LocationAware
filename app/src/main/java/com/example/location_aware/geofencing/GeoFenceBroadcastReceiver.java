@@ -1,4 +1,4 @@
-package com.example.location_aware.Geofencing;
+package com.example.location_aware.geofencing;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,7 +11,7 @@ import com.google.android.gms.location.GeofencingEvent;
 
 import static android.content.ContentValues.TAG;
 
-class GeofenceBroadcastReceiver extends BroadcastReceiver {
+public class GeoFenceBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
