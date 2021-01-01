@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "984769158858",
+    "project_id": "location-aware-10ba2",
+    "storage_bucket": "location-aware-10ba2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984769158858:android:e6b303047f6e9c42189e33",
+        "android_client_info": {
+          "package_name": "com.example.location_aware"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "984769158858-2uepvucmkb6lcc9qeo3obalflr6m9h8s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDe-rSKgv35tXoIlw66WPsGjPtnR8t6d6g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "984769158858-2uepvucmkb6lcc9qeo3obalflr6m9h8s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
