@@ -27,7 +27,6 @@ public class Registration extends AppCompatActivity {
     private EditText newEmail, newPassword;
     private Button register;
     private ProgressBar progressBar;
-    private Database myDb;
 
     private final String TAG = "REGISTRATION CLASS";
 
@@ -41,14 +40,13 @@ public class Registration extends AppCompatActivity {
         newPassword = findViewById(R.id.password_registration);
         progressBar = findViewById(R.id.registration_progress_bar);
 
-//        myDb = new Database();
-//        Data.getInstance().setMyDb(myDb);
-
+        //Get Firebase authenticator
         auth = FirebaseAuth.getInstance();
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Show progressbar as an indicator that the user is being added to the database
                 progressBar.setVisibility(View.VISIBLE);
                 String email = newEmail.getText().toString();
                 String password = newPassword.getText().toString();
@@ -58,6 +56,7 @@ public class Registration extends AppCompatActivity {
                     auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
+                            //Hide progressbar after registration completion
                             progressBar.setVisibility(View.GONE);
                             if(task.isSuccessful()){
                                 makeToast("Registration successful!");

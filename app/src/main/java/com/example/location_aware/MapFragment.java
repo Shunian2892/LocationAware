@@ -97,6 +97,7 @@ public class MapFragment extends Fragment implements SetRoute{
 
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
+        //Create mapView and draw marker on current location
         createMap(v);
         streetMaps = Data.getInstance().getStreetMaps();
         streetMaps.drawMarker(map,new GeoPoint(51.603063987023894, 4.785269550366492),getResources().getDrawable(R.drawable.location));
@@ -118,12 +119,6 @@ public class MapFragment extends Fragment implements SetRoute{
         initSpinnerList();
         methodChoices = v.findViewById(R.id.spinner);
 
-        database = FirebaseDatabase.getInstance();
-        auth = FirebaseAuth.getInstance();
-        String[] currentUser = auth.getCurrentUser().getEmail().split(Pattern.quote("@"));
-        String userPathSubstring = currentUser[0];
-        dbRef = database.getReference("Location Aware").child("User").child(userPathSubstring);
-        System.out.println("USERNAME FROM EMAILADDRESS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " + userPathSubstring);
         return v;
     }
 
@@ -132,7 +127,8 @@ public class MapFragment extends Fragment implements SetRoute{
         super.onViewCreated(view, savedInstanceState);
         //Get location
         getLocation();
-        addLocations();
+        //addLocations();
+
         //Set OnClickListeners
         //Set clicked boolean on true and draw route
         startRoute.setOnClickListener(new View.OnClickListener() {
@@ -147,15 +143,13 @@ public class MapFragment extends Fragment implements SetRoute{
 
                 if(startPoint == null && endPoint == null){
                     Toast.makeText(getContext(), "Please type in a (valid) start/end point!", Toast.LENGTH_LONG).show();
-                }
-                 else if(startPoint == null || endPoint == null){
+                } else if(startPoint == null || endPoint == null){
                     if (startPoint == null){
                         Toast.makeText(getContext(), "Please type in a (valid) start point!", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getContext(), "Please type in a (valid) end point!", Toast.LENGTH_LONG).show();
                     }
-                }
-                else {
+                } else {
                     Log.d("ONCLICK MapFragment", startPoint + " " + endPoint);
                     Log.d("DataONCLICK mapfragment", Data.getInstance().getStreetMaps().toString());
                     streetMaps.clearRoute();
@@ -265,10 +259,12 @@ public class MapFragment extends Fragment implements SetRoute{
             }
 
             // TODO: 1-1-2021 maybe see if we can fix the double data saving
-            //Set curretn location in Data Singleton
+            //Set current location in Data Singleton
             Data.getInstance().setCurrentLocation(newMarker);
 
-            //Set current location in Firebase Database
+            //Get information of specific user from Firebase Database
+            getDatabase();
+            //Set current location in Firebase Database in the subbranch of the current user
             dbRef.setValue(Data.getInstance().getCurrentLocation());
 
             //Make new marker for the new location, delete old marker, and display new marker on map
@@ -286,6 +282,23 @@ public class MapFragment extends Fragment implements SetRoute{
         }
     }
 
+    /**
+     * Get the current user information from the Database and go into this users subbranch
+     */
+    private void getDatabase() {
+        // TODO: 2-1-2021 need to make a better check for user, it's possible multiple users have the same input before the split character which is '@ '. But for now it works
+        database = FirebaseDatabase.getInstance();
+        auth = FirebaseAuth.getInstance();
+
+        //Get the email address of the current user and split it
+        String[] currentUser = auth.getCurrentUser().getEmail().split(Pattern.quote("@"));
+        String userPathSubstring = currentUser[0];
+
+        //Go to the subbranch of this specific user
+        dbRef = database.getReference("Location Aware").child("User").child(userPathSubstring);
+        System.out.println("USERNAME FROM EMAILADDRESS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " + userPathSubstring);
+    }
+
     public void addLocations(){
         points.add(new GeoPoint(51.5897, 4.7616));
         points.add(new GeoPoint(51.5890, 4.7758));
@@ -295,6 +308,10 @@ public class MapFragment extends Fragment implements SetRoute{
         Data.getInstance().setGeoPointsList(points);
     }
 
+    /**
+     * Create the map for the mapView fragment. Sets the controller, location provider, marker, and openRouteService for drawing routes between points.
+     * @param view
+     */
     public void createMap(View view){
         map = (MapView) view.findViewById(R.id.osm_view);
         map.setUseDataConnection(true);
@@ -336,10 +353,20 @@ public class MapFragment extends Fragment implements SetRoute{
         }
     }
 
+    /**
+     * Draws a route on the map between two points
+     * @param start startpoint
+     * @param end endpoint
+     * @param method method used: walking, cycling, or driving
+     */
     public void drawRoute(GeoPoint start, GeoPoint end, String method){
         routeService.getRoute(start, end, method);
     }
 
+    /**
+     * Gets a route from the recyclerviewer that contains multiple locations and draws this on the map
+     * @param route
+     */
     @Override
     public void setRouteCoord(Route route) {
         //Log.d("MainActivity Rote", route.getStringPlaces());

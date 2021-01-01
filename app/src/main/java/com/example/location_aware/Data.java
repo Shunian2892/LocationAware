@@ -3,7 +3,7 @@ package com.example.location_aware;
 import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.RouteAdapter;
 import com.example.location_aware.RouteRecyclerView.RouteManager;
-import com.example.location_aware.firebase.Database;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
@@ -14,6 +14,9 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Singleton class which holds most of the information
+ */
 public class Data {
     private static Data data;
     private MyLocationNewOverlay myLocationNewOverlay;
@@ -31,7 +34,7 @@ public class Data {
     private ArrayList<Route> routeList;
     private ArrayList<String> nameList;
     private HashMap<String, ArrayList<String>> routeHashMap;
-    private Database myDb;
+    private FirebaseAuth.AuthStateListener authStateListener;
 
     public static Data getInstance(){
         if(data == null){
@@ -177,11 +180,11 @@ public class Data {
         this.nameList = nameList;
     }
 
-    public Database getMyDb() {
-        return myDb;
+    public FirebaseAuth.AuthStateListener getAuthStateListener() {
+        return authStateListener;
     }
 
-    public void setMyDb(Database myDb) {
-        this.myDb = myDb;
+    public void setAuthStateListener(FirebaseAuth.AuthStateListener authStateListener) {
+        this.authStateListener = authStateListener;
     }
 }

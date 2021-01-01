@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.location_aware.Data;
 import com.example.location_aware.MainActivity;
 import com.example.location_aware.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,7 +25,6 @@ public class SignIn extends AppCompatActivity {
     private EditText email, password;
     private Button signIn;
     private ProgressBar progressBar;
-    private Database database;
 
     private final String TAG = "SIGN IN CLASS";
 
@@ -33,25 +33,30 @@ public class SignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        database = new Database();
         email = findViewById(R.id.email_address_sign_in);
         password = findViewById(R.id.password_sign_in);
         signIn = findViewById(R.id.sign_in_user_button);
         progressBar = findViewById(R.id.sign_in_progress_bar);
 
+        //Instantiate Firebase Authenticator and listener
         auth = FirebaseAuth.getInstance();
         authListener = new FirebaseAuth.AuthStateListener(){
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                //Get correct user through email validation
+                //Get correct user through email validation/check
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 //                progressBar.setVisibility(View.VISIBLE);
+
+                // TODO: 2-1-2021 fix this toast!!
                 if(user != null){
                     Log.d(TAG, "onAuthStateChanged: signed_in" + user.getUid());
                     makeToast("Successfully signed in!");
                 }
             }
         };
+
+        //Set authenticator listener into Data singleton for use elsewhere
+        Data.getInstance().setAuthStateListener(authListener);
 
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,9 +66,11 @@ public class SignIn extends AppCompatActivity {
 
                 if(!emailAddress.equals("") && !pass.equals("")){
                     auth.signInWithEmailAndPassword(emailAddress, pass);
+
                     //Go to main activity
                     Intent goToMainActivity = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(goToMainActivity);
+
                     //Close Sign in activity
                     finish();
                 } else  {
@@ -71,12 +78,6 @@ public class SignIn extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        auth.addAuthStateListener(authListener);
     }
 
     private void makeToast(String message){

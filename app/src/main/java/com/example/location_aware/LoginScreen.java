@@ -11,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.location_aware.firebase.Registration;
 import com.example.location_aware.firebase.SignIn;
 
+/**
+ * This class only has two buttons, one for logging in and one for making a new account
+ */
 public class LoginScreen extends AppCompatActivity {
     private Button register, signIn;
 
@@ -26,6 +29,9 @@ public class LoginScreen extends AppCompatActivity {
         onButtonClick();
     }
 
+    /**
+     * OnClick actions for the buttons
+     */
     private void onButtonClick() {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
