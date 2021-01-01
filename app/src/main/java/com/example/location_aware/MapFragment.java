@@ -30,6 +30,9 @@ import com.example.location_aware.RouteRecyclerView.SetRoute;
 import com.example.location_aware.methodSpinner.MethodAdapter;
 import com.example.location_aware.methodSpinner.MethodItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -41,6 +44,7 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class MapFragment extends Fragment implements SetRoute{
     private Context context;
@@ -53,7 +57,6 @@ public class MapFragment extends Fragment implements SetRoute{
     private Marker currentLocationMarker;
     private GpsMyLocationProvider myLocationProvider;
     private MyLocationNewOverlay myLocationNewOverlay;
-
 
     private ArrayList<GeoPoint> points;
     private OpenStreetMaps osm;
@@ -69,14 +72,16 @@ public class MapFragment extends Fragment implements SetRoute{
     private IMapController mapController;
     private MethodAdapter methodAdapter;
 
-
     private OpenRouteService routeService;
     private Boolean clicked;
+
+    private FirebaseDatabase database;
+    private DatabaseReference dbRef;
+    private FirebaseAuth auth;
 
     public MapFragment() {
         // Required empty public constructor
     }
-
 
     public static MapFragment newInstance(String param1, String param2) {
         MapFragment fragment = new MapFragment();
@@ -113,16 +118,13 @@ public class MapFragment extends Fragment implements SetRoute{
         initSpinnerList();
         methodChoices = v.findViewById(R.id.spinner);
 
+        database = FirebaseDatabase.getInstance();
+        auth = FirebaseAuth.getInstance();
+        String[] currentUser = auth.getCurrentUser().getEmail().split(Pattern.quote("@"));
+        String userPathSubstring = currentUser[0];
+        dbRef = database.getReference("Location Aware").child("User").child(userPathSubstring);
+        System.out.println("USERNAME FROM EMAILADDRESS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " + userPathSubstring);
         return v;
-    }
-    /**
-     * Initialise different methods in the methods list
-     */
-    private void initSpinnerList(){
-        methods = new ArrayList<>();
-        methods.add(new MethodItem("Walking", R.drawable.walking));
-        methods.add(new MethodItem("Cycling", R.drawable.bike));
-        methods.add(new MethodItem("Driving", R.drawable.car));
     }
 
     @Override
@@ -190,8 +192,6 @@ public class MapFragment extends Fragment implements SetRoute{
             }
         });
 
-
-
         //Set adapter to the spinner and a setOnItemSelectedListener.
         methodAdapter = new MethodAdapter(getContext(), methods);
         methodChoices.setAdapter(methodAdapter);
@@ -234,6 +234,16 @@ public class MapFragment extends Fragment implements SetRoute{
     }
 
     /**
+     * Initialise different methods in the methods list
+     */
+    private void initSpinnerList(){
+        methods = new ArrayList<>();
+        methods.add(new MethodItem("Walking", R.drawable.walking));
+        methods.add(new MethodItem("Cycling", R.drawable.bike));
+        methods.add(new MethodItem("Driving", R.drawable.car));
+    }
+
+    /**
      * Get the user location and show it on the map.
      */
     public void getLocation() {
@@ -254,7 +264,12 @@ public class MapFragment extends Fragment implements SetRoute{
                 newMarker = new GeoPoint(location.getLatitude(), location.getLongitude());
             }
 
+            // TODO: 1-1-2021 maybe see if we can fix the double data saving
+            //Set curretn location in Data Singleton
             Data.getInstance().setCurrentLocation(newMarker);
+
+            //Set current location in Firebase Database
+            dbRef.setValue(Data.getInstance().getCurrentLocation());
 
             //Make new marker for the new location, delete old marker, and display new marker on map
             Marker newPosition = new Marker(map);
@@ -279,6 +294,7 @@ public class MapFragment extends Fragment implements SetRoute{
 
         Data.getInstance().setGeoPointsList(points);
     }
+
     public void createMap(View view){
         map = (MapView) view.findViewById(R.id.osm_view);
         map.setUseDataConnection(true);
@@ -318,9 +334,8 @@ public class MapFragment extends Fragment implements SetRoute{
             ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION}, 44);
         }
-
-
     }
+
     public void drawRoute(GeoPoint start, GeoPoint end, String method){
         routeService.getRoute(start, end, method);
     }

@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             };
+
     public void setMapFragment(){
         if(fragmentManager.findFragmentById(R.id.map_fragment) == null){
             mapFragment= new MapFragment();
@@ -102,8 +103,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
             routeRV = (RouteRV) fragmentManager.findFragmentById(R.id.route_rv_fragment);
         }
-        //routeRV.saveData();
-        //routeRV.loadData();
         fragmentManager.beginTransaction().hide(routeRV).commit();
     }
 
@@ -116,8 +115,6 @@ public class MainActivity extends AppCompatActivity {
         }
         fragmentManager.beginTransaction().hide(ownRouteFragment).commit();
     }
-
-
 
     public void loadData(){
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", Context.MODE_PRIVATE);
@@ -143,5 +140,4 @@ public class MainActivity extends AppCompatActivity {
 //        }
         Data.getInstance().setRouteHashMap(nameList);
     }
-
 }

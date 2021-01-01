@@ -3,6 +3,7 @@ package com.example.location_aware;
 import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.RouteAdapter;
 import com.example.location_aware.RouteRecyclerView.RouteManager;
+import com.example.location_aware.firebase.Database;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
@@ -30,6 +31,7 @@ public class Data {
     private ArrayList<Route> routeList;
     private ArrayList<String> nameList;
     private HashMap<String, ArrayList<String>> routeHashMap;
+    private Database myDb;
 
     public static Data getInstance(){
         if(data == null){
@@ -173,5 +175,13 @@ public class Data {
 
     public void setNameList(ArrayList<String> nameList) {
         this.nameList = nameList;
+    }
+
+    public Database getMyDb() {
+        return myDb;
+    }
+
+    public void setMyDb(Database myDb) {
+        this.myDb = myDb;
     }
 }

@@ -24,6 +24,7 @@ public class SignIn extends AppCompatActivity {
     private EditText email, password;
     private Button signIn;
     private ProgressBar progressBar;
+    private Database database;
 
     private final String TAG = "SIGN IN CLASS";
 
@@ -32,6 +33,7 @@ public class SignIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
+        database = new Database();
         email = findViewById(R.id.email_address_sign_in);
         password = findViewById(R.id.password_sign_in);
         signIn = findViewById(R.id.sign_in_user_button);

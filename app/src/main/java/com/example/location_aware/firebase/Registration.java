@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.location_aware.Data;
 import com.example.location_aware.MainActivity;
 import com.example.location_aware.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,6 +27,7 @@ public class Registration extends AppCompatActivity {
     private EditText newEmail, newPassword;
     private Button register;
     private ProgressBar progressBar;
+    private Database myDb;
 
     private final String TAG = "REGISTRATION CLASS";
 
@@ -38,6 +40,9 @@ public class Registration extends AppCompatActivity {
         newEmail = findViewById(R.id.email_address_registration);
         newPassword = findViewById(R.id.password_registration);
         progressBar = findViewById(R.id.registration_progress_bar);
+
+//        myDb = new Database();
+//        Data.getInstance().setMyDb(myDb);
 
         auth = FirebaseAuth.getInstance();
 
@@ -59,9 +64,11 @@ public class Registration extends AppCompatActivity {
                                 Log.d(TAG, "createUserWithEmail:success");
                                 newEmail.setText("");
                                 newPassword.setText("");
+
                                 //Go to main activity
                                 Intent goToMainActivity = new Intent(getApplicationContext(), MainActivity.class);
                                 startActivity(goToMainActivity);
+
                                 //Close Registration activity
                                 finish();
                             } else {
