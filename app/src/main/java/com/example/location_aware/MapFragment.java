@@ -24,6 +24,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.location_aware.firebase.User;
 import com.example.location_aware.geofencing.GeofenceSetup;
 import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.SetRoute;
@@ -31,8 +32,11 @@ import com.example.location_aware.methodSpinner.MethodAdapter;
 import com.example.location_aware.methodSpinner.MethodItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -317,10 +321,37 @@ public class MapFragment extends Fragment implements SetRoute{
      * Update current user values (longitude and latitude) in the database
      */
     private void updateUserValues() {
-        userNameAndLocation.put("latitude", Double.toString(Data.getInstance().getCurrentLocation().getLatitude()));
-        userNameAndLocation.put("longitude", Double.toString(Data.getInstance().getCurrentLocation().getLongitude()));
+        String latitude = Double.toString(Data.getInstance().getCurrentLocation().getLatitude());
+        String longitude = Double.toString(Data.getInstance().getCurrentLocation().getLongitude());
+
+        userNameAndLocation.put("latitude", latitude);
+        userNameAndLocation.put("longitude", longitude);
 
         dbRef.updateChildren(userNameAndLocation);
+        getDbData();
+    }
+
+    private void getDbData(){
+        DatabaseReference getDataRef = database.getReference("Location Aware").child("User");
+
+        getDataRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot usersSnapshot : snapshot.getChildren()){
+
+                    System.out.println("USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~~~~~" + usersSnapshot);
+                    User user = usersSnapshot.getValue(User.class);
+                    System.out.println("USER FROM USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~" + user);
+//                    String txt = user.getName() + " : " + user.getLatitude() + " : " + user.getLongitude();
+//                    System.out.println("TEXT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + txt);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     /**
