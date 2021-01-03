@@ -16,7 +16,12 @@ import android.widget.Toast;
 import com.example.location_aware.Data;
 import com.example.location_aware.MainActivity;
 import com.example.location_aware.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class SignIn extends AppCompatActivity {
@@ -65,14 +70,31 @@ public class SignIn extends AppCompatActivity {
                 String pass = password.getText().toString();
 
                 if(!emailAddress.equals("") && !pass.equals("")){
-                    auth.signInWithEmailAndPassword(emailAddress, pass);
+                    auth.signInWithEmailAndPassword(emailAddress, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if(!task.isSuccessful()){
+                                try {
+                                    throw task.getException();
+                                } catch (FirebaseAuthInvalidUserException invalidEmail) {
+                                    Log.d(TAG, "onComplete: Invalid email");
+                                    makeToast("Invalid/non existing email address!");
+                                } catch (FirebaseAuthInvalidCredentialsException invalidPassword) {
+                                    Log.d(TAG, "onComplete: Invalid password!");
+                                    makeToast("Invalid password");
+                                } catch (Exception e) {
+                                    Log.d(TAG, "onComplete: " + e.getMessage());
+                                }
+                            } else {
+                                //Go to main activity
+                                Intent goToMainActivity = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(goToMainActivity);
 
-                    //Go to main activity
-                    Intent goToMainActivity = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(goToMainActivity);
-
-                    //Close Sign in activity
-                    finish();
+                                //Close Sign in activity
+                                finish();
+                            }
+                        }
+                    });
                 } else  {
                     makeToast("Please fill in all the fields");
                 }

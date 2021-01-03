@@ -280,6 +280,7 @@ public class MapFragment extends Fragment implements SetRoute{
             newPosition.setPosition(newMarker);
             map.getOverlays().remove(currentLocationMarker);
             currentLocationMarker = newPosition;
+            currentLocationMarker.setTitle("You are here");
             map.getOverlays().add(newPosition);
         };
 
@@ -363,13 +364,16 @@ public class MapFragment extends Fragment implements SetRoute{
         });
     }
 
+    /**
+     * Draw other users on map
+     * @param user
+     */
     private void drawOtherUsers(User user) {
         GeoPoint otherUserLocation = new GeoPoint(Double.parseDouble(user.getLatitude()), Double.parseDouble(user.getLongitude()));
         Marker otherUserMarker = new Marker(map);
         otherUserMarker.setPosition(otherUserLocation);
         map.getOverlays().add(otherUserMarker);
     }
-
 
     /**
      * Create the map for the mapView fragment. Sets the controller, location provider, marker, and openRouteService for drawing routes between points.
