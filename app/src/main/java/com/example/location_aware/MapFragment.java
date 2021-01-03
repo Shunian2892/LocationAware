@@ -301,6 +301,7 @@ public class MapFragment extends Fragment implements SetRoute{
         //Get the email address of the current user and split it
         String[] currentUser = auth.getCurrentUser().getEmail().split(Pattern.quote("@"));
         String userPathSubstring = currentUser[0];
+        Data.getInstance().setCurrentUser(userPathSubstring);
 
         //Go to the subbranch of this specific user
         dbRef = database.getReference("Location Aware").child("User").child(userPathSubstring);
@@ -331,6 +332,9 @@ public class MapFragment extends Fragment implements SetRoute{
         getDbData();
     }
 
+    /**
+     * Get the data from the database with all the users
+     */
     private void getDbData(){
         DatabaseReference getDataRef = database.getReference("Location Aware").child("User");
 
@@ -342,6 +346,11 @@ public class MapFragment extends Fragment implements SetRoute{
                     System.out.println("USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~~~~~" + usersSnapshot);
                     User user = usersSnapshot.getValue(User.class);
                     System.out.println("USER FROM USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~" + user);
+
+                    if(!user.getName().equals(Data.getInstance().getCurrentUser())){
+                        drawOtherUsers(user);
+                    }
+
 //                    String txt = user.getName() + " : " + user.getLatitude() + " : " + user.getLongitude();
 //                    System.out.println("TEXT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + txt);
                 }
@@ -353,6 +362,14 @@ public class MapFragment extends Fragment implements SetRoute{
             }
         });
     }
+
+    private void drawOtherUsers(User user) {
+        GeoPoint otherUserLocation = new GeoPoint(Double.parseDouble(user.getLatitude()), Double.parseDouble(user.getLongitude()));
+        Marker otherUserMarker = new Marker(map);
+        otherUserMarker.setPosition(otherUserLocation);
+        map.getOverlays().add(otherUserMarker);
+    }
+
 
     /**
      * Create the map for the mapView fragment. Sets the controller, location provider, marker, and openRouteService for drawing routes between points.

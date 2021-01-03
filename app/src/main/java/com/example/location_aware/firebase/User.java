@@ -5,6 +5,9 @@ import com.google.firebase.database.Exclude;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class stores the user' name, latitude, and longitude which it gets from the database
+ */
 public class User {
 
     private String latitude;

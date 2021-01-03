@@ -35,6 +35,7 @@ public class Data {
     private ArrayList<String> nameList;
     private HashMap<String, ArrayList<String>> routeHashMap;
     private FirebaseAuth.AuthStateListener authStateListener;
+    private String currentUser;
 
     public static Data getInstance(){
         if(data == null){
@@ -186,5 +187,13 @@ public class Data {
 
     public void setAuthStateListener(FirebaseAuth.AuthStateListener authStateListener) {
         this.authStateListener = authStateListener;
+    }
+
+    public String getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(String currentUser) {
+        this.currentUser = currentUser;
     }
 }
