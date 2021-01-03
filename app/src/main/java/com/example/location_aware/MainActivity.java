@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private Button logout;
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth auth;
+    private String nickname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         loadData();
+//        if(Data.getInstance().getUserNickname() == null){
+//            nickname = getIntent().getStringExtra("NICKNAME");
+//            Data.getInstance().setUserNickname(nickname);
+//        }
 
         //Set the different fragments
         fragmentManager = getSupportFragmentManager();
@@ -96,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //FirebaseAuth.getInstance().signOut();
                 Toast.makeText(getApplicationContext(), "Logged out!", Toast.LENGTH_LONG).show();
                 Intent goToLoginScreen = new Intent(getApplicationContext(), LoginScreen.class);
                 startActivity(goToLoginScreen);
@@ -180,5 +184,10 @@ public class MainActivity extends AppCompatActivity {
         nameList = new Gson().fromJson(jsonNames, nameToken.getType());
 
         Data.getInstance().setRouteHashMap(nameList);
+
+//        SharedPreferences nicknamePref = getSharedPreferences("nickname", MODE_PRIVATE);
+//        nickname = nicknamePref.getString("userNickName", "");
+//
+//        Data.getInstance().setUserNickname(nickname);
     }
 }

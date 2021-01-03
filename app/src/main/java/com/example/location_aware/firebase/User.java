@@ -13,14 +13,16 @@ public class User {
     private String latitude;
     private String longitude;
     private String name;
+    private String nickname;
 
     public User() {
     }
 
-    public User(String latitude, String longitude, String name) {
+    public User(String latitude, String longitude, String name, String nickname) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.name = name;
+        this.nickname = nickname;
     }
 
     public String getLatitude() {
@@ -47,12 +49,21 @@ public class User {
         this.name = name;
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("latitude", latitude);
         result.put("longitude", longitude);
         result.put("name", name);
+        result.put("nickname", nickname);
 
         return result;
     }

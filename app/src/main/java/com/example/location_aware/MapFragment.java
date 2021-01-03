@@ -266,7 +266,6 @@ public class MapFragment extends Fragment implements SetRoute{
                 newMarker = new GeoPoint(location.getLatitude(), location.getLongitude());
             }
 
-            // TODO: 1-1-2021 maybe see if we can fix the double data saving
             //Set current location in Data Singleton
             Data.getInstance().setCurrentLocation(newMarker);
 
@@ -278,6 +277,7 @@ public class MapFragment extends Fragment implements SetRoute{
             //Make new marker for the new location, delete old marker, and display new marker on map
             Marker newPosition = new Marker(map);
             newPosition.setPosition(newMarker);
+            newPosition.setTitle("Your location");
             map.getOverlays().remove(currentLocationMarker);
             currentLocationMarker = newPosition;
             map.getOverlays().add(newPosition);
@@ -306,6 +306,10 @@ public class MapFragment extends Fragment implements SetRoute{
         //Go to the subbranch of this specific user
         dbRef = database.getReference("Location Aware").child("User").child(userPathSubstring);
         userNameAndLocation.put("name", userPathSubstring);
+        userNameAndLocation.put("nickname", Data.getInstance().getUserNickname());
+
+        System.out.println("NICKNAME ~~~~~~~~~~~~~~~~~~~~~ " + Data.getInstance().getUserNickname());
+        dbRef.updateChildren(userNameAndLocation);
         System.out.println("USERNAME FROM EMAILADDRESS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " + userPathSubstring);
     }
 
@@ -347,12 +351,9 @@ public class MapFragment extends Fragment implements SetRoute{
                     User user = usersSnapshot.getValue(User.class);
                     System.out.println("USER FROM USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~" + user);
 
-                    if(!user.getName().equals(Data.getInstance().getCurrentUser())){
-                        drawOtherUsers(user);
-                    }
-
-//                    String txt = user.getName() + " : " + user.getLatitude() + " : " + user.getLongitude();
-//                    System.out.println("TEXT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + txt);
+//                    if(!user.getNickname().equals(Data.getInstance().getUserNickname())){
+//                        drawOtherUsers(user);
+//                    }
                 }
             }
 
@@ -367,9 +368,9 @@ public class MapFragment extends Fragment implements SetRoute{
         GeoPoint otherUserLocation = new GeoPoint(Double.parseDouble(user.getLatitude()), Double.parseDouble(user.getLongitude()));
         Marker otherUserMarker = new Marker(map);
         otherUserMarker.setPosition(otherUserLocation);
+        otherUserMarker.setTitle(Data.getInstance().getUserNickname());
         map.getOverlays().add(otherUserMarker);
     }
-
 
     /**
      * Create the map for the mapView fragment. Sets the controller, location provider, marker, and openRouteService for drawing routes between points.
