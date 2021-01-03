@@ -44,6 +44,7 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public class MapFragment extends Fragment implements SetRoute{
@@ -78,6 +79,7 @@ public class MapFragment extends Fragment implements SetRoute{
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
     private FirebaseAuth auth;
+    private HashMap<String, Object> userNameAndLocation;
 
     public MapFragment() {
         // Required empty public constructor
@@ -96,6 +98,8 @@ public class MapFragment extends Fragment implements SetRoute{
         Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
 
         View v = inflater.inflate(R.layout.fragment_map, container, false);
+
+        userNameAndLocation = new HashMap<>();
 
         //Create mapView and draw marker on current location
         createMap(v);
@@ -265,7 +269,7 @@ public class MapFragment extends Fragment implements SetRoute{
             //Get information of specific user from Firebase Database
             getDatabase();
             //Set current location in Firebase Database in the subbranch of the current user
-            dbRef.setValue(Data.getInstance().getCurrentLocation());
+            updateUserValues();
 
             //Make new marker for the new location, delete old marker, and display new marker on map
             Marker newPosition = new Marker(map);
@@ -296,6 +300,7 @@ public class MapFragment extends Fragment implements SetRoute{
 
         //Go to the subbranch of this specific user
         dbRef = database.getReference("Location Aware").child("User").child(userPathSubstring);
+        userNameAndLocation.put("name", userPathSubstring);
         System.out.println("USERNAME FROM EMAILADDRESS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " + userPathSubstring);
     }
 
@@ -306,6 +311,16 @@ public class MapFragment extends Fragment implements SetRoute{
         points.add(new GeoPoint(51.5859, 4.7924));
 
         Data.getInstance().setGeoPointsList(points);
+    }
+
+    /**
+     * Update current user values (longitude and latitude) in the database
+     */
+    private void updateUserValues() {
+        userNameAndLocation.put("latitude", Double.toString(Data.getInstance().getCurrentLocation().getLatitude()));
+        userNameAndLocation.put("longitude", Double.toString(Data.getInstance().getCurrentLocation().getLongitude()));
+
+        dbRef.updateChildren(userNameAndLocation);
     }
 
     /**
