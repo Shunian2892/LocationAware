@@ -3,6 +3,7 @@ package com.example.location_aware;
 import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.RouteAdapter;
 import com.example.location_aware.RouteRecyclerView.RouteManager;
+import com.example.location_aware.spinner.DogWalkingItem;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.osmdroid.api.IMapController;
@@ -36,6 +37,7 @@ public class Data {
     private HashMap<String, ArrayList<String>> routeHashMap;
     private FirebaseAuth.AuthStateListener authStateListener;
     private String currentUser;
+    private ArrayList<DogWalkingItem> dogWalkingItems;
 
     public static Data getInstance(){
         if(data == null){
@@ -195,5 +197,13 @@ public class Data {
 
     public void setCurrentUser(String currentUser) {
         this.currentUser = currentUser;
+    }
+
+    public ArrayList<DogWalkingItem> getDogWalkingItems() {
+        return dogWalkingItems;
+    }
+
+    public void setDogWalkingItems(ArrayList<DogWalkingItem> dogWalkingItems) {
+        this.dogWalkingItems = dogWalkingItems;
     }
 }

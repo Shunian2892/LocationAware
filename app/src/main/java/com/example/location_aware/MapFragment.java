@@ -81,13 +81,12 @@ public class MapFragment extends Fragment implements SetRoute{
     private MethodAdapter methodAdapter;
     private DogWalkingAdapter dogWalkingAdapter;
 
+    private GeofenceSetup setupexe;
+
     private OpenRouteService routeService;
     private Boolean clicked;
+    private DatabaseHelper databaseHelper;
 
-    private FirebaseDatabase database;
-    private DatabaseReference dbRef;
-    private FirebaseAuth auth;
-    private HashMap<String, Object> userNameAndLocation;
 
     public MapFragment() {
         // Required empty public constructor
@@ -107,14 +106,12 @@ public class MapFragment extends Fragment implements SetRoute{
 
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
-        userNameAndLocation = new HashMap<>();
+        databaseHelper = new DatabaseHelper();
 
         //Create mapView and draw marker on current location
         createMap(v);
         streetMaps = Data.getInstance().getStreetMaps();
-        streetMaps.drawMarker(map,new GeoPoint(51.603063987023894, 4.785269550366492),getResources().getDrawable(R.drawable.location));
-        GeofenceSetup setupexe = new GeofenceSetup(getActivity().getApplicationContext(), getActivity());
-        setupexe.setUpGeofencing();
+
 
         clicked = false;
         //Initialize buttons
@@ -130,6 +127,10 @@ public class MapFragment extends Fragment implements SetRoute{
         initSpinnerList();
         methodChoices = v.findViewById(R.id.spinner);
         dogParkChoices = v.findViewById(R.id.end_location);
+
+        setupexe = new GeofenceSetup(getActivity().getApplicationContext(), getActivity());
+        setupexe.setUpGeofencing();
+
         return v;
     }
 
@@ -264,6 +265,8 @@ public class MapFragment extends Fragment implements SetRoute{
         dogParks.add(new DogWalkingItem("Klein Ardennen", R.drawable.dog_park, new GeoPoint(51.61157, 4.7808913298782100)));
         dogParks.add(new DogWalkingItem("Loopakker", R.drawable.dog_park, new GeoPoint(51.60618999687, 4.737446)));
 
+        Data.getInstance().setDogWalkingItems(dogParks);
+
     }
 
     /**
@@ -292,10 +295,13 @@ public class MapFragment extends Fragment implements SetRoute{
             Data.getInstance().setCurrentLocation(newMarker);
 
             //Get information of specific user from Firebase Database
-            getDatabase();
-            //Set current location in Firebase Database in the subbranch of the current user
-            updateUserValues();
+            Data.getInstance().setCurrentUser(databaseHelper.getCurrentUserDatabase());
 
+            setupexe.setOwnGeofence(Data.getInstance().getCurrentLocation());
+            //Set current location in Firebase Database in the subbranch of the current user
+            databaseHelper.updateUserValues();
+
+            databaseHelper.getDbData(this);
             //Make new marker for the new location, delete old marker, and display new marker on map
             Marker newPosition = new Marker(map);
             newPosition.setPosition(newMarker);
@@ -312,81 +318,13 @@ public class MapFragment extends Fragment implements SetRoute{
         }
     }
 
-    /**
-     * Get the current user information from the Database and go into this users subbranch
-     */
-    private void getDatabase() {
-        // TODO: 2-1-2021 need to make a better check for user, it's possible multiple users have the same input before the split character which is '@ '. But for now it works
-        database = FirebaseDatabase.getInstance();
-        auth = FirebaseAuth.getInstance();
 
-        //Get the email address of the current user and split it
-        String[] currentUser = auth.getCurrentUser().getEmail().split(Pattern.quote("@"));
-        String userPathSubstring = currentUser[0];
-        Data.getInstance().setCurrentUser(userPathSubstring);
-
-        //Go to the subbranch of this specific user
-        dbRef = database.getReference("Location Aware").child("User").child(userPathSubstring);
-        userNameAndLocation.put("name", userPathSubstring);
-        System.out.println("USERNAME FROM EMAILADDRESS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " + userPathSubstring);
-    }
-
-    public void addLocations(){
-        points.add(new GeoPoint(51.5897, 4.7616));
-        points.add(new GeoPoint(51.5890, 4.7758));
-        points.add(new GeoPoint(51.5957, 4.7795));
-        points.add(new GeoPoint(51.5859, 4.7924));
-
-        Data.getInstance().setGeoPointsList(points);
-    }
-
-    /**
-     * Update current user values (longitude and latitude) in the database
-     */
-    private void updateUserValues() {
-        double latitude = Data.getInstance().getCurrentLocation().getLatitude();
-        double longitude = Data.getInstance().getCurrentLocation().getLongitude();
-
-        userNameAndLocation.put("latitude", latitude);
-        userNameAndLocation.put("longitude", longitude);
-
-        dbRef.updateChildren(userNameAndLocation);
-        getDbData();
-    }
-
-    /**
-     * Get the data from the database with all the users
-     */
-    private void getDbData(){
-        DatabaseReference getDataRef = database.getReference("Location Aware").child("User");
-
-        getDataRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot usersSnapshot : snapshot.getChildren()){
-
-                    System.out.println("USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~~~~~" + usersSnapshot);
-                    User user = usersSnapshot.getValue(User.class);
-                    System.out.println("USER FROM USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~" + user);
-
-                    if(!user.getName().equals(Data.getInstance().getCurrentUser())){
-                        drawOtherUser(user);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
 
     /**
      * Draw other users on map
      * @param user
      */
-    private void drawOtherUser(User user) {
+    public void drawOtherUser(User user) {
         double lat = user.getLatitude();
         double lon = user.getLongitude();
         GeoPoint otherUserLocation = new GeoPoint(lat, lon);
