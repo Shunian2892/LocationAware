@@ -1,5 +1,7 @@
 package com.example.location_aware;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,17 +21,14 @@ import android.widget.Toast;
 import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.RouteAdapter;
 import com.example.location_aware.RouteRecyclerView.RouteManager;
+import com.google.gson.Gson;
 
 import org.osmdroid.util.GeoPoint;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link OwnRouteFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class OwnRouteFragment extends Fragment {
         private EditText routeName, newLocation;
         private Button addLocation, deleteLocation, createRoute;
@@ -42,26 +41,6 @@ public class OwnRouteFragment extends Fragment {
         private RouteManager routeManager;
         private RouteAdapter routeAdapter;
 
-    public OwnRouteFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment OwnRouteFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static OwnRouteFragment newInstance(String param1, String param2) {
-        OwnRouteFragment fragment = new OwnRouteFragment();
-        Bundle args = new Bundle();
-
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -130,6 +109,7 @@ public class OwnRouteFragment extends Fragment {
                     if(newPoints.size() >= 2){
                         Route route = new Route(name, newPoints);
                         Data.getInstance().addRoute(route);
+                        Data.getInstance().addToRouteHashMap(route.getName(), locationNames);
                         routeAdapter.notifyDataSetChanged();
                         Toast.makeText(getContext(), "Route is created!", Toast.LENGTH_LONG).show();
                     } else {
@@ -139,12 +119,29 @@ public class OwnRouteFragment extends Fragment {
                     Toast.makeText(getContext(), "Please type in a name!", Toast.LENGTH_LONG).show();
                 }
 
-                newPoints.clear();
-                locationNames.clear();
+                saveData();
+                newPoints = new ArrayList<>();
+                locationNames = new ArrayList<>();
                 routeName.setText("");
                 newLocation.setText("");
                 adapter.notifyDataSetChanged();
             }
         });
+    }
+
+    public void saveData(){
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String jsonList = gson.toJson(Data.getInstance().getRouteList());
+        editor.putString("route list",jsonList);
+        editor.apply();
+
+        SharedPreferences hashMapPref = getActivity().getSharedPreferences("hashmap", Context.MODE_PRIVATE);
+        SharedPreferences.Editor hmEditor = hashMapPref.edit();
+        Gson hmGson = new Gson();
+        String jsonNames = hmGson.toJson(Data.getInstance().getRouteHashMap());
+        hmEditor.putString("location name list",jsonNames);
+        hmEditor.apply();
     }
 }

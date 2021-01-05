@@ -5,16 +5,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.RouteRV;
 import com.example.location_aware.RouteRecyclerView.SetRoute;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -23,9 +27,9 @@ import org.osmdroid.util.GeoPoint;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
-
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
     private RouteRV routeRV;
@@ -33,27 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private OpenStreetMaps streetMaps;
     private OpenRouteService routeService;
     private ArrayList<Route> routeList;
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        loadData();
-        fragmentManager = getSupportFragmentManager();
-        setMapFragment();
-        setRouteFragment();
-        setOwnRouteFragment();
-
-        streetMaps = Data.getInstance().getStreetMaps();
-        routeService = Data.getInstance().getRouteService();
-        setContentView(R.layout.activity_main);
-
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
-
-
-    }
+    private HashMap<String,ArrayList<String>> nameList;
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
@@ -76,46 +60,107 @@ public class MainActivity extends AppCompatActivity {
                             fragmentManager.beginTransaction().hide(mapFragment).commit();
                             break;
                     }
-
                     return true;
                 }
             };
+    private Button logout;
+    private FirebaseAuth.AuthStateListener authListener;
+    private FirebaseAuth auth;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        loadData();
+
+        //Set the different fragments
+        fragmentManager = getSupportFragmentManager();
+        setMapFragment();
+        setRouteFragment();
+        setOwnRouteFragment();
+
+        //Initialize OSM and OpenRouteService
+        streetMaps = Data.getInstance().getStreetMaps();
+        routeService = Data.getInstance().getRouteService();
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
+        Data.getInstance().setRouteHashMap(new HashMap<>());
+
+        //Initialize authentication listener for Firebase Database
+        authListener = Data.getData().getAuthStateListener();
+        auth = FirebaseAuth.getInstance();
+
+        logout = findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
+                Toast.makeText(getApplicationContext(), "Logged out!", Toast.LENGTH_LONG).show();
+                Intent goToLoginScreen = new Intent(getApplicationContext(), LoginScreen.class);
+                startActivity(goToLoginScreen);
+                finish();
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mapFragment.clearMap();
+        auth.addAuthStateListener(authListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        auth.removeAuthStateListener(authListener);
+    }
+
+    /**
+     * Checks if there is a map fragment. If there isn't, then make a new MapFragment and commit
+     */
     public void setMapFragment(){
         if(fragmentManager.findFragmentById(R.id.map_fragment) == null){
             mapFragment= new MapFragment();
             fragmentManager.beginTransaction().add(R.id.fragment_container, mapFragment).commit();
-        }else{
+        } else {
             mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
         }
         fragmentManager.beginTransaction().show(mapFragment).commit();
     }
 
+    /**
+     * Checks if there is a route recyclerview fragment. If there isn't, then make a new RouteRV and commit
+     */
     public void setRouteFragment(){
         if(fragmentManager.findFragmentById(R.id.route_rv_fragment) == null){
             routeRV = new RouteRV();
-
             routeRV.setRoute(mapFragment.getSetRoute());
             fragmentManager.beginTransaction().add(R.id.fragment_container,routeRV).commit();
-        }else{
+        } else {
             routeRV = (RouteRV) fragmentManager.findFragmentById(R.id.route_rv_fragment);
         }
-        //routeRV.saveData();
-        //routeRV.loadData();
         fragmentManager.beginTransaction().hide(routeRV).commit();
     }
 
+    /**
+     * Checks if there is a set own route fragment. If there isn't, then make a new OwnRouteFragment and commit
+     */
     public void setOwnRouteFragment(){
         if(fragmentManager.findFragmentById(R.id.ownRouteFragment) == null){
             ownRouteFragment = new OwnRouteFragment();
             fragmentManager.beginTransaction().add(R.id.fragment_container,ownRouteFragment).commit();
-        }else{
+        } else {
             ownRouteFragment = (OwnRouteFragment) fragmentManager.findFragmentById(R.id.ownRouteFragment);
         }
         fragmentManager.beginTransaction().hide(ownRouteFragment).commit();
     }
 
-
-
+    /**
+     * Load the saved data from Shared Preferences
+     */
     public void loadData(){
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", Context.MODE_PRIVATE);
         Gson gson = new Gson();
@@ -126,7 +171,15 @@ public class MainActivity extends AppCompatActivity {
         if(routeList == null){
             routeList = new ArrayList<>();
         }
-        Data.getInstance().setRouteList(routeList);
-    }
 
+        Data.getInstance().setRouteList(routeList);
+
+        SharedPreferences hmSharedPref = getSharedPreferences("hashmap", Context.MODE_PRIVATE);
+        String defValue = new Gson().toJson(new HashMap<String, ArrayList<String>>());
+        String jsonNames = hmSharedPref.getString("location name list", defValue);
+        TypeToken<HashMap<String, ArrayList<String>>> nameToken = new TypeToken<HashMap<String, ArrayList<String>>>(){};
+        nameList = new Gson().fromJson(jsonNames, nameToken.getType());
+
+        Data.getInstance().setRouteHashMap(nameList);
+    }
 }

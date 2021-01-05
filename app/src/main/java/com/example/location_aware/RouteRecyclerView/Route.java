@@ -1,8 +1,11 @@
 package com.example.location_aware.RouteRecyclerView;
 
+import com.example.location_aware.Data;
+
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Route {
     private String name;
@@ -17,7 +20,7 @@ public class Route {
     }
 
     public Route(String name, ArrayList<GeoPoint> geoPoints){
-        this.geoPoints =geoPoints;
+        this.geoPoints = geoPoints;
         this.name = name;
         this.isOwnMade = true;
 
@@ -49,11 +52,21 @@ public class Route {
 
     public String getStringPlaces(){
         String stringPlace = "";
-        for (String place: places) {
+        for (int i = 0; i < places.length;i++) {
             stringPlace +=" ";
-            stringPlace += place;
+            stringPlace += places[i];
         }
         return stringPlace;
+    }
+    public String getStringLocationNames(){
+        HashMap<String, ArrayList<String>> routeHashmap = Data.getInstance().getRouteHashMap();
+        ArrayList<String> locationNames = routeHashmap.get(name);
+        String names ="";
+        for (String name: locationNames) {
+            names += name + " ";
+
+        }
+        return names;
     }
 
     public boolean isOwnMade() {

@@ -24,11 +24,21 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.location_aware.firebase.User;
+import com.example.location_aware.geofencing.GeofenceSetup;
 import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.SetRoute;
-import com.example.location_aware.methodSpinner.MethodAdapter;
-import com.example.location_aware.methodSpinner.MethodItem;
+import com.example.location_aware.spinner.DogWalkingAdapter;
+import com.example.location_aware.spinner.DogWalkingItem;
+import com.example.location_aware.spinner.MethodAdapter;
+import com.example.location_aware.spinner.MethodItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -39,8 +49,9 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.regex.Pattern;
 
 public class MapFragment extends Fragment implements SetRoute{
     private Context context;
@@ -54,29 +65,33 @@ public class MapFragment extends Fragment implements SetRoute{
     private GpsMyLocationProvider myLocationProvider;
     private MyLocationNewOverlay myLocationNewOverlay;
 
-
     private ArrayList<GeoPoint> points;
     private OpenStreetMaps osm;
     private GeoPoint startPoint, newMarker, endPoint, currentLocation,startMarker;
     private boolean firstLocationSet;
     private ImageButton startRoute, stopRoute;
     private FloatingActionButton setCenter;
-    private EditText startLocationInput, endLocationInput;
-    private Spinner methodChoices;
+    private EditText startLocationInput;
+    private Spinner methodChoices, dogParkChoices;
     private ArrayList<MethodItem> methods;
+    private ArrayList<DogWalkingItem> dogParks;
 
     private OpenStreetMaps streetMaps;
     private IMapController mapController;
     private MethodAdapter methodAdapter;
-
+    private DogWalkingAdapter dogWalkingAdapter;
 
     private OpenRouteService routeService;
     private Boolean clicked;
 
+    private FirebaseDatabase database;
+    private DatabaseReference dbRef;
+    private FirebaseAuth auth;
+    private HashMap<String, Object> userNameAndLocation;
+
     public MapFragment() {
         // Required empty public constructor
     }
-
 
     public static MapFragment newInstance(String param1, String param2) {
         MapFragment fragment = new MapFragment();
@@ -92,7 +107,14 @@ public class MapFragment extends Fragment implements SetRoute{
 
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
+        userNameAndLocation = new HashMap<>();
+
+        //Create mapView and draw marker on current location
         createMap(v);
+        streetMaps = Data.getInstance().getStreetMaps();
+        streetMaps.drawMarker(map,new GeoPoint(51.603063987023894, 4.785269550366492),getResources().getDrawable(R.drawable.location));
+        GeofenceSetup setupexe = new GeofenceSetup(getActivity().getApplicationContext(), getActivity());
+        setupexe.setUpGeofencing();
 
         clicked = false;
         //Initialize buttons
@@ -103,22 +125,12 @@ public class MapFragment extends Fragment implements SetRoute{
 
         //Initialize EditText box
         startLocationInput = v.findViewById(R.id.start_location);
-        endLocationInput = v.findViewById(R.id.end_location);
 
         //Initialise arraylist with different methods
         initSpinnerList();
         methodChoices = v.findViewById(R.id.spinner);
-
+        dogParkChoices = v.findViewById(R.id.end_location);
         return v;
-    }
-    /**
-     * Initialise different methods in the methods list
-     */
-    private void initSpinnerList(){
-        methods = new ArrayList<>();
-        methods.add(new MethodItem("Walking", R.drawable.walking));
-        methods.add(new MethodItem("Cycling", R.drawable.bike));
-        methods.add(new MethodItem("Driving", R.drawable.car));
     }
 
     @Override
@@ -126,67 +138,7 @@ public class MapFragment extends Fragment implements SetRoute{
         super.onViewCreated(view, savedInstanceState);
         //Get location
         getLocation();
-        addLocations();
-        //Set OnClickListeners
-        //Set clicked boolean on true and draw route
-        startRoute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clicked = true;
-                String startLocation = startLocationInput.getText().toString();
-                String endLocation = endLocationInput.getText().toString();
-
-                startPoint = streetMaps.createGeoPoint(getContext(), startLocation);
-                endPoint = streetMaps.createGeoPoint(getContext(), endLocation);
-
-                if(startPoint == null && endPoint == null){
-                    Toast.makeText(getContext(), "Please type in a (valid) start/end point!", Toast.LENGTH_LONG).show();
-                }
-                 else if(startPoint == null || endPoint == null){
-                    if (startPoint == null){
-                        Toast.makeText(getContext(), "Please type in a (valid) start point!", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(getContext(), "Please type in a (valid) end point!", Toast.LENGTH_LONG).show();
-                    }
-                }
-                else {
-                    Log.d("ONCLICK MapFragment", startPoint + " " + endPoint);
-                    Log.d("DataONCLICK mapfragment", Data.getInstance().getStreetMaps().toString());
-                    streetMaps.clearRoute();
-                    drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
-                    startRoute.setEnabled(false);
-                    startRoute.setImageResource(R.drawable.start_route_disabled);
-                    stopRoute.setEnabled(true);
-                    stopRoute.setImageResource(R.drawable.stop_route);
-                    Toast.makeText(getContext(), "Starting route! A moment please...", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        //Set clicked boolean to false, such that when switching methods doesn't draw more routes
-        stopRoute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clicked = false;
-                streetMaps.clearRoute();
-                stopRoute.setEnabled(false);
-                stopRoute.setImageResource(R.drawable.stop_route_disabled);
-                startRoute.setEnabled(true);
-                startRoute.setImageResource(R.drawable.start_route);
-                Toast.makeText(getContext(), "Stopping route! A moment please...", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        setCenter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentLocation = Data.getInstance().getCurrentLocation();
-                mapController = Data.getInstance().getMapController();
-                mapController.animateTo(currentLocation);
-            }
-        });
-
-
+        //addLocations();
 
         //Set adapter to the spinner and a setOnItemSelectedListener.
         methodAdapter = new MethodAdapter(getContext(), methods);
@@ -227,6 +179,91 @@ public class MapFragment extends Fragment implements SetRoute{
                 //Do nothing
             }
         });
+
+        dogWalkingAdapter = new DogWalkingAdapter(getContext(), dogParks);
+        dogParkChoices.setAdapter(dogWalkingAdapter);
+        dogParkChoices.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                DogWalkingItem clickedItem = (DogWalkingItem) adapterView.getItemAtPosition(position);
+                endPoint = clickedItem.getLocation();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                //Do nothing
+            }
+        });
+
+        //Set OnClickListeners
+        //Set clicked boolean on true and draw route
+        startRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clicked = true;
+                String startLocation = startLocationInput.getText().toString();
+
+                startPoint = streetMaps.createGeoPoint(getContext(), startLocation);
+
+                if(startPoint == null){
+                    Toast.makeText(getContext(), "Please type in a (valid) start point!", Toast.LENGTH_LONG).show();
+                } else {
+                    Log.d("ONCLICK MapFragment", startPoint + " " + endPoint);
+                    Log.d("DataONCLICK mapfragment", Data.getInstance().getStreetMaps().toString());
+                    streetMaps.clearRoute();
+                    drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
+                    startRoute.setEnabled(false);
+                    startRoute.setImageResource(R.drawable.start_route_disabled);
+                    stopRoute.setEnabled(true);
+                    stopRoute.setImageResource(R.drawable.stop_route);
+                    Toast.makeText(getContext(), "Starting route! A moment please...", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        //Set clicked boolean to false, such that when switching methods doesn't draw more routes
+        stopRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clicked = false;
+                streetMaps.clearRoute();
+                stopRoute.setEnabled(false);
+                stopRoute.setImageResource(R.drawable.stop_route_disabled);
+                startRoute.setEnabled(true);
+                startRoute.setImageResource(R.drawable.start_route);
+                Toast.makeText(getContext(), "Stopping route! A moment please...", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        setCenter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentLocation = Data.getInstance().getCurrentLocation();
+                mapController = Data.getInstance().getMapController();
+                mapController.animateTo(currentLocation);
+            }
+        });
+    }
+
+    /**
+     * Initialise different methods in the methods list
+     */
+    private void initSpinnerList(){
+        methods = new ArrayList<>();
+        methods.add(new MethodItem("Walking", R.drawable.walking));
+        methods.add(new MethodItem("Cycling", R.drawable.bike));
+        methods.add(new MethodItem("Driving", R.drawable.car));
+
+        dogParks = new ArrayList<>();
+        dogParks.add(new DogWalkingItem("Mastbos", R.drawable.forrest, new GeoPoint(51.56134525467572, 4.767793972942238)));
+        dogParks.add(new DogWalkingItem("Liesbos", R.drawable.forrest, new GeoPoint(51.58769, 4.7105)));
+        dogParks.add(new DogWalkingItem("Somerweide", R.drawable.dog_park, new GeoPoint(51.61157, 4.74524)));
+        dogParks.add(new DogWalkingItem("Melkpad", R.drawable.dog_park, new GeoPoint(51.609804, 4.729187)));
+        dogParks.add(new DogWalkingItem("Johansberg", R.drawable.dog_park, new GeoPoint(51.6152369049874, 4.72776872907537)));
+        dogParks.add(new DogWalkingItem("Cadetten kamp", R.drawable.forrest, new GeoPoint(51.6039713573722, 4.83417502727798)));
+        dogParks.add(new DogWalkingItem("Klein Ardennen", R.drawable.dog_park, new GeoPoint(51.61157, 4.7808913298782100)));
+        dogParks.add(new DogWalkingItem("Loopakker", R.drawable.dog_park, new GeoPoint(51.60618999687, 4.737446)));
+
     }
 
     /**
@@ -250,13 +287,21 @@ public class MapFragment extends Fragment implements SetRoute{
                 newMarker = new GeoPoint(location.getLatitude(), location.getLongitude());
             }
 
+            // TODO: 1-1-2021 maybe see if we can fix the double data saving
+            //Set current location in Data Singleton
             Data.getInstance().setCurrentLocation(newMarker);
+
+            //Get information of specific user from Firebase Database
+            getDatabase();
+            //Set current location in Firebase Database in the subbranch of the current user
+            updateUserValues();
 
             //Make new marker for the new location, delete old marker, and display new marker on map
             Marker newPosition = new Marker(map);
             newPosition.setPosition(newMarker);
             map.getOverlays().remove(currentLocationMarker);
             currentLocationMarker = newPosition;
+            currentLocationMarker.setTitle("You are here");
             map.getOverlays().add(newPosition);
         };
 
@@ -267,6 +312,25 @@ public class MapFragment extends Fragment implements SetRoute{
         }
     }
 
+    /**
+     * Get the current user information from the Database and go into this users subbranch
+     */
+    private void getDatabase() {
+        // TODO: 2-1-2021 need to make a better check for user, it's possible multiple users have the same input before the split character which is '@ '. But for now it works
+        database = FirebaseDatabase.getInstance();
+        auth = FirebaseAuth.getInstance();
+
+        //Get the email address of the current user and split it
+        String[] currentUser = auth.getCurrentUser().getEmail().split(Pattern.quote("@"));
+        String userPathSubstring = currentUser[0];
+        Data.getInstance().setCurrentUser(userPathSubstring);
+
+        //Go to the subbranch of this specific user
+        dbRef = database.getReference("Location Aware").child("User").child(userPathSubstring);
+        userNameAndLocation.put("name", userPathSubstring);
+        System.out.println("USERNAME FROM EMAILADDRESS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " + userPathSubstring);
+    }
+
     public void addLocations(){
         points.add(new GeoPoint(51.5897, 4.7616));
         points.add(new GeoPoint(51.5890, 4.7758));
@@ -275,6 +339,67 @@ public class MapFragment extends Fragment implements SetRoute{
 
         Data.getInstance().setGeoPointsList(points);
     }
+
+    /**
+     * Update current user values (longitude and latitude) in the database
+     */
+    private void updateUserValues() {
+        double latitude = Data.getInstance().getCurrentLocation().getLatitude();
+        double longitude = Data.getInstance().getCurrentLocation().getLongitude();
+
+        userNameAndLocation.put("latitude", latitude);
+        userNameAndLocation.put("longitude", longitude);
+
+        dbRef.updateChildren(userNameAndLocation);
+        getDbData();
+    }
+
+    /**
+     * Get the data from the database with all the users
+     */
+    private void getDbData(){
+        DatabaseReference getDataRef = database.getReference("Location Aware").child("User");
+
+        getDataRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot usersSnapshot : snapshot.getChildren()){
+
+                    System.out.println("USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~~~~~" + usersSnapshot);
+                    User user = usersSnapshot.getValue(User.class);
+                    System.out.println("USER FROM USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~" + user);
+
+                    if(!user.getName().equals(Data.getInstance().getCurrentUser())){
+                        drawOtherUser(user);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    /**
+     * Draw other users on map
+     * @param user
+     */
+    private void drawOtherUser(User user) {
+        double lat = user.getLatitude();
+        double lon = user.getLongitude();
+        GeoPoint otherUserLocation = new GeoPoint(lat, lon);
+
+        Marker otherUserMarker = new Marker(Data.getInstance().getMapView());
+        otherUserMarker.setPosition(otherUserLocation);
+        Data.getInstance().getMapView().getOverlays().add(otherUserMarker);
+    }
+
+    /**
+     * Create the map for the mapView fragment. Sets the controller, location provider, marker, and openRouteService for drawing routes between points.
+     * @param view
+     */
     public void createMap(View view){
         map = (MapView) view.findViewById(R.id.osm_view);
         map.setUseDataConnection(true);
@@ -283,7 +408,6 @@ public class MapFragment extends Fragment implements SetRoute{
 
         routeService = new OpenRouteService(map);
         Data.getInstance().setRouteService(routeService);
-        streetMaps = Data.getInstance().getStreetMaps();
 
         //Set mapcontroller
         controller = map.getController();
@@ -316,10 +440,21 @@ public class MapFragment extends Fragment implements SetRoute{
                     Manifest.permission.ACCESS_COARSE_LOCATION}, 44);
         }
     }
+
+    /**
+     * Draws a route on the map between two points
+     * @param start startpoint
+     * @param end endpoint
+     * @param method method used: walking, cycling, or driving
+     */
     public void drawRoute(GeoPoint start, GeoPoint end, String method){
         routeService.getRoute(start, end, method);
     }
 
+    /**
+     * Gets a route from the recyclerviewer that contains multiple locations and draws this on the map
+     * @param route
+     */
     @Override
     public void setRouteCoord(Route route) {
         //Log.d("MainActivity Rote", route.getStringPlaces());
@@ -342,6 +477,10 @@ public class MapFragment extends Fragment implements SetRoute{
 
     public SetRoute getSetRoute(){
         return this;
+    }
+
+    public void clearMap(){
+        map.getOverlays().clear();
     }
 
 }

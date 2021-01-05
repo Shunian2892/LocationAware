@@ -1,4 +1,4 @@
-package com.example.location_aware.methodSpinner;
+package com.example.location_aware.spinner;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -18,10 +18,10 @@ import java.util.ArrayList;
 /**
  * Adapter for handling (clicked) items in the combobox in the MainActivity.
  */
-public class MethodAdapter extends ArrayAdapter<MethodItem> {
+public class DogWalkingAdapter extends ArrayAdapter<DogWalkingItem> {
 
-    public MethodAdapter(Context context, ArrayList<MethodItem> methodList){
-        super(context, 0, methodList);
+    public DogWalkingAdapter(Context context, ArrayList<DogWalkingItem> parkList){
+        super(context, 0, parkList);
     }
 
     //getView and getDropDownView both need to return the same view. Therefor a new method "initView" which returns the desired view such that the getView and getDropDownView only need to cal initView.
@@ -47,11 +47,11 @@ public class MethodAdapter extends ArrayAdapter<MethodItem> {
         ImageView methodImage = convertView.findViewById(R.id.method_image);
         TextView methodText = convertView.findViewById(R.id.method_text);
 
-        MethodItem currentItem = getItem(position);
+        DogWalkingItem currentItem = getItem(position);
 
         if(currentItem != null){
-            methodImage.setImageResource(currentItem.getMethodImage());
-            methodText.setText(currentItem.getMethodName());
+            methodImage.setImageResource(currentItem.getImage());
+            methodText.setText(currentItem.getName());
         }
 
         return convertView;

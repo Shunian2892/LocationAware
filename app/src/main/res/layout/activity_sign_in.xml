@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".firebase.SignIn">
+
+    <TextView
+        android:id="@+id/sign_in_user_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="260dp"
+        android:gravity="center"
+        android:text="Sign in existing user"
+        android:textStyle="bold"/>
+
+    <RelativeLayout
+        android:id="@+id/emailSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sign_in_user_tv"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/email_address_sign_in"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:hint="E-mail address"
+                android:inputType="textEmailAddress"
+                android:singleLine="true"
+                android:textColorHint="@android:color/darker_gray" />
+
+            <EditText
+                android:id="@+id/password_sign_in"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:textColorHint="@android:color/darker_gray" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/sign_in_user_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/emailSignIn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Sign in"
+        android:textAllCaps="false"
+        android:textSize="15dp" />
+
+    <ProgressBar
+        android:id="@+id/sign_in_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sign_in_user_button"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"/>
+</RelativeLayout>

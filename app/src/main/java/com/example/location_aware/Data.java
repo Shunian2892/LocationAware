@@ -3,6 +3,7 @@ package com.example.location_aware;
 import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.RouteAdapter;
 import com.example.location_aware.RouteRecyclerView.RouteManager;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
@@ -11,7 +12,11 @@ import org.osmdroid.views.overlay.Polyline;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+/**
+ * Singleton class which holds most of the information
+ */
 public class Data {
     private static Data data;
     private MyLocationNewOverlay myLocationNewOverlay;
@@ -27,6 +32,10 @@ public class Data {
     private RouteManager routeManager;
     private RouteAdapter routeAdapter;
     private ArrayList<Route> routeList;
+    private ArrayList<String> nameList;
+    private HashMap<String, ArrayList<String>> routeHashMap;
+    private FirebaseAuth.AuthStateListener authStateListener;
+    private String currentUser;
 
     public static Data getInstance(){
         if(data == null){
@@ -141,6 +150,17 @@ public class Data {
         this.routeAdapter = routeAdapter;
     }
 
+    public HashMap<String, ArrayList<String>> getRouteHashMap() {
+        return routeHashMap;
+    }
+
+    public void setRouteHashMap(HashMap<String, ArrayList<String>> routeHashMap) {
+        this.routeHashMap = routeHashMap;
+    }
+    public void addToRouteHashMap(String route, ArrayList<String> locations){
+        this.routeHashMap.put(route,locations);
+    }
+
     public ArrayList<Route> getRouteList() {
         return routeList;
     }
@@ -151,5 +171,29 @@ public class Data {
 
     public void addRoute(Route route){
         this.routeList.add(route);
+    }
+
+    public ArrayList<String> getNameList() {
+        return nameList;
+    }
+
+    public void setNameList(ArrayList<String> nameList) {
+        this.nameList = nameList;
+    }
+
+    public FirebaseAuth.AuthStateListener getAuthStateListener() {
+        return authStateListener;
+    }
+
+    public void setAuthStateListener(FirebaseAuth.AuthStateListener authStateListener) {
+        this.authStateListener = authStateListener;
+    }
+
+    public String getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(String currentUser) {
+        this.currentUser = currentUser;
     }
 }
