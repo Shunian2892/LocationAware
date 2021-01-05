@@ -323,8 +323,8 @@ public class MapFragment extends Fragment implements SetRoute{
      * Update current user values (longitude and latitude) in the database
      */
     private void updateUserValues() {
-        String latitude = Double.toString(Data.getInstance().getCurrentLocation().getLatitude());
-        String longitude = Double.toString(Data.getInstance().getCurrentLocation().getLongitude());
+        double latitude = Data.getInstance().getCurrentLocation().getLatitude();
+        double longitude = Data.getInstance().getCurrentLocation().getLongitude();
 
         userNameAndLocation.put("latitude", latitude);
         userNameAndLocation.put("longitude", longitude);
@@ -349,11 +349,8 @@ public class MapFragment extends Fragment implements SetRoute{
                     System.out.println("USER FROM USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~" + user);
 
                     if(!user.getName().equals(Data.getInstance().getCurrentUser())){
-                        drawOtherUsers(user);
+                        drawOtherUser(user);
                     }
-
-//                    String txt = user.getName() + " : " + user.getLatitude() + " : " + user.getLongitude();
-//                    System.out.println("TEXT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + txt);
                 }
             }
 
@@ -368,11 +365,17 @@ public class MapFragment extends Fragment implements SetRoute{
      * Draw other users on map
      * @param user
      */
-    private void drawOtherUsers(User user) {
-        GeoPoint otherUserLocation = new GeoPoint(Double.parseDouble(user.getLatitude()), Double.parseDouble(user.getLongitude()));
-        Marker otherUserMarker = new Marker(map);
+    private void drawOtherUser(User user) {
+        double lat = user.getLatitude();
+        double lon = user.getLongitude();
+        GeoPoint otherUserLocation = new GeoPoint(lat, lon);
+
+        Marker otherUserMarker = new Marker(Data.getInstance().getMapView());
         otherUserMarker.setPosition(otherUserLocation);
-        map.getOverlays().add(otherUserMarker);
+        Data.getInstance().getMapView().getOverlays().add(otherUserMarker);
+//        if(Data.getInstance().getCurrentLocation() != otherUserLocation){
+//
+//        }
     }
 
     /**
@@ -456,6 +459,10 @@ public class MapFragment extends Fragment implements SetRoute{
 
     public SetRoute getSetRoute(){
         return this;
+    }
+
+    public void clearMap(){
+        map.getOverlays().clear();
     }
 
 }

@@ -65,8 +65,8 @@ public class Registration extends AppCompatActivity {
                                 newPassword.setText("");
 
                                 //Go to main activity
-                                Intent goToMainActivity = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(goToMainActivity);
+                                Intent goToSignIn = new Intent(getApplicationContext(), SignIn.class);
+                                startActivity(goToSignIn);
 
                                 //Close Registration activity
                                 finish();

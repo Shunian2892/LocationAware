@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //FirebaseAuth.getInstance().signOut();
+                FirebaseAuth.getInstance().signOut();
                 Toast.makeText(getApplicationContext(), "Logged out!", Toast.LENGTH_LONG).show();
                 Intent goToLoginScreen = new Intent(getApplicationContext(), LoginScreen.class);
                 startActivity(goToLoginScreen);
@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        mapFragment.clearMap();
         auth.addAuthStateListener(authListener);
     }
 
