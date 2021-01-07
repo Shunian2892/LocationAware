@@ -383,8 +383,8 @@ public class MapFragment extends Fragment implements SetRoute{
      * @param user
      */
     public void drawOtherUser(User user) {
-        map.onResume();
-        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, this).addToBackStack(null).commit();
+//        map.onResume();
+//        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, this).addToBackStack(null).commit();
         double lat = user.getLatitude();
         double lon = user.getLongitude();
 //        GeoPoint otherUserLocation = new GeoPoint(lat, lon);
@@ -403,7 +403,10 @@ public class MapFragment extends Fragment implements SetRoute{
             map.getOverlays().remove(oldMarker);
             oldMarker = otherUserMarker;
             map.getOverlays().add(otherUserMarker);
-            otherUserMarker.showInfoWindow();
+
+            //Show marker title
+//            otherUserMarker.showInfoWindow();
+
             map.invalidate();
         }
     }
