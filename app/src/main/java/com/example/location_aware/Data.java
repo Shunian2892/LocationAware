@@ -3,6 +3,7 @@ package com.example.location_aware;
 import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.RouteAdapter;
 import com.example.location_aware.RouteRecyclerView.RouteManager;
+import com.example.location_aware.RouteRecyclerView.RouteRV;
 import com.example.location_aware.spinner.DogWalkingItem;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -38,6 +39,9 @@ public class Data {
     private FirebaseAuth.AuthStateListener authStateListener;
     private String currentUser;
     private ArrayList<DogWalkingItem> dogWalkingItems;
+    private MapFragment mapFragment;
+    private OwnRouteFragment ownRouteFragment;
+    private RouteRV routeRV;
 
     public static Data getInstance(){
         if(data == null){
@@ -54,6 +58,30 @@ public class Data {
 
     public static void setData(Data data) {
         Data.data = data;
+    }
+
+    public MapFragment getMapFragment() {
+        return mapFragment;
+    }
+
+    public void setMapFragment(MapFragment mapFragment) {
+        this.mapFragment = mapFragment;
+    }
+
+    public OwnRouteFragment getOwnRouteFragment() {
+        return ownRouteFragment;
+    }
+
+    public void setOwnRouteFragment(OwnRouteFragment ownRouteFragment) {
+        this.ownRouteFragment = ownRouteFragment;
+    }
+
+    public RouteRV getRouteRV() {
+        return routeRV;
+    }
+
+    public void setRouteRV(RouteRV routeRV) {
+        this.routeRV = routeRV;
     }
 
     public MyLocationNewOverlay getMyLocationNewOverlay() {

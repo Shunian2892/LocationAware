@@ -64,9 +64,9 @@ public class GeofenceSetup {
         }
 
     }
-    public void setOwnGeofence(GeoPoint geopoint){
-       addGeoFence(geopoint,100,"My Location");
-    }
+//    public void setOwnGeofence(GeoPoint geopoint){
+//       addGeoFence(geopoint,100,"My Location");
+//    }
 
     private void addFences() {
         for (DogWalkingItem location : Data.getInstance().getDogWalkingItems()){

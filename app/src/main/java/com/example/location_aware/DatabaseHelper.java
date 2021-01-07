@@ -20,31 +20,41 @@ public class DatabaseHelper {
     private FirebaseAuth auth;
     private HashMap<String, Object> userNameAndLocation;
     private User user;
+    private String[] currentUser;
+    private String userPathSubstring;
 
 
     public DatabaseHelper() {
         userNameAndLocation = new HashMap<>();
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
+
     }
 
     /**
      * Get the current user information from the Database and go into this users subbranch
      */
     public String getCurrentUserDatabase() {
+//
+//        if(auth.getCurrentUser() != null){
+//            //Get the email address of the current user and split it
+//            currentUser = auth.getCurrentUser().getEmail().split(Pattern.quote("@"));
+//            userPathSubstring = currentUser[0];
+//
+//
+//        } else {
+//            return null;
+//        }
 
-        //Get the email address of the current user and split it
-        String[] currentUser = auth.getCurrentUser().getEmail().split(Pattern.quote("@"));
-        String userPathSubstring = currentUser[0];
-        //Data.getInstance().setCurrentUser(userPathSubstring);
-
+        System.out.println("CURRENT USER IN DATA CLASS ~~~~~~~~~~~~~~~~~~~~~ " + Data.getInstance().getCurrentUser());
+        System.out.println("CURRENT USER IN USERPATHSUBSTRING VARIABLE ~~~~~~~~~~~~~~~~~~~~~ " + userPathSubstring);
+        userPathSubstring = Data.getInstance().getCurrentUser();
         //Go to the subbranch of this specific user
         dbRef = database.getReference("Location Aware").child("User").child(userPathSubstring);
         userNameAndLocation.put("name", userPathSubstring);
         System.out.println("USERNAME FROM EMAILADDRESS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " + userPathSubstring);
         return userPathSubstring;
     }
-
 
     /**
      * Update current user values (longitude and latitude) in the database
@@ -65,9 +75,10 @@ public class DatabaseHelper {
     /**
      * Get the data from the database with all the users
      */
-    public User getDbData(MapFragment mapFragment){
-        DatabaseReference getDataRef = database.getReference("Location Aware").child("User");
+    public User getDbData(){
+        MapFragment mapFragment = Data.getInstance().getMapFragment();
 
+        DatabaseReference getDataRef = database.getReference("Location Aware").child("User");
         getDataRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
