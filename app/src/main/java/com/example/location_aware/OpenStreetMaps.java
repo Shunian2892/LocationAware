@@ -22,6 +22,7 @@ public class OpenStreetMaps {
     private Polyline route;
     private MapView mapView;
     private OpenRouteService routeService;
+    private Marker oldMarker;
 
     public OpenStreetMaps(){
         this.mapView = Data.getInstance().getMapView();
@@ -68,12 +69,15 @@ public class OpenStreetMaps {
         mapView.getOverlays().add(marker);
     }
 
-    public void drawMarker(MapView mapView, GeoPoint point, String userName, IMarkerUpdateListener markerUpdateListener){
+    public void drawMarker(MapView mapView, GeoPoint point, String userName){
         if(mapView != null){
             Marker marker = new Marker(mapView);
             marker.setPosition(point);
-            marker.setTitle(userName);
+            mapView.getOverlays().remove(oldMarker);
+            oldMarker = marker;
+            oldMarker.setTitle(userName);
             mapView.getOverlays().add(marker);
+            System.out.println("DRAWMARKER REACHED!!!!!!!!!!!!!!");
         }
 
     }

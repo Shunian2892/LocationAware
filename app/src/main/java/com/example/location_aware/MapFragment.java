@@ -89,6 +89,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
     private DatabaseHelper databaseHelper;
 
     private MapHelper mapHelper;
+    private HashMap<String, GeoPoint> userHashMap;
 
 
     public MapFragment() {
@@ -111,6 +112,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
         databaseHelper = new DatabaseHelper();
+        userHashMap = new HashMap<>();
 
         //Create mapView and draw marker on current location
         createMap(v);
@@ -446,19 +448,25 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
 
     @Override
     public void onMarkerUpdate(User user) {
-//        drawOtherUser(user);
 
         double userLat  = user.getLatitude();
         double userLon = user.getLongitude();
         String userName = user.getName();
 
-        Marker userMarker = new Marker(map);
         GeoPoint userLocation = new GeoPoint(userLat, userLon);
-//        userMarker.setPosition(userLocation);
-//        userMarker.setTitle(userName);
-//        map.getOverlays().add(userMarker);
 
-        streetMaps.drawMarker(map, userLocation, userName, this);
+        if(userHashMap.containsKey(userName)){
+            if(!userHashMap.get(userName).equals(userLocation)){
+                System.out.println("ONMARKERUPDATE ------" + userHashMap.get(userName) + userLocation);
+                /*if((mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),userLat,userLon) < 300) && (map != null)) {*/
+                    streetMaps.drawMarker(map, userLocation, userName);
+
+            }
+        }
+        userHashMap.put(userName,userLocation);
+        System.out.println("USERHASHMAP HERE--------------" + userHashMap);
+
+
 
     }
 
