@@ -106,6 +106,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         //Load/initialise osmdroid configuration
         context = getActivity().getApplicationContext();
         Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
+        Data.getInstance().setMarkerUpdateListener(this);
 
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
