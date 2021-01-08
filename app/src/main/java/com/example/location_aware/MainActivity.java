@@ -225,5 +225,6 @@ public class MainActivity extends AppCompatActivity {
         Intent goToLoginScreen = new Intent(getApplicationContext(), LoginScreen.class);
         startActivity(goToLoginScreen);
         finish();
+        makeToast("Logged out!");
     }
 }

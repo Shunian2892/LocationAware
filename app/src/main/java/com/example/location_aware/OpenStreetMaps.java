@@ -67,4 +67,15 @@ public class OpenStreetMaps {
         marker.setIcon(icon);
         mapView.getOverlays().add(marker);
     }
+
+    public void drawMarker(MapView mapView, GeoPoint point, String userName, IMarkerUpdateListener markerUpdateListener){
+        if(mapView != null){
+            Marker marker = new Marker(mapView);
+            marker.setPosition(point);
+            marker.setTitle(userName);
+            mapView.getOverlays().add(marker);
+        }
+
+    }
+
 }

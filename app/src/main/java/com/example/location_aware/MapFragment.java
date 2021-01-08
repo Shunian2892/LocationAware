@@ -54,7 +54,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
-public class MapFragment extends Fragment implements SetRoute{
+public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateListener{
     private Context context;
 
     private MapView map;
@@ -441,6 +441,24 @@ public class MapFragment extends Fragment implements SetRoute{
 
     public void clearMap(){
         map.getOverlays().clear();
+    }
+
+    @Override
+    public void onMarkerUpdate(User user) {
+//        drawOtherUser(user);
+
+        double userLat  = user.getLatitude();
+        double userLon = user.getLongitude();
+        String userName = user.getName();
+
+        Marker userMarker = new Marker(map);
+        GeoPoint userLocation = new GeoPoint(userLat, userLon);
+//        userMarker.setPosition(userLocation);
+//        userMarker.setTitle(userName);
+//        map.getOverlays().add(userMarker);
+
+        streetMaps.drawMarker(map, userLocation, userName, this);
+
     }
 
 }

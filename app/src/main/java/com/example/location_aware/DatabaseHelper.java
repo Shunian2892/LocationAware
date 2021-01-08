@@ -1,6 +1,7 @@
 package com.example.location_aware;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.location_aware.firebase.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,12 +24,10 @@ public class DatabaseHelper {
     private String[] currentUser;
     private String userPathSubstring;
 
-
     public DatabaseHelper() {
         userNameAndLocation = new HashMap<>();
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
-
     }
 
     /**
@@ -47,7 +46,6 @@ public class DatabaseHelper {
 //        }
 
         System.out.println("CURRENT USER IN DATA CLASS ~~~~~~~~~~~~~~~~~~~~~ " + Data.getInstance().getCurrentUser());
-        System.out.println("CURRENT USER IN USERPATHSUBSTRING VARIABLE ~~~~~~~~~~~~~~~~~~~~~ " + userPathSubstring);
         userPathSubstring = Data.getInstance().getCurrentUser();
         //Go to the subbranch of this specific user
         dbRef = database.getReference("Location Aware").child("User").child(userPathSubstring);
@@ -84,13 +82,18 @@ public class DatabaseHelper {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot usersSnapshot : snapshot.getChildren()){
 
-                    System.out.println("USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~~~~~" + usersSnapshot);
+                    System.out.println("USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~~~ " + usersSnapshot);
                     user = usersSnapshot.getValue(User.class);
-                    System.out.println("USER FROM USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~" + user);
+                    System.out.println("MAPFRAGMENT IN GETDBDATA() ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "+ mapFragment);
 
-                    if(!user.getName().equals(Data.getInstance().getCurrentUser())){
-                        mapFragment.drawOtherUser(user);
+                    if(mapFragment != null){
+                        if(!user.getName().equals(Data.getInstance().getCurrentUser())){
+                            Data.getInstance().getMarkerUpdateListener().onMarkerUpdate(user);
+                        }
+                    } else {
+                        System.out.println("MAPFRAGMENT IS NULL");
                     }
+
                 }
             }
 

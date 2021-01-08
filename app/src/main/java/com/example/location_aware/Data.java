@@ -1,9 +1,13 @@
 package com.example.location_aware;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.RouteAdapter;
 import com.example.location_aware.RouteRecyclerView.RouteManager;
 import com.example.location_aware.RouteRecyclerView.RouteRV;
+import com.example.location_aware.firebase.User;
 import com.example.location_aware.spinner.DogWalkingItem;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -42,6 +46,7 @@ public class Data {
     private MapFragment mapFragment;
     private OwnRouteFragment ownRouteFragment;
     private RouteRV routeRV;
+    private IMarkerUpdateListener markerUpdateListener;
 
     public static Data getInstance(){
         if(data == null){
@@ -233,5 +238,13 @@ public class Data {
 
     public void setDogWalkingItems(ArrayList<DogWalkingItem> dogWalkingItems) {
         this.dogWalkingItems = dogWalkingItems;
+    }
+
+    public IMarkerUpdateListener getMarkerUpdateListener() {
+        return markerUpdateListener;
+    }
+
+    public void setMarkerUpdateListener(IMarkerUpdateListener markerUpdateListener) {
+        this.markerUpdateListener = markerUpdateListener;
     }
 }
