@@ -43,6 +43,10 @@
     <string name="toast_ownRoute_created">Route is created!</string>
     <string name="toast_signIn_invalid_email">Invalid/non existing e-mail address!</string>
     <string name="toast_signIn_invalid_password">Invalid password!</string>
-
-
+    <string name="map">Map</string>
+    <string name="routes">Routes</string>
+    <string name="settings">Settings</string>
+    <string name="log_out">Log out</string>
+    <string name="create_own_route">Create own route</string>
+    <string name="change_password">Change password</string>
 </resources>

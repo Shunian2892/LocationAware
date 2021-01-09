@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -43,11 +45,18 @@ public class OwnRouteFragment extends Fragment {
         private ArrayList<String> locationNames;
         private RouteAdapter routeAdapter;
 
+        private FragmentManager fragmentManager;
+        private SettingsFragmentButtons settingsFragmentButtons;
+        private ImageButton ibBackButton;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_own_route, container, false);
+
+        fragmentManager = getFragmentManager();
+        ibBackButton = v.findViewById(R.id.own_route_backButton);
 
         streetMaps = Data.getInstance().getStreetMaps();
         routeAdapter = Data.getInstance().getRouteAdapter();
@@ -65,6 +74,7 @@ public class OwnRouteFragment extends Fragment {
         adapter = new ArrayAdapter<String>(getContext(), R.layout.own_route_list_item, locationNames);
         addedLocations.setAdapter(adapter);
 
+        settingsFragmentButtons = Data.getInstance().getSettingsButtons();
         return v;
     }
 
@@ -130,6 +140,14 @@ public class OwnRouteFragment extends Fragment {
                 routeName.setText("");
                 newLocation.setText("");
                 adapter.notifyDataSetChanged();
+            }
+        });
+
+        ibBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fragmentManager.beginTransaction().show(settingsFragmentButtons).commit();
+                fragmentManager.beginTransaction().hide(Data.getInstance().getOwnRouteFragment()).commit();
             }
         });
     }

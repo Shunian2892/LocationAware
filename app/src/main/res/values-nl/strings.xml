@@ -35,4 +35,10 @@
     <string name="toast_ownRoute_created">Route is gecreëerd!</string>
     <string name="toast_signIn_invalid_email">Onbekend e-mail adres!</string>
     <string name="toast_signIn_invalid_password">Foutief wachtwoord!</string>
+    <string name="routes">Routes</string>
+    <string name="settings">Instellingen</string>
+    <string name="map">Map</string>
+    <string name="log_out">Log uit</string>
+    <string name="create_own_route">Creëer eigen route</string>
+    <string name="change_password">Verander wachtwoord</string>
 </resources>
