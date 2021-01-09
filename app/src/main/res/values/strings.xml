@@ -41,6 +41,8 @@
     <string name="toast_ownRoute_name">Please type in a name for the route!</string>
     <string name="toast_ownRoute_multiple_locations">Please add multiple locations!</string>
     <string name="toast_ownRoute_created">Route is created!</string>
+    <string name="toast_signIn_invalid_email">Invalid/non existing e-mail address!</string>
+    <string name="toast_signIn_invalid_password">Invalid password!</string>
 
 
 </resources>

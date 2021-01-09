@@ -33,4 +33,6 @@
     <string name="toast_ownRoute_name">Vul alstublieft een routenaam in!</string>
     <string name="toast_ownRoute_multiple_locations">Voeg alstublieft meeredere locaties toe!</string>
     <string name="toast_ownRoute_created">Route is gecreëerd!</string>
+    <string name="toast_signIn_invalid_email">Onbekend e-mail adres!</string>
+    <string name="toast_signIn_invalid_password">Foutief wachtwoord!</string>
 </resources>

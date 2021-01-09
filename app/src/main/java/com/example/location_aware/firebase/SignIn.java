@@ -24,6 +24,10 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * This class handles the signing in of a existing (firebase) user. Based on the given email address and password, the firebase authenticator will check if there is a user registered.
+ * If not, it will show a toast with the error message.
+ */
 public class SignIn extends AppCompatActivity {
     private FirebaseAuth auth;
     private EditText email, password;
@@ -63,11 +67,9 @@ public class SignIn extends AppCompatActivity {
                                 try {
                                     throw task.getException();
                                 } catch (FirebaseAuthInvalidUserException invalidEmail) {
-//                                    Log.d(TAG, "onComplete: Invalid email");
-                                    makeToast("Invalid/non existing email address!");
+                                    makeToast(R.string.toast_signIn_invalid_email);
                                 } catch (FirebaseAuthInvalidCredentialsException invalidPassword) {
-//                                    Log.d(TAG, "onComplete: Invalid password!");
-                                    makeToast("Invalid password");
+                                    makeToast(R.string.toast_signIn_invalid_password);
                                 } catch (Exception e) {
                                     Log.d(TAG, "onComplete: " + e.getMessage());
                                 }
@@ -82,13 +84,13 @@ public class SignIn extends AppCompatActivity {
                         }
                     });
                 } else  {
-                    makeToast("Please fill in all the fields");
+                    makeToast(R.string.toast_register_new_fields);
                 }
             }
         });
     }
 
-    private void makeToast(String message){
+    private void makeToast(int message){
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }
