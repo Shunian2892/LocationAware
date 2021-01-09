@@ -1,8 +1,14 @@
 package com.example.location_aware;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.location_aware.RouteRecyclerView.Route;
 import com.example.location_aware.RouteRecyclerView.RouteAdapter;
 import com.example.location_aware.RouteRecyclerView.RouteManager;
+import com.example.location_aware.RouteRecyclerView.RouteRV;
+import com.example.location_aware.firebase.User;
+import com.example.location_aware.spinner.DogWalkingItem;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.osmdroid.api.IMapController;
@@ -36,6 +42,11 @@ public class Data {
     private HashMap<String, ArrayList<String>> routeHashMap;
     private FirebaseAuth.AuthStateListener authStateListener;
     private String currentUser;
+    private ArrayList<DogWalkingItem> dogWalkingItems;
+    private MapFragment mapFragment;
+    private OwnRouteFragment ownRouteFragment;
+    private RouteRV routeRV;
+    private IMarkerUpdateListener markerUpdateListener;
 
     public static Data getInstance(){
         if(data == null){
@@ -52,6 +63,30 @@ public class Data {
 
     public static void setData(Data data) {
         Data.data = data;
+    }
+
+    public MapFragment getMapFragment() {
+        return mapFragment;
+    }
+
+    public void setMapFragment(MapFragment mapFragment) {
+        this.mapFragment = mapFragment;
+    }
+
+    public OwnRouteFragment getOwnRouteFragment() {
+        return ownRouteFragment;
+    }
+
+    public void setOwnRouteFragment(OwnRouteFragment ownRouteFragment) {
+        this.ownRouteFragment = ownRouteFragment;
+    }
+
+    public RouteRV getRouteRV() {
+        return routeRV;
+    }
+
+    public void setRouteRV(RouteRV routeRV) {
+        this.routeRV = routeRV;
     }
 
     public MyLocationNewOverlay getMyLocationNewOverlay() {
@@ -195,5 +230,21 @@ public class Data {
 
     public void setCurrentUser(String currentUser) {
         this.currentUser = currentUser;
+    }
+
+    public ArrayList<DogWalkingItem> getDogWalkingItems() {
+        return dogWalkingItems;
+    }
+
+    public void setDogWalkingItems(ArrayList<DogWalkingItem> dogWalkingItems) {
+        this.dogWalkingItems = dogWalkingItems;
+    }
+
+    public IMarkerUpdateListener getMarkerUpdateListener() {
+        return markerUpdateListener;
+    }
+
+    public void setMarkerUpdateListener(IMarkerUpdateListener markerUpdateListener) {
+        this.markerUpdateListener = markerUpdateListener;
     }
 }

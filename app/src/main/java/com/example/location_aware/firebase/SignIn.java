@@ -45,23 +45,10 @@ public class SignIn extends AppCompatActivity {
 
         //Instantiate Firebase Authenticator and listener
         auth = FirebaseAuth.getInstance();
-        authListener = new FirebaseAuth.AuthStateListener(){
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                //Get correct user through email validation/check
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-//                progressBar.setVisibility(View.VISIBLE);
 
-                // TODO: 2-1-2021 fix this toast!!
-                if(user != null){
-                    Log.d(TAG, "onAuthStateChanged: signed_in" + user.getUid());
-                    makeToast("Successfully signed in!");
-                }
-            }
-        };
 
         //Set authenticator listener into Data singleton for use elsewhere
-        Data.getInstance().setAuthStateListener(authListener);
+//        Data.getInstance().setAuthStateListener(authListener);
 
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override

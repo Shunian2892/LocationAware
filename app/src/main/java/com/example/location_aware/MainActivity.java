@@ -19,6 +19,7 @@ import com.example.location_aware.RouteRecyclerView.RouteRV;
 import com.example.location_aware.RouteRecyclerView.SetRoute;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -28,14 +29,16 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
+    private String TAG = "MAINACTIVITY CLASS";
+
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
     private RouteRV routeRV;
     private OwnRouteFragment ownRouteFragment;
-    private OpenStreetMaps streetMaps;
-    private OpenRouteService routeService;
+
     private ArrayList<Route> routeList;
     private HashMap<String,ArrayList<String>> nameList;
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
@@ -66,6 +69,10 @@ public class MainActivity extends AppCompatActivity {
     private Button logout;
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth auth;
+    private FirebaseUser user;
+
+    private String[] currentUser;
+    private String userPathSubstring;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,43 +87,64 @@ public class MainActivity extends AppCompatActivity {
         setRouteFragment();
         setOwnRouteFragment();
 
-        //Initialize OSM and OpenRouteService
-        streetMaps = Data.getInstance().getStreetMaps();
-        routeService = Data.getInstance().getRouteService();
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
         Data.getInstance().setRouteHashMap(new HashMap<>());
 
         //Initialize authentication listener for Firebase Database
-        authListener = Data.getData().getAuthStateListener();
         auth = FirebaseAuth.getInstance();
 
-        logout = findViewById(R.id.logout);
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                Toast.makeText(getApplicationContext(), "Logged out!", Toast.LENGTH_LONG).show();
-                Intent goToLoginScreen = new Intent(getApplicationContext(), LoginScreen.class);
-                startActivity(goToLoginScreen);
-                finish();
-            }
-        });
+//        authListener = new FirebaseAuth.AuthStateListener(){
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//                //Get correct user through email validation/check
+////                FirebaseUser user = firebaseAuth.getCurrentUser();
+////                progressBar.setVisibility(View.VISIBLE);
+//
+//                if(user != null){
+//                    Log.d(TAG, "onAuthStateChanged: signed_in " + user.getUid());
+//                    makeToast("Successfully signed in!");
+//                } else {
+//                    makeToast("Logged out!");
+//                }
+//            }
+//        };
+//
+//        logout = findViewById(R.id.logout);
+//        logout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                auth.signOut();
+//                Intent goToLoginScreen = new Intent(getApplicationContext(), LoginScreen.class);
+//                startActivity(goToLoginScreen);
+////                finish();
+//            }
+//        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         mapFragment.clearMap();
-        auth.addAuthStateListener(authListener);
+        user = auth.getCurrentUser();
+
+        if(user != null){
+            currentUser = user.getEmail().split(Pattern.quote("@"));
+            userPathSubstring = currentUser[0];
+            Data.getInstance().setCurrentUser(userPathSubstring);
+            Log.d(TAG, "onAuthStateChanged: signed_in under name: " + userPathSubstring + " with ID: " + user.getUid());
+            makeToast("Successfully signed in!");
+        } else {
+
+        }
+//        auth.addAuthStateListener(authListener);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        auth.removeAuthStateListener(authListener);
-    }
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        auth.removeAuthStateListener(authListener);
+//    }
 
     /**
      * Checks if there is a map fragment. If there isn't, then make a new MapFragment and commit
@@ -128,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
         }
+
+        Data.getInstance().setMapFragment(mapFragment);
         fragmentManager.beginTransaction().show(mapFragment).commit();
     }
 
@@ -142,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             routeRV = (RouteRV) fragmentManager.findFragmentById(R.id.route_rv_fragment);
         }
+        Data.getInstance().setRouteRV(routeRV);
         fragmentManager.beginTransaction().hide(routeRV).commit();
     }
 
@@ -155,6 +186,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             ownRouteFragment = (OwnRouteFragment) fragmentManager.findFragmentById(R.id.ownRouteFragment);
         }
+
+        Data.getInstance().setOwnRouteFragment(ownRouteFragment);
         fragmentManager.beginTransaction().hide(ownRouteFragment).commit();
     }
 
@@ -181,5 +214,17 @@ public class MainActivity extends AppCompatActivity {
         nameList = new Gson().fromJson(jsonNames, nameToken.getType());
 
         Data.getInstance().setRouteHashMap(nameList);
+    }
+
+    private void makeToast(String message){
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    public void logout(View view) {
+        auth.signOut();
+        Intent goToLoginScreen = new Intent(getApplicationContext(), LoginScreen.class);
+        startActivity(goToLoginScreen);
+        finish();
+        makeToast("Logged out!");
     }
 }

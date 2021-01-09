@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.location_aware.Data;
+import com.example.location_aware.spinner.DogWalkingItem;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -20,6 +22,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.osmdroid.util.GeoPoint;
+
+import java.util.ArrayList;
 
 public class GeofenceSetup {
     private Context context;
@@ -60,10 +64,14 @@ public class GeofenceSetup {
         }
 
     }
+//    public void setOwnGeofence(GeoPoint geopoint){
+//       addGeoFence(geopoint,100,"My Location");
+//    }
 
     private void addFences() {
-        GeoPoint curio = new GeoPoint(51.603063987023894, 4.785269550366492);
-        addGeoFence(curio,100, "curio");
+        for (DogWalkingItem location : Data.getInstance().getDogWalkingItems()){
+            addGeoFence(location.getLocation(),100,location.getName());
+        }
     }
 
     private void addGeoFence(GeoPoint geoPoint, float radius, String id){

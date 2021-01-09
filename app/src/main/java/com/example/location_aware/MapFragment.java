@@ -34,6 +34,7 @@ import com.example.location_aware.spinner.MethodAdapter;
 import com.example.location_aware.spinner.MethodItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -53,7 +54,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
-public class MapFragment extends Fragment implements SetRoute{
+public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateListener{
     private Context context;
 
     private MapView map;
@@ -61,7 +62,7 @@ public class MapFragment extends Fragment implements SetRoute{
     private LocationManager manager;
     private LocationListener listener;
 
-    private Marker currentLocationMarker;
+    private Marker currentLocationMarker, oldMarker, otherUserMarker;
     private GpsMyLocationProvider myLocationProvider;
     private MyLocationNewOverlay myLocationNewOverlay;
 
@@ -81,13 +82,15 @@ public class MapFragment extends Fragment implements SetRoute{
     private MethodAdapter methodAdapter;
     private DogWalkingAdapter dogWalkingAdapter;
 
+    private GeofenceSetup setupexe;
+
     private OpenRouteService routeService;
     private Boolean clicked;
+    private DatabaseHelper databaseHelper;
 
-    private FirebaseDatabase database;
-    private DatabaseReference dbRef;
-    private FirebaseAuth auth;
-    private HashMap<String, Object> userNameAndLocation;
+    private MapHelper mapHelper;
+    private HashMap<String, GeoPoint> userHashMap;
+
 
     public MapFragment() {
         // Required empty public constructor
@@ -104,17 +107,17 @@ public class MapFragment extends Fragment implements SetRoute{
         //Load/initialise osmdroid configuration
         context = getActivity().getApplicationContext();
         Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context));
+        Data.getInstance().setMarkerUpdateListener(this);
 
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
-        userNameAndLocation = new HashMap<>();
+        databaseHelper = new DatabaseHelper();
+        userHashMap = new HashMap<>();
 
         //Create mapView and draw marker on current location
         createMap(v);
         streetMaps = Data.getInstance().getStreetMaps();
-        streetMaps.drawMarker(map,new GeoPoint(51.603063987023894, 4.785269550366492),getResources().getDrawable(R.drawable.location));
-        GeofenceSetup setupexe = new GeofenceSetup(getActivity().getApplicationContext(), getActivity());
-        setupexe.setUpGeofencing();
+
 
         clicked = false;
         //Initialize buttons
@@ -130,6 +133,11 @@ public class MapFragment extends Fragment implements SetRoute{
         initSpinnerList();
         methodChoices = v.findViewById(R.id.spinner);
         dogParkChoices = v.findViewById(R.id.end_location);
+
+        setupexe = new GeofenceSetup(getActivity().getApplicationContext(), getActivity());
+        setupexe.setUpGeofencing();
+
+        mapHelper = new MapHelper();
         return v;
     }
 
@@ -138,7 +146,6 @@ public class MapFragment extends Fragment implements SetRoute{
         super.onViewCreated(view, savedInstanceState);
         //Get location
         getLocation();
-        //addLocations();
 
         //Set adapter to the spinner and a setOnItemSelectedListener.
         methodAdapter = new MethodAdapter(getContext(), methods);
@@ -264,6 +271,7 @@ public class MapFragment extends Fragment implements SetRoute{
         dogParks.add(new DogWalkingItem("Klein Ardennen", R.drawable.dog_park, new GeoPoint(51.61157, 4.7808913298782100)));
         dogParks.add(new DogWalkingItem("Loopakker", R.drawable.dog_park, new GeoPoint(51.60618999687, 4.737446)));
 
+        Data.getInstance().setDogWalkingItems(dogParks);
     }
 
     /**
@@ -287,15 +295,21 @@ public class MapFragment extends Fragment implements SetRoute{
                 newMarker = new GeoPoint(location.getLatitude(), location.getLongitude());
             }
 
-            // TODO: 1-1-2021 maybe see if we can fix the double data saving
             //Set current location in Data Singleton
             Data.getInstance().setCurrentLocation(newMarker);
+//
+//            if(FirebaseAuth.getInstance().getCurrentUser() != null){
+//                //Get information of specific user from Firebase Database
+//                Data.getInstance().setCurrentUser(databaseHelper.getCurrentUserDatabase());
+//            } else {
+//                System.out.println("FB USER IS NULL!!! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");
+//            }
 
-            //Get information of specific user from Firebase Database
-            getDatabase();
+            databaseHelper.getCurrentUserDatabase();
             //Set current location in Firebase Database in the subbranch of the current user
-            updateUserValues();
+            databaseHelper.updateUserValues();
 
+            databaseHelper.getDbData();
             //Make new marker for the new location, delete old marker, and display new marker on map
             Marker newPosition = new Marker(map);
             newPosition.setPosition(newMarker);
@@ -310,90 +324,6 @@ public class MapFragment extends Fragment implements SetRoute{
             manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
         }
-    }
-
-    /**
-     * Get the current user information from the Database and go into this users subbranch
-     */
-    private void getDatabase() {
-        // TODO: 2-1-2021 need to make a better check for user, it's possible multiple users have the same input before the split character which is '@ '. But for now it works
-        database = FirebaseDatabase.getInstance();
-        auth = FirebaseAuth.getInstance();
-
-        //Get the email address of the current user and split it
-        String[] currentUser = auth.getCurrentUser().getEmail().split(Pattern.quote("@"));
-        String userPathSubstring = currentUser[0];
-        Data.getInstance().setCurrentUser(userPathSubstring);
-
-        //Go to the subbranch of this specific user
-        dbRef = database.getReference("Location Aware").child("User").child(userPathSubstring);
-        userNameAndLocation.put("name", userPathSubstring);
-        System.out.println("USERNAME FROM EMAILADDRESS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " + userPathSubstring);
-    }
-
-    public void addLocations(){
-        points.add(new GeoPoint(51.5897, 4.7616));
-        points.add(new GeoPoint(51.5890, 4.7758));
-        points.add(new GeoPoint(51.5957, 4.7795));
-        points.add(new GeoPoint(51.5859, 4.7924));
-
-        Data.getInstance().setGeoPointsList(points);
-    }
-
-    /**
-     * Update current user values (longitude and latitude) in the database
-     */
-    private void updateUserValues() {
-        double latitude = Data.getInstance().getCurrentLocation().getLatitude();
-        double longitude = Data.getInstance().getCurrentLocation().getLongitude();
-
-        userNameAndLocation.put("latitude", latitude);
-        userNameAndLocation.put("longitude", longitude);
-
-        dbRef.updateChildren(userNameAndLocation);
-        getDbData();
-    }
-
-    /**
-     * Get the data from the database with all the users
-     */
-    private void getDbData(){
-        DatabaseReference getDataRef = database.getReference("Location Aware").child("User");
-
-        getDataRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot usersSnapshot : snapshot.getChildren()){
-
-                    System.out.println("USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~~~~~" + usersSnapshot);
-                    User user = usersSnapshot.getValue(User.class);
-                    System.out.println("USER FROM USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~" + user);
-
-                    if(!user.getName().equals(Data.getInstance().getCurrentUser())){
-                        drawOtherUser(user);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-
-    /**
-     * Draw other users on map
-     * @param user
-     */
-    private void drawOtherUser(User user) {
-        double lat = user.getLatitude();
-        double lon = user.getLongitude();
-        GeoPoint otherUserLocation = new GeoPoint(lat, lon);
-
-        Marker otherUserMarker = new Marker(Data.getInstance().getMapView());
-        otherUserMarker.setPosition(otherUserLocation);
-        Data.getInstance().getMapView().getOverlays().add(otherUserMarker);
     }
 
     /**
@@ -452,6 +382,39 @@ public class MapFragment extends Fragment implements SetRoute{
     }
 
     /**
+     * Draw other users on map
+     * @param user
+     */
+    public void drawOtherUser(User user) {
+//        map.onResume();
+//        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, this).addToBackStack(null).commit();
+        double lat = user.getLatitude();
+        double lon = user.getLongitude();
+//        GeoPoint otherUserLocation = new GeoPoint(lat, lon);
+//        Marker otherUserMarker = new Marker(Data.getInstance().getMapView());
+//        otherUserMarker.setPosition(otherUserLocation);
+//        Data.getInstance().getMapView().getOverlays().add(otherUserMarker);
+
+        GeoPoint otherUserLocation = new GeoPoint(lat, lon);
+
+
+        if((mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),lat,lon) < 300) && (map != null)){
+            System.out.println("MAPVIEW IN DRAWOTHERUSER METHOD ~~~~~~~~~~~~~~~~~~  " + map);
+            otherUserMarker = new Marker(map);
+            otherUserMarker.setTitle(databaseHelper.getCurrentUserDatabase());
+            otherUserMarker.setPosition(otherUserLocation);
+            map.getOverlays().remove(oldMarker);
+            oldMarker = otherUserMarker;
+            map.getOverlays().add(otherUserMarker);
+
+            //Show marker title
+//            otherUserMarker.showInfoWindow();
+
+            map.invalidate();
+        }
+    }
+
+    /**
      * Gets a route from the recyclerviewer that contains multiple locations and draws this on the map
      * @param route
      */
@@ -481,6 +444,30 @@ public class MapFragment extends Fragment implements SetRoute{
 
     public void clearMap(){
         map.getOverlays().clear();
+    }
+
+    @Override
+    public void onMarkerUpdate(User user) {
+
+        double userLat  = user.getLatitude();
+        double userLon = user.getLongitude();
+        String userName = user.getName();
+
+        GeoPoint userLocation = new GeoPoint(userLat, userLon);
+
+        if(userHashMap.containsKey(userName)){
+            if(!userHashMap.get(userName).equals(userLocation)){
+                System.out.println("ONMARKERUPDATE ------" + userHashMap.get(userName) + userLocation);
+                /*if((mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),userLat,userLon) < 300) && (map != null)) {*/
+                    streetMaps.drawMarker(map, userLocation, userName);
+
+            }
+        }
+        userHashMap.put(userName,userLocation);
+        System.out.println("USERHASHMAP HERE--------------" + userHashMap);
+
+
+
     }
 
 }
