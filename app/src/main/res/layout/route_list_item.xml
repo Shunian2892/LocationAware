@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Name"
+        android:text="@string/route_name"
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.119"
@@ -37,7 +37,7 @@
         app:layout_constraintStart_toEndOf="@id/route_list_item_image"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="8dp"
-        android:text="places" />
+        android:text="@string/route_places" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

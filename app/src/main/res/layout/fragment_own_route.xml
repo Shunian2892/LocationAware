@@ -12,7 +12,7 @@
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:layout_marginTop="25dp"
-       android:hint="name Route"
+       android:hint="@string/set_new_route_name"
        app:layout_constraintTop_toTopOf="parent"
        app:layout_constraintEnd_toEndOf="parent"
        app:layout_constraintStart_toStartOf="parent"/>
@@ -21,7 +21,7 @@
         android:id="@+id/setlocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="name Location"
+        android:hint="@string/set_new_location"
         app:layout_constraintTop_toBottomOf="@id/setName"
         android:layout_marginTop="25dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,7 +34,7 @@
         app:layout_constraintTop_toBottomOf="@id/setlocation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/removeButton"
-        android:text="Add"/>
+        android:text="@string/add_new_location"/>
     <Button
         android:id="@+id/removeButton"
         android:layout_width="wrap_content"
@@ -43,7 +43,7 @@
         app:layout_constraintTop_toBottomOf="@id/setlocation"
         app:layout_constraintStart_toEndOf="@id/addButton"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Remove last"/>
+        android:text="@string/remove_last_location"/>
 
     <ListView
         android:id="@+id/addedLocations"
@@ -60,6 +60,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="create route"/>
+        android:text="@string/create_new_route"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

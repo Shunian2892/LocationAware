@@ -14,7 +14,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="260dp"
         android:gravity="center"
-        android:text="Sign in existing user"
+        android:text="@string/sign_in_existing_user"
         android:textStyle="bold"/>
 
     <RelativeLayout
@@ -35,7 +35,7 @@
                 android:id="@+id/email_address_sign_in"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:hint="E-mail address"
+                android:hint="@string/e_mail_address"
                 android:inputType="textEmailAddress"
                 android:singleLine="true"
                 android:textColorHint="@android:color/darker_gray" />
@@ -44,7 +44,7 @@
                 android:id="@+id/password_sign_in"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:hint="Password"
+                android:hint="@string/password"
                 android:inputType="textPassword"
                 android:singleLine="true"
                 android:textColorHint="@android:color/darker_gray" />
@@ -58,9 +58,9 @@
         android:layout_below="@id/emailSignIn"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:text="Sign in"
+        android:text="@string/sign_in"
         android:textAllCaps="false"
-        android:textSize="15dp" />
+        android:textSize="15sp" />
 
     <ProgressBar
         android:id="@+id/sign_in_progress_bar"

@@ -1,5 +1,34 @@
 <resources>
+    <!-- TODO: change app name!!!!! -->
     <string name="app_name">Location_Aware</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="walking">Walking</string>
+    <string name="cycling">Cycling</string>
+    <string name="driving">Driving</string>
+    <string name="route_places">Route places</string>
+    <string name="route_name">Route name</string>
+    <string name="set_new_route_name">Name of route</string>
+    <string name="set_new_location">Name of location</string>
+    <string name="add_new_location">Add</string>
+    <string name="remove_last_location">Remove last</string>
+    <string name="create_new_route">create route</string>
+    <string name="start_location">Start location</string>
+    <string name="to">to:</string>
+    <string name="sign_in_existing_user">Sign in existing user</string>
+    <string name="e_mail_address">E-mail address</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign in</string>
+    <string name="register">Register</string>
+    <string name="register_new_user">Register new user</string>
+    <string name="welcome_text">Welcome! What would you like to do?</string>
+    <string name="your_location">You are here</string>
+
+    <string-array name="suggestions_array">
+        <item>my location</item>
+        <item>current location</item>
+        <item>mijn locatie</item>
+        <item>huidige locatie</item>
+    </string-array>
+
+
 </resources>

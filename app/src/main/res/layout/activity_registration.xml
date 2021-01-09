@@ -14,7 +14,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="260dp"
         android:gravity="center"
-        android:text="Register new user"
+        android:text="@string/register_new_user"
         android:textStyle="bold"/>
 
     <RelativeLayout
@@ -35,7 +35,7 @@
                 android:id="@+id/email_address_registration"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:hint="E-mail address"
+                android:hint="@string/e_mail_address"
                 android:inputType="textEmailAddress"
                 android:singleLine="true"
                 android:textColorHint="@android:color/darker_gray" />
@@ -44,7 +44,7 @@
                 android:id="@+id/password_registration"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:hint="Password"
+                android:hint="@string/password"
                 android:inputType="textPassword"
                 android:singleLine="true"
                 android:textColorHint="@android:color/darker_gray" />
@@ -58,9 +58,9 @@
         android:layout_below="@id/emailAuth"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:text="Register"
+        android:text="@string/register"
         android:textAllCaps="false"
-        android:textSize="15dp" />
+        android:textSize="15sp" />
 
     <ProgressBar
         android:id="@+id/registration_progress_bar"
