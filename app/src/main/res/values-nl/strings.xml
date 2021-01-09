@@ -21,4 +21,16 @@
     <string name="register_new_user">Registreer nieuwe gebruiker</string>
     <string name="welcome_text">Hallo! Wat wilt u doen?</string>
     <string name="your_location">Hier bent u</string>
+    <string name="toast_choose_valid_route">Kies een valide route, alstublieft</string>
+    <string name="toast_stopping_route">Route aan het stoppen! Een ongenblik geduld...</string>
+    <string name="toast_starting_route">Rotue aan het starten! Een ongenblik geduld...</string>
+    <string name="toast_valid_location">Vul alstublieft een (geldig) punt in!</string>
+    <string name="toast_logged_out">U bent uitgelogd!</string>
+    <string name="toast_logged_in">U bent ingelogd!</string>
+    <string name="toast_register_new">Registratie geslaagd!</string>
+    <string name="toast_register_new_failed">Registratie is niet gelukt...</string>
+    <string name="toast_register_new_fields">Vul alstublieft alle velden in!</string>
+    <string name="toast_ownRoute_name">Vul alstublieft een routenaam in!</string>
+    <string name="toast_ownRoute_multiple_locations">Voeg alstublieft meeredere locaties toe!</string>
+    <string name="toast_ownRoute_created">Route is gecreëerd!</string>
 </resources>

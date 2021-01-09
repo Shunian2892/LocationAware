@@ -28,7 +28,10 @@ import org.osmdroid.util.GeoPoint;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
+/**
+ * In this class, the user can make his own route based on given locations. Before adding the location to the locations list, GeoPoint will check if it's a valid location.
+ * If the list is complete and the user clicks on the create route button, a new Route object with the correct geopoints will be made and put in the recyclerviewer in the routes screen.
+ */
 public class OwnRouteFragment extends Fragment {
         private EditText routeName, newLocation;
         private Button addLocation, deleteLocation, createRoute;
@@ -38,9 +41,7 @@ public class OwnRouteFragment extends Fragment {
         private GeoPoint newGeoPoint;
         private ArrayAdapter<String> adapter;
         private ArrayList<String> locationNames;
-        private RouteManager routeManager;
         private RouteAdapter routeAdapter;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,7 +50,6 @@ public class OwnRouteFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_own_route, container, false);
 
         streetMaps = Data.getInstance().getStreetMaps();
-        routeManager = Data.getInstance().getRouteManager();
         routeAdapter = Data.getInstance().getRouteAdapter();
 
         newPoints = new ArrayList<>();
@@ -65,7 +65,6 @@ public class OwnRouteFragment extends Fragment {
         adapter = new ArrayAdapter<String>(getContext(), R.layout.own_route_list_item, locationNames);
         addedLocations.setAdapter(adapter);
 
-        // Inflate the layout for this fragment
         return v;
     }
 
@@ -73,26 +72,29 @@ public class OwnRouteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //Add a location to the locations list
         addLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String location = newLocation.getText().toString();
                 newGeoPoint = streetMaps.createGeoPoint(getContext(), location);
 
+                //Check if location is a valid GeoPoint
                 if(newGeoPoint == null){
-                    Toast.makeText(getContext(), "This location is not valid, try again", Toast.LENGTH_LONG).show();
+                    makeToast(R.string.toast_valid_location);
                 } else {
                     newPoints.add(newGeoPoint);
                     locationNames.add(location);
-                    Log.d("Location added", "onClick: " + locationNames.toString());
                     adapter.notifyDataSetChanged();
                 }
             }
         });
 
+        //Delete previously added location from the list
         deleteLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Check if locations added isn't smaller than 2 locations
                 if(locationNames.size() != 0 && newPoints.size() != 0){
                     locationNames.remove(locationNames.size()-1);
                     newPoints.remove(newPoints.size()-1);
@@ -101,24 +103,27 @@ public class OwnRouteFragment extends Fragment {
             }
         });
 
+        //Create a new route based on the given locations and route name
         createRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String name = routeName.getText().toString();
+                //Check if route name textfield isn't empty
                 if(!name.equals("")){
                     if(newPoints.size() >= 2){
                         Route route = new Route(name, newPoints);
                         Data.getInstance().addRoute(route);
                         Data.getInstance().addToRouteHashMap(route.getName(), locationNames);
                         routeAdapter.notifyDataSetChanged();
-                        Toast.makeText(getContext(), "Route is created!", Toast.LENGTH_LONG).show();
+                        makeToast(R.string.toast_ownRoute_created);
                     } else {
-                        Toast.makeText(getContext(), "Please add multiple location!", Toast.LENGTH_LONG).show();
+                        makeToast(R.string.toast_ownRoute_multiple_locations);
                     }
                 } else {
-                    Toast.makeText(getContext(), "Please type in a name!", Toast.LENGTH_LONG).show();
+                    makeToast(R.string.toast_ownRoute_name);
                 }
 
+                //Save data to shared preferences
                 saveData();
                 newPoints = new ArrayList<>();
                 locationNames = new ArrayList<>();
@@ -129,7 +134,11 @@ public class OwnRouteFragment extends Fragment {
         });
     }
 
+    /**
+     * Save shared preferences data
+     */
     public void saveData(){
+        //Save route list to shared preferences
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("shared preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
@@ -137,11 +146,16 @@ public class OwnRouteFragment extends Fragment {
         editor.putString("route list",jsonList);
         editor.apply();
 
+        //Save location list of a route to shared preferences
         SharedPreferences hashMapPref = getActivity().getSharedPreferences("hashmap", Context.MODE_PRIVATE);
         SharedPreferences.Editor hmEditor = hashMapPref.edit();
         Gson hmGson = new Gson();
         String jsonNames = hmGson.toJson(Data.getInstance().getRouteHashMap());
         hmEditor.putString("location name list",jsonNames);
         hmEditor.apply();
+    }
+
+    private void makeToast(int messageID){
+        Toast.makeText(getContext(), messageID, Toast.LENGTH_LONG).show();
     }
 }

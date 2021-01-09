@@ -53,31 +53,16 @@
         android:id="@+id/start_route_button"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="@+id/topPanel"
-        app:layout_constraintHorizontal_bias="0.309"
+        app:layout_constraintHorizontal_bias="0.323"
         app:layout_constraintStart_toEndOf="@+id/spinner"
         app:layout_constraintTop_toBottomOf="@+id/end_location"
         app:srcCompat="@drawable/start_route" />
-
-    <ImageButton
-        android:id="@+id/stop_route_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@android:color/transparent"
-        android:scaleType="fitCenter"
-        app:layout_constraintEnd_toEndOf="@+id/topPanel"
-        app:layout_constraintHorizontal_bias="0.2"
-        app:layout_constraintStart_toEndOf="@+id/start_route_button"
-        app:layout_constraintTop_toBottomOf="@+id/end_location"
-        app:srcCompat="@drawable/stop_route_disabled" />
 
     <!--    <EditText-->
 <!--        android:id="@+id/start_location"-->
@@ -90,6 +75,21 @@
 <!--        android:scrollHorizontally="true"-->
 <!--        app:layout_constraintStart_toStartOf="parent"-->
 <!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+    <ImageButton
+        android:id="@+id/stop_route_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="@+id/topPanel"
+        app:layout_constraintHorizontal_bias="0.203"
+        app:layout_constraintStart_toEndOf="@+id/start_route_button"
+        app:layout_constraintTop_toBottomOf="@+id/end_location"
+        app:srcCompat="@drawable/stop_route_disabled" />
 
     <AutoCompleteTextView
         android:id="@+id/start_location"
@@ -107,10 +107,8 @@
     <Spinner
         android:id="@+id/end_location"
         android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:scrollHorizontally="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

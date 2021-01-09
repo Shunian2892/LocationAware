@@ -22,6 +22,7 @@
     <string name="register_new_user">Register new user</string>
     <string name="welcome_text">Welcome! What would you like to do?</string>
     <string name="your_location">You are here</string>
+    <string name="toast_choose_valid_route">Please choose a valid route</string>
 
     <string-array name="suggestions_array">
         <item>my location</item>
@@ -29,6 +30,17 @@
         <item>mijn locatie</item>
         <item>huidige locatie</item>
     </string-array>
+    <string name="toast_stopping_route">Stopping route! A moment please...</string>
+    <string name="toast_starting_route">Starting route! A moment please...</string>
+    <string name="toast_valid_location">Please type in a (valid) point!</string>
+    <string name="toast_logged_out">You are successfully logged out!</string>
+    <string name="toast_logged_in">You are successfully logged in!</string>
+    <string name="toast_register_new">Registration successful!</string>
+    <string name="toast_register_new_failed">Registration was unsuccesfull...</string>
+    <string name="toast_register_new_fields">Please fill in all the fields!</string>
+    <string name="toast_ownRoute_name">Please type in a name for the route!</string>
+    <string name="toast_ownRoute_multiple_locations">Please add multiple locations!</string>
+    <string name="toast_ownRoute_created">Route is created!</string>
 
 
 </resources>

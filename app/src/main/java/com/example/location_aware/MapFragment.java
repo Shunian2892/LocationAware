@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,7 +121,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
 
         //Initialize EditText box
         startLocationInput = v.findViewById(R.id.start_location);
-        myLocation = new String[] { "my location", "current location", "huidige locatie", "mijn locatie"};
+        myLocation = getResources().getStringArray(R.array.suggestions_array);
         startLocationInput.setAdapter(new ArrayAdapter<String>(context, R.layout.autocomplete_list_item, myLocation));
 
         //Initialise arraylist with different methods
@@ -209,6 +208,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
                 clicked = true;
                 String startLocation = startLocationInput.getText().toString();
 
+                //Check if input from start location is the same as one of the saved suggestions, if so, then set the startLocation on current location
                 for(String myLoc : myLocation){
                     if(startLocation.equals(myLoc)){
                         startPoint = Data.getInstance().getCurrentLocation();
@@ -218,7 +218,8 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
                 }
 
                 if(startPoint == null){
-                    Toast.makeText(getContext(), "Please type in a (valid) start point!", Toast.LENGTH_LONG).show();
+                    makeToast(R.string.toast_valid_location);
+//                    Toast.makeText(getContext(), "Please type in a (valid) start point!", Toast.LENGTH_LONG).show();
                 } else {
 //                    Log.d("ONCLICK MapFragment", startPoint + " " + endPoint);
 //                    Log.d("DataONCLICK mapfragment", Data.getInstance().getStreetMaps().toString());
@@ -228,7 +229,8 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
                     startRoute.setImageResource(R.drawable.start_route_disabled);
                     stopRoute.setEnabled(true);
                     stopRoute.setImageResource(R.drawable.stop_route);
-                    Toast.makeText(getContext(), "Starting route! A moment please...", Toast.LENGTH_LONG).show();
+                    makeToast(R.string.toast_starting_route);
+//                    Toast.makeText(getContext(), "Starting route! A moment please...", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -243,7 +245,8 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
                 stopRoute.setImageResource(R.drawable.stop_route_disabled);
                 startRoute.setEnabled(true);
                 startRoute.setImageResource(R.drawable.start_route);
-                Toast.makeText(getContext(), "Stopping route! A moment please...", Toast.LENGTH_LONG).show();
+                makeToast(R.string.toast_stopping_route);
+//                Toast.makeText(getContext(), "Stopping route! A moment please...", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -385,12 +388,12 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
      */
     @Override
     public void setRouteCoord(Route route) {
-        //Log.d("MainActivity Rote", route.getStringPlaces());
         ArrayList<GeoPoint> geoPoints = new ArrayList<>();
 
         if(!route.isOwnMade()){
             if(geoPoints == null){
-                Toast.makeText(context, "Please chose a valid route", Toast.LENGTH_LONG).show();
+                makeToast(R.string.toast_choose_valid_route);
+//                Toast.makeText(context, "Please chose a valid route", Toast.LENGTH_LONG).show();
             } else {
                 for (int i =0; i<route.getPlaces().length;i++) {
                     geoPoints.add(streetMaps.createGeoPoint(context, route.getPlaces()[i]));
@@ -426,14 +429,18 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
 
         if(userHashMap.containsKey(userName)){
             if(!userHashMap.get(userName).equals(userLocation)){
-                System.out.println("ONMARKERUPDATE ------" + userHashMap.get(userName) + userLocation);
-                /*if((mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),userLat,userLon) < 300) && (map != null)) {*/
+//                System.out.println("ONMARKERUPDATE ------" + userHashMap.get(userName) + userLocation);
+                if((mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),userLat,userLon) < 300) && (map != null)) {
                     streetMaps.drawMarker(map, userLocation, userName);
-
+                }
             }
         }
         userHashMap.put(userName,userLocation);
 //        System.out.println("USERHASHMAP HERE--------------" + userHashMap);
+    }
+
+    private void makeToast(int messageID){
+        Toast.makeText(context, messageID, Toast.LENGTH_LONG).show();
     }
 }
 

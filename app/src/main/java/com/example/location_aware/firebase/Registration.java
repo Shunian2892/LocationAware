@@ -23,7 +23,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class Registration extends AppCompatActivity {
     private FirebaseAuth auth;
-    private FirebaseAuth.AuthStateListener authListener;
     private EditText newEmail, newPassword;
     private Button register;
     private ProgressBar progressBar;
@@ -59,8 +58,8 @@ public class Registration extends AppCompatActivity {
                             //Hide progressbar after registration completion
                             progressBar.setVisibility(View.GONE);
                             if(task.isSuccessful()){
-                                makeToast("Registration successful!");
-                                Log.d(TAG, "createUserWithEmail:success");
+                                makeToast(R.string.toast_register_new);
+//                                Log.d(TAG, "createUserWithEmail:success");
                                 newEmail.setText("");
                                 newPassword.setText("");
 
@@ -71,19 +70,19 @@ public class Registration extends AppCompatActivity {
                                 //Close Registration activity
                                 finish();
                             } else {
-                                makeToast(task.getException().getMessage());
-                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                makeToast(R.string.toast_register_new_failed);
+//                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             }
                         }
                     });
                 } else {
-                    makeToast("Please fill in all the fields");
+                    makeToast(R.string.toast_register_new_fields);
                 }
             }
         });
     }
 
-    private void makeToast(String message){
+    private void makeToast(int message){
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }
