@@ -29,12 +29,12 @@
         app:layout_constraintTop_toTopOf="parent" >
 
 
-        <Button
-            android:id="@+id/logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Log out"
-            android:onClick="logout"/>
+<!--        <Button-->
+<!--            android:id="@+id/logout"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Log out"-->
+<!--            android:onClick="logout"/>-->
     </FrameLayout>
 
 

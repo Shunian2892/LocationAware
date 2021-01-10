@@ -14,12 +14,12 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -33,13 +33,6 @@ import com.example.location_aware.spinner.DogWalkingItem;
 import com.example.location_aware.spinner.MethodAdapter;
 import com.example.location_aware.spinner.MethodItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -52,7 +45,6 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateListener{
     private Context context;
@@ -72,7 +64,9 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
     private boolean firstLocationSet;
     private ImageButton startRoute, stopRoute;
     private FloatingActionButton setCenter;
-    private EditText startLocationInput;
+//    private EditText startLocationInput;
+    private AutoCompleteTextView startLocationInput;
+    private String[] myLocation;
     private Spinner methodChoices, dogParkChoices;
     private ArrayList<MethodItem> methods;
     private ArrayList<DogWalkingItem> dogParks;
@@ -82,7 +76,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
     private MethodAdapter methodAdapter;
     private DogWalkingAdapter dogWalkingAdapter;
 
-    private GeofenceSetup setupexe;
+    private GeofenceSetup geofenceSetup;
 
     private OpenRouteService routeService;
     private Boolean clicked;
@@ -90,7 +84,6 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
 
     private MapHelper mapHelper;
     private HashMap<String, GeoPoint> userHashMap;
-
 
     public MapFragment() {
         // Required empty public constructor
@@ -111,13 +104,13 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
 
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
+        //Initialise database helper and other usher hashmap
         databaseHelper = new DatabaseHelper();
         userHashMap = new HashMap<>();
 
         //Create mapView and draw marker on current location
         createMap(v);
         streetMaps = Data.getInstance().getStreetMaps();
-
 
         clicked = false;
         //Initialize buttons
@@ -128,14 +121,17 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
 
         //Initialize EditText box
         startLocationInput = v.findViewById(R.id.start_location);
+        myLocation = getResources().getStringArray(R.array.suggestions_array);
+        startLocationInput.setAdapter(new ArrayAdapter<String>(context, R.layout.autocomplete_list_item, myLocation));
 
         //Initialise arraylist with different methods
         initSpinnerList();
         methodChoices = v.findViewById(R.id.spinner);
         dogParkChoices = v.findViewById(R.id.end_location);
 
-        setupexe = new GeofenceSetup(getActivity().getApplicationContext(), getActivity());
-        setupexe.setUpGeofencing();
+        //Initialize Geofence setup
+        geofenceSetup = new GeofenceSetup(getActivity().getApplicationContext(), getActivity());
+        geofenceSetup.setUpGeofencing();
 
         mapHelper = new MapHelper();
         return v;
@@ -144,7 +140,8 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //Get location
+
+        //Get current location
         getLocation();
 
         //Set adapter to the spinner and a setOnItemSelectedListener.
@@ -155,6 +152,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 MethodItem clickedMethod = (MethodItem) adapterView.getItemAtPosition(position);
                 String clickedItemName = clickedMethod.getMethodName();
+
 
                 switch (clickedItemName){
                     case "Walking":
@@ -210,20 +208,29 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
                 clicked = true;
                 String startLocation = startLocationInput.getText().toString();
 
-                startPoint = streetMaps.createGeoPoint(getContext(), startLocation);
+                //Check if input from start location is the same as one of the saved suggestions, if so, then set the startLocation on current location
+                for(String myLoc : myLocation){
+                    if(startLocation.equals(myLoc)){
+                        startPoint = Data.getInstance().getCurrentLocation();
+                    } else {
+                        startPoint = streetMaps.createGeoPoint(getContext(), startLocation);
+                    }
+                }
 
                 if(startPoint == null){
-                    Toast.makeText(getContext(), "Please type in a (valid) start point!", Toast.LENGTH_LONG).show();
+                    makeToast(R.string.toast_valid_location);
+//                    Toast.makeText(getContext(), "Please type in a (valid) start point!", Toast.LENGTH_LONG).show();
                 } else {
-                    Log.d("ONCLICK MapFragment", startPoint + " " + endPoint);
-                    Log.d("DataONCLICK mapfragment", Data.getInstance().getStreetMaps().toString());
+//                    Log.d("ONCLICK MapFragment", startPoint + " " + endPoint);
+//                    Log.d("DataONCLICK mapfragment", Data.getInstance().getStreetMaps().toString());
                     streetMaps.clearRoute();
                     drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
                     startRoute.setEnabled(false);
                     startRoute.setImageResource(R.drawable.start_route_disabled);
                     stopRoute.setEnabled(true);
                     stopRoute.setImageResource(R.drawable.stop_route);
-                    Toast.makeText(getContext(), "Starting route! A moment please...", Toast.LENGTH_LONG).show();
+                    makeToast(R.string.toast_starting_route);
+//                    Toast.makeText(getContext(), "Starting route! A moment please...", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -238,7 +245,8 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
                 stopRoute.setImageResource(R.drawable.stop_route_disabled);
                 startRoute.setEnabled(true);
                 startRoute.setImageResource(R.drawable.start_route);
-                Toast.makeText(getContext(), "Stopping route! A moment please...", Toast.LENGTH_LONG).show();
+                makeToast(R.string.toast_stopping_route);
+//                Toast.makeText(getContext(), "Stopping route! A moment please...", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -297,13 +305,6 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
 
             //Set current location in Data Singleton
             Data.getInstance().setCurrentLocation(newMarker);
-//
-//            if(FirebaseAuth.getInstance().getCurrentUser() != null){
-//                //Get information of specific user from Firebase Database
-//                Data.getInstance().setCurrentUser(databaseHelper.getCurrentUserDatabase());
-//            } else {
-//                System.out.println("FB USER IS NULL!!! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ");
-//            }
 
             databaseHelper.getCurrentUserDatabase();
             //Set current location in Firebase Database in the subbranch of the current user
@@ -382,50 +383,17 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
     }
 
     /**
-     * Draw other users on map
-     * @param user
-     */
-    public void drawOtherUser(User user) {
-//        map.onResume();
-//        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, this).addToBackStack(null).commit();
-        double lat = user.getLatitude();
-        double lon = user.getLongitude();
-//        GeoPoint otherUserLocation = new GeoPoint(lat, lon);
-//        Marker otherUserMarker = new Marker(Data.getInstance().getMapView());
-//        otherUserMarker.setPosition(otherUserLocation);
-//        Data.getInstance().getMapView().getOverlays().add(otherUserMarker);
-
-        GeoPoint otherUserLocation = new GeoPoint(lat, lon);
-
-
-        if((mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),lat,lon) < 300) && (map != null)){
-            System.out.println("MAPVIEW IN DRAWOTHERUSER METHOD ~~~~~~~~~~~~~~~~~~  " + map);
-            otherUserMarker = new Marker(map);
-            otherUserMarker.setTitle(databaseHelper.getCurrentUserDatabase());
-            otherUserMarker.setPosition(otherUserLocation);
-            map.getOverlays().remove(oldMarker);
-            oldMarker = otherUserMarker;
-            map.getOverlays().add(otherUserMarker);
-
-            //Show marker title
-//            otherUserMarker.showInfoWindow();
-
-            map.invalidate();
-        }
-    }
-
-    /**
      * Gets a route from the recyclerviewer that contains multiple locations and draws this on the map
      * @param route
      */
     @Override
     public void setRouteCoord(Route route) {
-        //Log.d("MainActivity Rote", route.getStringPlaces());
         ArrayList<GeoPoint> geoPoints = new ArrayList<>();
 
         if(!route.isOwnMade()){
             if(geoPoints == null){
-                Toast.makeText(context, "Please chose a valid route", Toast.LENGTH_LONG).show();
+                makeToast(R.string.toast_choose_valid_route);
+//                Toast.makeText(context, "Please chose a valid route", Toast.LENGTH_LONG).show();
             } else {
                 for (int i =0; i<route.getPlaces().length;i++) {
                     geoPoints.add(streetMaps.createGeoPoint(context, route.getPlaces()[i]));
@@ -446,6 +414,10 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         map.getOverlays().clear();
     }
 
+    /**
+     * Draw other user locations on map when their position is changed in the database
+     * @param user
+     */
     @Override
     public void onMarkerUpdate(User user) {
 
@@ -457,19 +429,19 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
 
         if(userHashMap.containsKey(userName)){
             if(!userHashMap.get(userName).equals(userLocation)){
-                System.out.println("ONMARKERUPDATE ------" + userHashMap.get(userName) + userLocation);
-                /*if((mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),userLat,userLon) < 300) && (map != null)) {*/
+//                System.out.println("ONMARKERUPDATE ------" + userHashMap.get(userName) + userLocation);
+                if((mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),userLat,userLon) < 300) && (map != null)) {
                     streetMaps.drawMarker(map, userLocation, userName);
-
+                }
             }
         }
         userHashMap.put(userName,userLocation);
-        System.out.println("USERHASHMAP HERE--------------" + userHashMap);
-
-
-
+//        System.out.println("USERHASHMAP HERE--------------" + userHashMap);
     }
 
+    private void makeToast(int messageID){
+        Toast.makeText(context, messageID, Toast.LENGTH_LONG).show();
+    }
 }
 
 

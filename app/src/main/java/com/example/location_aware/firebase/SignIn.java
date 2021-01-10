@@ -24,9 +24,12 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
+/**
+ * This class handles the signing in of a existing (firebase) user. Based on the given email address and password, the firebase authenticator will check if there is a user registered.
+ * If not, it will show a toast with the error message.
+ */
 public class SignIn extends AppCompatActivity {
     private FirebaseAuth auth;
-    private FirebaseAuth.AuthStateListener authListener;
     private EditText email, password;
     private Button signIn;
     private ProgressBar progressBar;
@@ -46,29 +49,27 @@ public class SignIn extends AppCompatActivity {
         //Instantiate Firebase Authenticator and listener
         auth = FirebaseAuth.getInstance();
 
-
-        //Set authenticator listener into Data singleton for use elsewhere
-//        Data.getInstance().setAuthStateListener(authListener);
-
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String emailAddress = email.getText().toString();
                 String pass = password.getText().toString();
+                //Show progressbar
+                progressBar.setVisibility(View.VISIBLE);
 
                 if(!emailAddress.equals("") && !pass.equals("")){
                     auth.signInWithEmailAndPassword(emailAddress, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
+                            //Hide progressbar
+                            progressBar.setVisibility(View.GONE);
                             if(!task.isSuccessful()){
                                 try {
                                     throw task.getException();
                                 } catch (FirebaseAuthInvalidUserException invalidEmail) {
-                                    Log.d(TAG, "onComplete: Invalid email");
-                                    makeToast("Invalid/non existing email address!");
+                                    makeToast(R.string.toast_signIn_invalid_email);
                                 } catch (FirebaseAuthInvalidCredentialsException invalidPassword) {
-                                    Log.d(TAG, "onComplete: Invalid password!");
-                                    makeToast("Invalid password");
+                                    makeToast(R.string.toast_signIn_invalid_password);
                                 } catch (Exception e) {
                                     Log.d(TAG, "onComplete: " + e.getMessage());
                                 }
@@ -83,13 +84,13 @@ public class SignIn extends AppCompatActivity {
                         }
                     });
                 } else  {
-                    makeToast("Please fill in all the fields");
+                    makeToast(R.string.toast_register_new_fields);
                 }
             }
         });
     }
 
-    private void makeToast(String message){
+    private void makeToast(int message){
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }

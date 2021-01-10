@@ -1,5 +1,58 @@
 <resources>
+    <!-- TODO: change app name!!!!! -->
     <string name="app_name">Location_Aware</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="walking">Walking</string>
+    <string name="cycling">Cycling</string>
+    <string name="driving">Driving</string>
+    <string name="route_places">Route places</string>
+    <string name="route_name">Route name</string>
+    <string name="set_new_route_name">Name of route</string>
+    <string name="set_new_location">Name of location</string>
+    <string name="add_new_location">Add</string>
+    <string name="remove_last_location">Remove last</string>
+    <string name="create_new_route">create route</string>
+    <string name="start_location">Start location</string>
+    <string name="to">to:</string>
+    <string name="sign_in_existing_user">Sign in existing user</string>
+    <string name="e_mail_address">E-mail address</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign in</string>
+    <string name="register">Register</string>
+    <string name="register_new_user">Register new user</string>
+    <string name="welcome_text">Welcome! What would you like to do?</string>
+    <string name="your_location">You are here</string>
+    <string name="toast_choose_valid_route">Please choose a valid route</string>
+
+    <string-array name="suggestions_array">
+        <item>my location</item>
+        <item>current location</item>
+        <item>mijn locatie</item>
+        <item>huidige locatie</item>
+    </string-array>
+    <string name="toast_stopping_route">Stopping route! A moment please...</string>
+    <string name="toast_starting_route">Starting route! A moment please...</string>
+    <string name="toast_valid_location">Please type in a (valid) point!</string>
+    <string name="toast_logged_out">You are successfully logged out!</string>
+    <string name="toast_logged_in">You are successfully logged in!</string>
+    <string name="toast_register_new">Registration successful!</string>
+    <string name="toast_register_new_failed">Registration was unsuccesfull...</string>
+    <string name="toast_register_new_fields">Please fill in all the fields!</string>
+    <string name="toast_ownRoute_name">Please type in a name for the route!</string>
+    <string name="toast_ownRoute_multiple_locations">Please add multiple locations!</string>
+    <string name="toast_ownRoute_created">Route is created!</string>
+    <string name="toast_signIn_invalid_email">Invalid/non existing e-mail address!</string>
+    <string name="toast_signIn_invalid_password">Invalid password!</string>
+    <string name="map">Map</string>
+    <string name="routes">Routes</string>
+    <string name="settings">Settings</string>
+    <string name="log_out">Log out</string>
+    <string name="create_own_route">Create own route</string>
+    <string name="change_password">Change password</string>
+    <string name="set_new_password">Set new password:</string>
+    <string name="repeat_new_password">Repeat new password:</string>
+    <string name="enter_new_password">Enter new password:</string>
+    <string name="confirm_new_password">Confirm</string>
+    <string name="toast_changePassword">User password updated</string>
+    <string name="toast_changePassword_failed">Passwords are not equal</string>
 </resources>

@@ -1,65 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ownRouteFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".OwnRouteFragment"
-    android:id="@+id/ownRouteFragment">
+    android:background="@color/teal_200"
+    tools:context=".OwnRouteFragment">
 
-   <EditText
-       android:id="@+id/setName"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_marginTop="25dp"
-       android:hint="name Route"
-       app:layout_constraintTop_toTopOf="parent"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintStart_toStartOf="parent"/>
+    <ImageButton
+        android:id="@+id/own_route_backButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="fitCenter"
+        android:background="@android:color/transparent"
+        android:src="@drawable/abc_vector_test"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.043"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/setName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:hint="@string/set_new_route_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/setlocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="name Location"
-        app:layout_constraintTop_toBottomOf="@id/setName"
         android:layout_marginTop="25dp"
+        android:hint="@string/set_new_location"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/setName" />
+
     <Button
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
-        app:layout_constraintTop_toBottomOf="@id/setlocation"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/add_new_location"
         app:layout_constraintEnd_toStartOf="@id/removeButton"
-        android:text="Add"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/setlocation" />
+
     <Button
         android:id="@+id/removeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
-        app:layout_constraintTop_toBottomOf="@id/setlocation"
-        app:layout_constraintStart_toEndOf="@id/addButton"
+        android:text="@string/remove_last_location"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Remove last"/>
+        app:layout_constraintStart_toEndOf="@id/addButton"
+        app:layout_constraintTop_toBottomOf="@id/setlocation" />
 
     <ListView
         android:id="@+id/addedLocations"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/removeButton"
-        app:layout_constraintBottom_toTopOf="@id/createRouteButton"/>
+        app:layout_constraintBottom_toTopOf="@id/createRouteButton"
+        app:layout_constraintTop_toBottomOf="@id/removeButton" />
 
     <Button
         android:id="@+id/createRouteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="25dp"
+        android:text="@string/create_new_route"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="create route"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
