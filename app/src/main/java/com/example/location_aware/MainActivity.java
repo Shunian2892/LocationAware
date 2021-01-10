@@ -8,10 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.location_aware.RouteRecyclerView.Route;
@@ -39,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private RouteRV routeRV;
     private OwnRouteFragment ownRouteFragment;
 
+    private SettingsFragment settingsFragment;
+
     private ArrayList<Route> routeList;
     private HashMap<String,ArrayList<String>> nameList;
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
@@ -49,15 +49,15 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.menu_map:
                             fragmentManager.beginTransaction().show(mapFragment).commit();
                             fragmentManager.beginTransaction().hide(routeRV).commit();
-                            fragmentManager.beginTransaction().hide(ownRouteFragment).commit();
+                            fragmentManager.beginTransaction().hide(settingsFragment).commit();
                             break;
                         case R.id.menu_list:
                             fragmentManager.beginTransaction().show(routeRV).commit();
                             fragmentManager.beginTransaction().hide(mapFragment).commit();
-                            fragmentManager.beginTransaction().hide(ownRouteFragment).commit();
+                            fragmentManager.beginTransaction().hide(settingsFragment).commit();
                             break;
                         case R.id.menu_makeRoute:
-                            fragmentManager.beginTransaction().show(ownRouteFragment).commit();
+                            fragmentManager.beginTransaction().show(settingsFragment).commit();
                             fragmentManager.beginTransaction().hide(routeRV).commit();
                             fragmentManager.beginTransaction().hide(mapFragment).commit();
                             break;
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         setMapFragment();
         setRouteFragment();
-        setOwnRouteFragment();
+        setSettingsFragment();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
@@ -142,19 +142,31 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager.beginTransaction().hide(routeRV).commit();
     }
 
-    /**
-     * Checks if there is a set own route fragment. If there isn't, then make a new OwnRouteFragment and commit
-     */
-    public void setOwnRouteFragment(){
-        if(fragmentManager.findFragmentById(R.id.ownRouteFragment) == null){
-            ownRouteFragment = new OwnRouteFragment();
-            fragmentManager.beginTransaction().add(R.id.fragment_container,ownRouteFragment).commit();
+//    /**
+//     * Checks if there is a set own route fragment. If there isn't, then make a new OwnRouteFragment and commit
+//     */
+//    public void setOwnRouteFragment(){
+//        if(fragmentManager.findFragmentById(R.id.ownRouteFragment) == null){
+//            ownRouteFragment = new OwnRouteFragment();
+//            fragmentManager.beginTransaction().add(R.id.fragment_container,ownRouteFragment).commit();
+//        } else {
+//            ownRouteFragment = (OwnRouteFragment) fragmentManager.findFragmentById(R.id.ownRouteFragment);
+//        }
+//
+//        Data.getInstance().setOwnRouteFragment(ownRouteFragment);
+//        fragmentManager.beginTransaction().hide(ownRouteFragment).commit();
+//    }
+
+    public void setSettingsFragment(){
+        if(fragmentManager.findFragmentById(R.id.settings_fragment) == null){
+            settingsFragment = new SettingsFragment();
+            fragmentManager.beginTransaction().add(R.id.fragment_container,settingsFragment).commit();
         } else {
-            ownRouteFragment = (OwnRouteFragment) fragmentManager.findFragmentById(R.id.ownRouteFragment);
+            settingsFragment = (SettingsFragment) fragmentManager.findFragmentById(R.id.settings_fragment);
         }
 
-        Data.getInstance().setOwnRouteFragment(ownRouteFragment);
-        fragmentManager.beginTransaction().hide(ownRouteFragment).commit();
+        Data.getInstance().setSettingsFragment(settingsFragment);
+        fragmentManager.beginTransaction().hide(settingsFragment).commit();
     }
 
     /**

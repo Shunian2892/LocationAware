@@ -22,7 +22,6 @@ public class LoginScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in_screen);
 
-
         register = findViewById(R.id.login_register);
         signIn = findViewById(R.id.login_sign_in);
 

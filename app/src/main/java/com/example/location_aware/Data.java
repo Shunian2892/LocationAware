@@ -46,6 +46,9 @@ public class Data {
     private MapFragment mapFragment;
     private OwnRouteFragment ownRouteFragment;
     private RouteRV routeRV;
+    private ChangePasswordFragment changePasswordFragment;
+    private SettingsFragment settingsFragment;
+    private SettingsFragmentButtons settingsButtons;
     private IMarkerUpdateListener markerUpdateListener;
 
     public static Data getInstance(){
@@ -238,6 +241,30 @@ public class Data {
 
     public void setDogWalkingItems(ArrayList<DogWalkingItem> dogWalkingItems) {
         this.dogWalkingItems = dogWalkingItems;
+    }
+
+    public ChangePasswordFragment getChangePasswordFragment() {
+        return changePasswordFragment;
+    }
+
+    public void setChangePasswordFragment(ChangePasswordFragment changePasswordFragment) {
+        this.changePasswordFragment = changePasswordFragment;
+    }
+
+    public SettingsFragment getSettingsFragment() {
+        return settingsFragment;
+    }
+
+    public void setSettingsFragment(SettingsFragment settingsFragment) {
+        this.settingsFragment = settingsFragment;
+    }
+
+    public SettingsFragmentButtons getSettingsButtons() {
+        return settingsButtons;
+    }
+
+    public void setSettingsButtons(SettingsFragmentButtons settingsButtons) {
+        this.settingsButtons = settingsButtons;
     }
 
     public IMarkerUpdateListener getMarkerUpdateListener() {
