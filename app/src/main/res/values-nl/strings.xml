@@ -41,4 +41,10 @@
     <string name="log_out">Log uit</string>
     <string name="create_own_route">Creëer eigen route</string>
     <string name="change_password">Verander wachtwoord</string>
+    <string name="set_new_password">Zet nieuw wachtwoord:</string>
+    <string name="repeat_new_password">Herhaal nieuw wachtwoord:</string>
+    <string name="enter_new_password">Vul nieuw wachtwoord in:</string>
+    <string name="confirm_new_password">Bevestig</string>
+    <string name="toast_changePassword">Gebruikers wachtwoord veranderd</string>
+    <string name="toast_changePassword_failed">Wachtwoorden komen niet overeen</string>
 </resources>
