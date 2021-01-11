@@ -8,4 +8,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="disabled">#C0C0C0</color>
+
+    <color name="ashGray">#CAD2C5</color>
+    <color name="brownSugar">#B36C49</color>
+    <color name="darkSeaGreen">#84A98C</color>
+    <color name="feldgrau">#3C635A</color>
+    <color name="caputMortuum">#662C29</color>
 </resources>

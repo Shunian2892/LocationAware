@@ -3,12 +3,10 @@
     package="com.example.location_aware">
     <!-- Offline tile provider and storing tiles -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- Location provider -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Location provider -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <!-- Internet access -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> <!-- Internet access -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -20,16 +18,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Location_Aware"
         android:usesCleartextTraffic="true">
-        <activity android:name=".firebase.SignIn" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".firebase.Registration" />
-        <activity android:name=".LoginScreen">
+        <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".firebase.SignIn" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".firebase.Registration" />
+        <activity android:name=".LoginScreen"/>
 
         <receiver android:name=".geofencing.GeoFenceBroadcastReceiver" />
     </application>
