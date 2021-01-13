@@ -29,6 +29,6 @@ public class MapHelperTest extends TestCase {
         double lon2 = 4.779160;
 
         double expected = mapHelper.distanceCoords(lat1, lon1, lat2, lon2);
-        assertEquals(expected, 45);
+        assertEquals(expected, 45, 0.5);
     }
 }
