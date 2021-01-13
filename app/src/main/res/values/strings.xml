@@ -55,4 +55,7 @@
     <string name="confirm_new_password">Confirm</string>
     <string name="toast_changePassword">User password updated</string>
     <string name="toast_changePassword_failed">Passwords are not equal</string>
+    <string name="toast_geofence_enter">You are entering a dog park/forrest</string>
+    <string name="toast_geofence_dwell">You are in a dog park/forest</string>
+    <string name="toast_geofence_exit">You are exiting a dog park/forrest</string>
 </resources>

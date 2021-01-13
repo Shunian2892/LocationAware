@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".firebase.SignIn">
+    tools:context=".data.firebase.SignIn">
 
     <TextView
         android:id="@+id/sign_in_user_tv"

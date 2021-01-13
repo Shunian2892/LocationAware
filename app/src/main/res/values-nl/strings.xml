@@ -47,4 +47,7 @@
     <string name="confirm_new_password">Bevestig</string>
     <string name="toast_changePassword">Gebruikers wachtwoord veranderd</string>
     <string name="toast_changePassword_failed">Wachtwoorden komen niet overeen</string>
+    <string name="toast_geofence_enter">U gaat een honden park/bos binnen</string>
+    <string name="toast_geofence_dwell">U bevindt zich in een honden park/bos</string>
+    <string name="toast_geofence_exit">U verlaat een honden park/bos</string>
 </resources>
