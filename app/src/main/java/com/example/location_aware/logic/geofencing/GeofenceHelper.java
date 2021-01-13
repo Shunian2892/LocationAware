@@ -10,6 +10,9 @@ import com.google.android.gms.location.GeofencingRequest;
 
 import org.osmdroid.util.GeoPoint;
 
+/**
+ * This class handles all pending intents, geofencing requests, and sets new geofences
+ */
 class GeofenceHelper extends ContextWrapper {
     private PendingIntent pendingIntent;
 
@@ -17,6 +20,11 @@ class GeofenceHelper extends ContextWrapper {
         super(base);
     }
 
+    /**
+     * Create new Geofence request
+     * @param geofence the location on which a geofence has to be set
+     * @return return the request
+     */
     public GeofencingRequest getGeofencingRequest(Geofence geofence){
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
@@ -24,6 +32,14 @@ class GeofenceHelper extends ContextWrapper {
         return builder.build();
     }
 
+    /**
+     * Set a new geofence based on a given geopoint location
+     * @param id unique id of the new geofence
+     * @param point geopoint with latitude and longitude of the location
+     * @param radius radius of the geofence around the location
+     * @param transitionTypes transition type of user, can be: entering, dewelling, or exiting
+     * @return return the geofence
+     */
     public Geofence getGeofence(String id, GeoPoint point, float radius, int transitionTypes){
         Geofence geofence = new Geofence.Builder()
                 .setCircularRegion(point.getLatitude(),point.getLongitude(),radius)
@@ -35,11 +51,15 @@ class GeofenceHelper extends ContextWrapper {
         return geofence;
     }
 
+    /**
+     * Makes a new intent for transition types
+     * @return pending intent
+     */
     public PendingIntent getPendingIntent(){
         if(pendingIntent != null) return pendingIntent;
 
         Intent intent = new Intent(this, GeoFenceBroadcastReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(this,2607,intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        return  pendingIntent;
+        return pendingIntent;
     }
 }

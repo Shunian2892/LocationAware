@@ -87,6 +87,10 @@ public class SignIn extends AppCompatActivity {
         });
     }
 
+    /**
+     * Make a new toast
+     * @param message id of the string resource such that the text changes depending on the device language
+     */
     private void makeToast(int message){
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }

@@ -29,7 +29,6 @@ import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 
-
 /**
  * In this class, the user can make his own route based on given locations. Before adding the location to the locations list, GeoPoint will check if it's a valid location.
  * If the list is complete and the user clicks on the create route button, a new Route object with the correct geopoints will be made and put in the recyclerviewer in the routes screen.
@@ -55,6 +54,7 @@ public class OwnRouteFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_own_route, container, false);
 
+        //Find all views
         fragmentManager = getFragmentManager();
         ibBackButton = v.findViewById(R.id.own_route_backButton);
 
@@ -143,6 +143,7 @@ public class OwnRouteFragment extends Fragment {
             }
         });
 
+        //Go back to the buttons fragment
         ibBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -173,6 +174,10 @@ public class OwnRouteFragment extends Fragment {
         hmEditor.apply();
     }
 
+    /**
+     * Make a new toast
+     * @param messageID id of the string resource such that the text changes depending on the device language
+     */
     private void makeToast(int messageID){
         Toast.makeText(getContext(), messageID, Toast.LENGTH_LONG).show();
     }

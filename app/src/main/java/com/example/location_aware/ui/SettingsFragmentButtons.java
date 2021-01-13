@@ -18,6 +18,9 @@ import com.example.location_aware.R;
 import com.example.location_aware.data.Data;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * This class is the settings fragment with the different setting options: log out, create own route, and change password
+ */
 public class SettingsFragmentButtons extends Fragment {
     private Button logOut, createRoute, changePass;
     private FirebaseAuth auth;
@@ -58,6 +61,7 @@ public class SettingsFragmentButtons extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //Log out current user
         logOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,6 +73,7 @@ public class SettingsFragmentButtons extends Fragment {
             }
         });
 
+        //Switch fragments to create own route fragment
         createRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,6 +82,7 @@ public class SettingsFragmentButtons extends Fragment {
             }
         });
 
+        //Switch fragments to change password fragment
         changePass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,7 +92,9 @@ public class SettingsFragmentButtons extends Fragment {
         });
     }
 
-
+    /**
+     * Checks if there is a change password fragment. If there isn't, then make a new ChangePasswordFragment and commit
+     */
     private void setPasswordFragment() {
         if(fragmentManager.findFragmentById(R.id.change_password_fragment) == null){
             changePasswordFragment = new ChangePasswordFragment();
@@ -98,6 +106,9 @@ public class SettingsFragmentButtons extends Fragment {
         fragmentManager.beginTransaction().hide(changePasswordFragment).commit();
     }
 
+    /**
+     * Checks if there is a create route fragment. If there isn't, then make a new OwnRouteFragment and commit
+     */
     private void setCreateRouteFragment() {
         if(fragmentManager.findFragmentById(R.id.ownRouteFragment) == null){
             ownRouteFragment = new OwnRouteFragment();
@@ -111,8 +122,10 @@ public class SettingsFragmentButtons extends Fragment {
 
     }
 
-
-
+    /**
+     * Make a new toast
+     * @param message id of the string resource such that the text changes depending on the device language
+     */
     private void makeToast(int message){
         Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }

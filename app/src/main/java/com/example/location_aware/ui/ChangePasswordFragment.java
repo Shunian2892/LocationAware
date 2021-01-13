@@ -68,6 +68,7 @@ public class ChangePasswordFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //Go back to settings menu
         ibBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,6 +77,7 @@ public class ChangePasswordFragment extends Fragment {
             }
         });
 
+        //Confirm changing password
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,6 +107,10 @@ public class ChangePasswordFragment extends Fragment {
         });
     }
 
+    /**
+     * Make a new toast
+     * @param message id of the string resource such that the text changes depending on the device language
+     */
     private void makeToast(int message){
         Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }

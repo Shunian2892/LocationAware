@@ -7,6 +7,9 @@ import org.osmdroid.util.GeoPoint;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * This class makes a new Route object with a name and either an array list of geopoints or a string array with location names.
+ */
 public class Route {
     private String name;
     private String[] places;
@@ -23,15 +26,10 @@ public class Route {
         this.geoPoints = geoPoints;
         this.name = name;
         this.isOwnMade = true;
-
     }
 
     public ArrayList<GeoPoint> getGeoPoints() {
         return geoPoints;
-    }
-
-    public void setGeoPoints(ArrayList<GeoPoint> geoPoints) {
-        this.geoPoints = geoPoints;
     }
 
     public String getName() {
@@ -44,29 +42,6 @@ public class Route {
 
     public String[] getPlaces() {
         return places;
-    }
-
-    public void setPlaces(String[] places) {
-        this.places = places;
-    }
-
-    public String getStringPlaces(){
-        String stringPlace = "";
-        for (int i = 0; i < places.length;i++) {
-            stringPlace +=" ";
-            stringPlace += places[i];
-        }
-        return stringPlace;
-    }
-    public String getStringLocationNames(){
-        HashMap<String, ArrayList<String>> routeHashmap = Data.getInstance().getRouteHashMap();
-        ArrayList<String> locationNames = routeHashmap.get(name);
-        String names ="";
-        for (String name: locationNames) {
-            names += name + " ";
-
-        }
-        return names;
     }
 
     public boolean isOwnMade() {

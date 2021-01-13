@@ -17,6 +17,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * This class handles the request of creating a new user in the database. If registration fails, it will show a toast message with the reason.
+ */
 public class Registration extends AppCompatActivity {
     private FirebaseAuth auth;
     private EditText newEmail, newPassword;
@@ -78,6 +81,10 @@ public class Registration extends AppCompatActivity {
         });
     }
 
+    /**
+     * Make a new toast
+     * @param message id of the string resource such that the text changes depending on the device language
+     */
     private void makeToast(int message){
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }

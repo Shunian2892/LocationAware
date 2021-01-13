@@ -2,6 +2,9 @@ package com.example.location_aware.logic.routeRecyclerView;
 
 import java.util.ArrayList;
 
+/**
+ * TODO does noting for now, can delete
+ */
 public class RouteManager {
     private ArrayList<Route> routeList;
 

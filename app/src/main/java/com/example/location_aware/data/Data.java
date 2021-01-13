@@ -11,8 +11,6 @@ import com.example.location_aware.ui.SettingsFragmentButtons;
 import com.example.location_aware.logic.routeRecyclerView.*;
 import com.example.location_aware.logic.spinner.*;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import org.osmdroid.api.IMapController;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -32,18 +30,14 @@ public class Data {
     private MapView mapView;
     private IMapController mapController;
     private GeoPoint currentLocation;
-    private ArrayList<GeoPoint> geoPointsList;
     private String routeMethod;
     private Polyline routeLine;
     private OpenStreetMaps streetMaps;
     private OpenRouteService routeService;
     private Route route;
-    private RouteManager routeManager;
     private RouteAdapter routeAdapter;
     private ArrayList<Route> routeList;
-    private ArrayList<String> nameList;
     private HashMap<String, ArrayList<String>> routeHashMap;
-    private FirebaseAuth.AuthStateListener authStateListener;
     private String currentUser;
     private ArrayList<DogWalkingItem> dogWalkingItems;
     private MapFragment mapFragment;
@@ -127,24 +121,12 @@ public class Data {
         this.currentLocation = currentLocation;
     }
 
-    public ArrayList<GeoPoint> getGeoPointsList() {
-        return geoPointsList;
-    }
-
-    public void setGeoPointsList(ArrayList<GeoPoint> geoPointsList) {
-        this.geoPointsList = geoPointsList;
-    }
-
     public String getRouteMethod() {
         return routeMethod;
     }
 
     public void setRouteMethod(String routeMethod) {
         this.routeMethod = routeMethod;
-    }
-
-    public Polyline getRouteLine() {
-        return routeLine;
     }
 
     public void setRouteLine(Polyline routeLine) {
@@ -175,14 +157,6 @@ public class Data {
         this.route = route;
     }
 
-    public RouteManager getRouteManager() {
-        return routeManager;
-    }
-
-    public void setRouteManager(RouteManager routeManager) {
-        this.routeManager = routeManager;
-    }
-
     public RouteAdapter getRouteAdapter() {
         return routeAdapter;
     }
@@ -198,6 +172,7 @@ public class Data {
     public void setRouteHashMap(HashMap<String, ArrayList<String>> routeHashMap) {
         this.routeHashMap = routeHashMap;
     }
+
     public void addToRouteHashMap(String route, ArrayList<String> locations){
         this.routeHashMap.put(route,locations);
     }
@@ -212,22 +187,6 @@ public class Data {
 
     public void addRoute(Route route){
         this.routeList.add(route);
-    }
-
-    public ArrayList<String> getNameList() {
-        return nameList;
-    }
-
-    public void setNameList(ArrayList<String> nameList) {
-        this.nameList = nameList;
-    }
-
-    public FirebaseAuth.AuthStateListener getAuthStateListener() {
-        return authStateListener;
-    }
-
-    public void setAuthStateListener(FirebaseAuth.AuthStateListener authStateListener) {
-        this.authStateListener = authStateListener;
     }
 
     public String getCurrentUser() {

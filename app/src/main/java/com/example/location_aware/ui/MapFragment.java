@@ -156,7 +156,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
                 MethodItem clickedMethod = (MethodItem) adapterView.getItemAtPosition(position);
                 String clickedItemName = clickedMethod.getMethodName();
 
-
+                //TODO make cases dynamic such that text change depending on device language
                 switch (clickedItemName){
                     case "Walking":
                         Data.getInstance().setRouteMethod("foot-walking");
@@ -222,10 +222,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
 
                 if(startPoint == null){
                     makeToast(R.string.toast_valid_location);
-//                    Toast.makeText(getContext(), "Please type in a (valid) start point!", Toast.LENGTH_LONG).show();
                 } else {
-//                    Log.d("ONCLICK MapFragment", startPoint + " " + endPoint);
-//                    Log.d("DataONCLICK mapfragment", Data.getInstance().getStreetMaps().toString());
                     streetMaps.clearRoute();
                     drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
                     startRoute.setEnabled(false);
@@ -233,7 +230,6 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
                     stopRoute.setEnabled(true);
                     stopRoute.setImageResource(R.drawable.stop_route);
                     makeToast(R.string.toast_starting_route);
-//                    Toast.makeText(getContext(), "Starting route! A moment please...", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -249,7 +245,6 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
                 startRoute.setEnabled(true);
                 startRoute.setImageResource(R.drawable.start_route);
                 makeToast(R.string.toast_stopping_route);
-//                Toast.makeText(getContext(), "Stopping route! A moment please...", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -319,6 +314,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
             newPosition.setPosition(newMarker);
             map.getOverlays().remove(currentLocationMarker);
             currentLocationMarker = newPosition;
+            //TODO check if we can change: you are here to a dynamic string that changes depending on device language
             currentLocationMarker.setTitle("You are here");
             map.getOverlays().add(newPosition);
         };
@@ -413,6 +409,9 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         return this;
     }
 
+    /**
+     * Clear the map
+     */
     public void clearMap(){
         map.getOverlays().clear();
     }
@@ -432,16 +431,18 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
 
         if(userHashMap.containsKey(userName)){
             if(!userHashMap.get(userName).equals(userLocation)){
-//                System.out.println("ONMARKERUPDATE ------" + userHashMap.get(userName) + userLocation);
                 if((mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),userLat,userLon) < 300) && (map != null)) {
                     streetMaps.drawMarker(map, userLocation, userName);
                 }
             }
         }
         userHashMap.put(userName,userLocation);
-//        System.out.println("USERHASHMAP HERE--------------" + userHashMap);
     }
 
+    /**
+     * Make a new toast
+     * @param messageID id of the string resource such that the text changes depending on the device language
+     */
     private void makeToast(int messageID){
         Toast.makeText(context, messageID, Toast.LENGTH_LONG).show();
     }

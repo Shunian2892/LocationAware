@@ -23,6 +23,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.osmdroid.util.GeoPoint;
 
+/**
+ * This class sets new geofences on given locations
+ */
 public class GeofenceSetup {
     private Context context;
     private Activity activity;
@@ -45,7 +48,6 @@ public class GeofenceSetup {
 
         if (Build.VERSION.SDK_INT >= 29) {
             //If API is higher then 29 we need background permission
-
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 addFences();
             } else {
@@ -60,15 +62,23 @@ public class GeofenceSetup {
         } else {
             addFences();
         }
-
     }
 
+    /**
+     * Add new locations on which a geofence needs to be created with a standard radius
+     */
     private void addFences() {
         for (DogWalkingItem location : Data.getInstance().getDogWalkingItems()){
             addGeoFence(location.getLocation(),100,location.getName());
         }
     }
 
+    /**
+     * Add a new geofence on the map
+     * @param geoPoint given location on which the geofence has te be set
+     * @param radius radius of the geofence
+     * @param id unique geofence id
+     */
     private void addGeoFence(GeoPoint geoPoint, float radius, String id){
         checkFineLocationPermission();
 
@@ -90,6 +100,9 @@ public class GeofenceSetup {
         });
     }
 
+    /**
+     * Check if the user allowed location permission
+     */
     private void checkFineLocationPermission() {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;

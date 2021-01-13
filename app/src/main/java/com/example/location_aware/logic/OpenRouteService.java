@@ -23,11 +23,13 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * This class handles the api request to the openstreetmaps site for getting directions form one location to another location
+ */
 public class OpenRouteService {
     private final String apiKey = "5b3ce3597851110001cf624838f723c4a0944307a267699df56fb5e8";
     private OkHttpClient client;
-    private String ipAddress;
-    private int port;
+
     public boolean isConnected;
 
     private OpenStreetMaps openStreetMaps;
@@ -37,8 +39,6 @@ public class OpenRouteService {
 
     public OpenRouteService(MapView mapView) {
         this.client = new OkHttpClient();
-        this.ipAddress = "localhost";
-        this.port = 8000;
         this.isConnected = false;
         this.openStreetMaps = new OpenStreetMaps();
         Data.getInstance().setStreetMaps(openStreetMaps);
@@ -51,16 +51,29 @@ public class OpenRouteService {
         this.isConnected = true;
     }
 
+    /**
+     * Create a new get request
+     * @param method method of moving: walking, cycling, or driving
+     * @param url open route service url which consists of open route service website, method, api key, and start location and enc location
+     * @return return the request
+     */
     private Request createGetRequest(String method, String url) {
         Request request = new Request.Builder().url("\n" +
                 "https://api.openrouteservice.org/v2/directions/" + method + "?api_key=" + this.apiKey + url).build();
         return request;
     }
 
+    /**
+     * Get a route between two points
+     * @param startPoint startpoint of route
+     * @param endPoint endpoint of route
+     * @param method moving method: walking, cycling, driving
+     */
     public void getRoute(GeoPoint startPoint, GeoPoint endPoint, String method) {
         ArrayList<GeoPoint> points = new ArrayList<>();
 
         if (this.isConnected) {
+            //Create a new get requests
             client.newCall(createGetRequest(method,
                     "&start=" + startPoint.getLongitude() + "," + startPoint.getLatitude()
                             + "&end=" + endPoint.getLongitude() + "," + endPoint.getLatitude()))
@@ -73,6 +86,7 @@ public class OpenRouteService {
 
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                            //Unpack JSON response into saperate objects
                             try {
                                 JSONObject responseObject = new JSONObject(response.body().string());
                                 JSONArray featureArray = responseObject.getJSONArray("features");
@@ -88,6 +102,7 @@ public class OpenRouteService {
                                     points.add(point);
                                 }
 
+                                //Draw route on map
                                 openStreetMaps.drawRoute(points);
 
                             } catch (JSONException e) {
@@ -97,12 +112,26 @@ public class OpenRouteService {
                     });
         }
     }
+
+    /**
+     * Create new post request based on the given method and json file
+     * @param method driving, walking, cycling
+     * @param json json file with the locations
+     * @return request
+     */
     private Request createPostRequest(String method, String json) {
         RequestBody requestBody = RequestBody.create(json, JSON);
         Request request = new Request.Builder().url("https://api.openrouteservice.org/v2/directions/" + method).
                 post(requestBody).addHeader("Authorization", apiKey).build();
         return request;
     }
+
+    /**
+     * Get the route between all GeoPints in an arraylist based on the given method and (optional) language
+     * @param waypoints the geopoints between which a route must be drawn
+     * @param method driving, walking, cycling
+     * @param language language in which the directions will be given
+     */
     public void getRoute(ArrayList<GeoPoint> waypoints, String method,String language) {
         if (this.isConnected) {
             ArrayList<GeoPoint> points = new ArrayList<>();
@@ -113,6 +142,7 @@ public class OpenRouteService {
                 coordinates[i][1] = waypoints.get(i).getLatitude();
             }
 
+            //Create new request
             client.newCall(createPostRequest(method, "{\"coordinates\":" + Arrays.deepToString(coordinates) + ",\"language\":\"" + language + "\"}"))
 
                     .enqueue(new Callback() {
@@ -124,6 +154,7 @@ public class OpenRouteService {
 
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                            //Unpack JSON response into separate objects
                             try {
                                 JSONObject responseObject = new JSONObject(response.body().string());
                                 Log.d("JSONORS", responseObject.toString());
@@ -138,11 +169,8 @@ public class OpenRouteService {
                                     double lng = cordArray.getDouble(1);
                                     GeoPoint point = new GeoPoint(lat, lng);
                                     points.add(point);
-//                                    System.out.println(i + ": " + cordArray.toString());
                                 }
-                             /*   for (GeoPoint point : waypoints) {
-                                    openStreetMaps.drawMarker(mapView, point, context.getResources().getDrawable(R.drawable.waypoint_marker));
-                                }*/
+                                //Clear map in case there is already a route drawn, then draw the new route
                                 openStreetMaps.clearRoute();
                                 openStreetMaps.drawRoute(points);
                             } catch (JSONException e) {
@@ -153,6 +181,12 @@ public class OpenRouteService {
         }
     }
 
+    /**
+     * Get route directions between points and (optional) elevation
+     * @param encodedGeometry string which needs to be decoded
+     * @param inclElevation if there is an elevation on the route
+     * @return jsonArray
+     */
     private static JSONArray decodeGeometry(String encodedGeometry, boolean inclElevation) {
         JSONArray geometry = new JSONArray();
         int len = encodedGeometry.length();

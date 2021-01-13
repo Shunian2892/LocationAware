@@ -12,6 +12,9 @@ import com.example.location_aware.data.Data;
 
 import java.util.ArrayList;
 
+/**
+ * This class sets the route items in the route recyclerviewer
+ */
 public class RouteAdapter extends RecyclerView.Adapter<RouteViewHolder> {
     private ArrayList<Route> routeList;
     private OnItemClickListener listener;
@@ -19,7 +22,6 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteViewHolder> {
     public RouteAdapter(OnItemClickListener listener, ArrayList<Route> routeList){
         this.listener = listener;
         this.routeList = routeList;
-
     }
 
     @NonNull
@@ -34,9 +36,8 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteViewHolder> {
         Route route = this.routeList.get(position);
 
         Route routeClicked = Data.getInstance().getRouteList().get(position);
-        System.out.println("ROUTE LIST FROM DATA -- SIZE ~~~~~~~~~~~~~~~~~" + Data.getInstance().getRouteList().size());
-        System.out.println("CLICKED ROUTE IN ROUTEADAPTER ~~~~~~~~~~~~~~~~" +  routeClicked);
 
+        //Set correct route name and a standard icon
         holder.routeName.setText(route.getName());
         holder.routeImage.setImageResource(R.drawable.location);
 

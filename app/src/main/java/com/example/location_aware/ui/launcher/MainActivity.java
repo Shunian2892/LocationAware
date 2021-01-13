@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
     private RouteRV routeRV;
-    private OwnRouteFragment ownRouteFragment;
 
     private SettingsFragment settingsFragment;
 
@@ -48,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private HashMap<String,ArrayList<String>> nameList;
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
+        //Change fragments based on which button the user clicks
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     switch (item.getItemId()) {
@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             };
-
 
     private FirebaseAuth auth;
     private FirebaseUser user;
@@ -110,10 +109,9 @@ public class MainActivity extends AppCompatActivity {
             currentUser = user.getEmail().split(Pattern.quote("@"));
             userPathSubstring = currentUser[0];
             Data.getInstance().setCurrentUser(userPathSubstring);
-//            Log.d(TAG, "onAuthStateChanged: signed_in under name: " + userPathSubstring + " with ID: " + user.getUid());
             makeToast(R.string.toast_logged_in);
         } else {
-
+            //TODO finish this if/else statement. doenst have to do anything tbh...
         }
     }
 
@@ -147,21 +145,9 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager.beginTransaction().hide(routeRV).commit();
     }
 
-//    /**
-//     * Checks if there is a set own route fragment. If there isn't, then make a new OwnRouteFragment and commit
-//     */
-//    public void setOwnRouteFragment(){
-//        if(fragmentManager.findFragmentById(R.id.ownRouteFragment) == null){
-//            ownRouteFragment = new OwnRouteFragment();
-//            fragmentManager.beginTransaction().add(R.id.fragment_container,ownRouteFragment).commit();
-//        } else {
-//            ownRouteFragment = (OwnRouteFragment) fragmentManager.findFragmentById(R.id.ownRouteFragment);
-//        }
-//
-//        Data.getInstance().setOwnRouteFragment(ownRouteFragment);
-//        fragmentManager.beginTransaction().hide(ownRouteFragment).commit();
-//    }
-
+    /**
+     * Checks if there is a settings fragment. If there isn't, then make a new SettingsFragment and commit
+     */
     public void setSettingsFragment(){
         if(fragmentManager.findFragmentById(R.id.settings_fragment) == null){
             settingsFragment = new SettingsFragment();
@@ -211,6 +197,10 @@ public class MainActivity extends AppCompatActivity {
         makeToast(R.string.toast_logged_out);
     }
 
+    /**
+     * Make a new toast
+     * @param message id of the string resource such that the text changes depending on the device language
+     */
     private void makeToast(int message){
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }

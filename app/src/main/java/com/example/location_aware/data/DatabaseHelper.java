@@ -32,23 +32,12 @@ public class DatabaseHelper {
      * Get the current user information from the Database and go into this users subbranch
      */
     public String getCurrentUserDatabase() {
-//
-//        if(auth.getCurrentUser() != null){
-//            //Get the email address of the current user and split it
-//            currentUser = auth.getCurrentUser().getEmail().split(Pattern.quote("@"));
-//            userPathSubstring = currentUser[0];
-//
-//
-//        } else {
-//            return null;
-//        }
-
-        System.out.println("CURRENT USER IN DATA CLASS ~~~~~~~~~~~~~~~~~~~~~ " + Data.getInstance().getCurrentUser());
         userPathSubstring = Data.getInstance().getCurrentUser();
+
         //Go to the subbranch of this specific user
         dbRef = database.getReference("Location Aware").child("User").child(userPathSubstring);
         userNameAndLocation.put("name", userPathSubstring);
-        System.out.println("USERNAME FROM EMAILADDRESS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ " + userPathSubstring);
+
         return userPathSubstring;
     }
 
@@ -63,7 +52,6 @@ public class DatabaseHelper {
         userNameAndLocation.put("longitude", longitude);
 
         dbRef.updateChildren(userNameAndLocation);
-        //getDbData();
 
         return userNameAndLocation;
     }
@@ -80,9 +68,7 @@ public class DatabaseHelper {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot usersSnapshot : snapshot.getChildren()){
 
-                    System.out.println("USERSNAPSHOT ~~~~~~~~~~~~~~~~~~~~~~~~~ " + usersSnapshot);
                     user = usersSnapshot.getValue(User.class);
-                    System.out.println("MAPFRAGMENT IN GETDBDATA() ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "+ mapFragment);
 
                     if(mapFragment != null){
                         if(!user.getName().equals(Data.getInstance().getCurrentUser())){
@@ -91,7 +77,6 @@ public class DatabaseHelper {
                     } else {
                         System.out.println("MAPFRAGMENT IS NULL");
                     }
-
                 }
             }
 

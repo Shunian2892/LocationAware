@@ -1,5 +1,8 @@
 package com.example.location_aware.logic;
 
+/**
+ * This class helps set a manual radius around the user on the map. If another user is within x amount of meter from the current user, it's location will be updated on the map
+ */
 public class MapHelper {
     public double degreesToRadians(double degrees){
         return degrees*Math.PI/180;

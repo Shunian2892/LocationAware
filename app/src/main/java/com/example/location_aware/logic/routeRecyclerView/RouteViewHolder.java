@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.location_aware.R;
 
+/**
+ * This class creates new recyclerviewer items and sets the correct name, image and clicklistener
+ */
 class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     public TextView routeName, places;
     public ImageView routeImage;
@@ -24,6 +27,10 @@ class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
         itemView.setOnClickListener(this);
     }
 
+    /**
+     * Get the correct item that was clicked
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         clickListener.OnItemClick(getAdapterPosition());
