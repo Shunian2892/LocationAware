@@ -34,6 +34,7 @@ public class OpenRouteService {
 
     private OpenStreetMaps openStreetMaps;
     private MapView mapView;
+    private GeometryDecoder decoder;
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -43,7 +44,7 @@ public class OpenRouteService {
         this.openStreetMaps = new OpenStreetMaps();
         Data.getInstance().setStreetMaps(openStreetMaps);
         this.mapView = mapView;
-
+        this.decoder = new GeometryDecoder();
         Connect();
     }
 
@@ -161,7 +162,7 @@ public class OpenRouteService {
                                 JSONArray routesArray = responseObject.getJSONArray("routes");
                                 JSONObject routes = (JSONObject) routesArray.get(0);
                                 String geometry = routes.getString("geometry");
-                                JSONArray coordinates = decodeGeometry(geometry, false);
+                                JSONArray coordinates = decoder.decodeGeometry(geometry, false);
 
                                 for (int i = 0; i < coordinates.length(); i++) {
                                     JSONArray cordArray = (JSONArray) coordinates.get(i);
@@ -181,64 +182,5 @@ public class OpenRouteService {
         }
     }
 
-    /**
-     * Get route directions between points and (optional) elevation
-     * @param encodedGeometry string which needs to be decoded
-     * @param inclElevation if there is an elevation on the route
-     * @return jsonArray
-     */
-    private static JSONArray decodeGeometry(String encodedGeometry, boolean inclElevation) {
-        JSONArray geometry = new JSONArray();
-        int len = encodedGeometry.length();
-        int index = 0;
-        int lat = 0;
-        int lng = 0;
-        int ele = 0;
 
-        while (index < len) {
-            int result = 1;
-            int shift = 0;
-            int b;
-            do {
-                b = encodedGeometry.charAt(index++) - 63 - 1;
-                result += b << shift;
-                shift += 5;
-            } while (b >= 0x1f);
-            lat += (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
-
-            result = 1;
-            shift = 0;
-            do {
-                b = encodedGeometry.charAt(index++) - 63 - 1;
-                result += b << shift;
-                shift += 5;
-            } while (b >= 0x1f);
-            lng += (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
-
-
-            if (inclElevation) {
-                result = 1;
-                shift = 0;
-                do {
-                    b = encodedGeometry.charAt(index++) - 63 - 1;
-                    result += b << shift;
-                    shift += 5;
-                } while (b >= 0x1f);
-                ele += (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
-            }
-
-            JSONArray location = new JSONArray();
-            try {
-                location.put(lat / 1E5);
-                location.put(lng / 1E5);
-                if (inclElevation) {
-                    location.put((float) (ele / 100));
-                }
-                geometry.put(location);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return geometry;
-    }
 }

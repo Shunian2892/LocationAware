@@ -392,7 +392,6 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         if(!route.isOwnMade()){
             if(geoPoints == null){
                 makeToast(R.string.toast_choose_valid_route);
-//                Toast.makeText(context, "Please chose a valid route", Toast.LENGTH_LONG).show();
             } else {
                 for (int i =0; i<route.getPlaces().length;i++) {
                     geoPoints.add(streetMaps.createGeoPoint(context, route.getPlaces()[i]));

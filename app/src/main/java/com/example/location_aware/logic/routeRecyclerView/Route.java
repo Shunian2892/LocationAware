@@ -16,13 +16,13 @@ public class Route {
     private ArrayList<GeoPoint> geoPoints;
     private boolean isOwnMade;
 
-    public Route(String name, String[] places){
+    public Route(String name, String[] places) {
         this.name = name;
         this.places = places;
         this.isOwnMade = false;
     }
 
-    public Route(String name, ArrayList<GeoPoint> geoPoints){
+    public Route(String name, ArrayList<GeoPoint> geoPoints) {
         this.geoPoints = geoPoints;
         this.name = name;
         this.isOwnMade = true;
