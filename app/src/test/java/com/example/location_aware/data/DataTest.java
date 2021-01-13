@@ -54,6 +54,7 @@ public class DataTest extends TestCase {
     }
 
     public void testGetRoute() {
+        data.setRoute(testRoute);
         assertEquals(testRoute, data.getRoute());
     }
 
