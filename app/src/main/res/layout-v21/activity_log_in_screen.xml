@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ashGray"
     tools:context=".ui.LoginScreen">
 
     <TextView
@@ -23,10 +22,11 @@
 
     <Button
         android:id="@+id/login_register"
-        android:layout_width="231dp"
-        android:layout_height="73dp"
+        android:layout_width="237dp"
+        android:layout_height="85dp"
         android:layout_marginTop="36dp"
         android:background="@drawable/login_button"
+        android:backgroundTint="#DECAB0"
         android:text="@string/register_new_user"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,10 +34,10 @@
 
     <Button
         android:id="@+id/login_sign_in"
-        android:layout_width="231dp"
-        android:layout_height="73dp"
-        android:background="@drawable/login_button"
+        android:layout_width="237dp"
+        android:layout_height="85dp"
         android:layout_marginTop="24dp"
+        android:background="@drawable/login_button"
         android:text="@string/sign_in_existing_user"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/ashGray"
     tools:context=".data.firebase.Registration">
 
     <TextView
@@ -38,7 +38,7 @@
                 android:hint="@string/e_mail_address"
                 android:inputType="textEmailAddress"
                 android:singleLine="true"
-                android:textColorHint="@android:color/darker_gray" />
+                android:textColorHint="@color/caputMortuum" />
 
             <EditText
                 android:id="@+id/password_registration"
@@ -47,7 +47,7 @@
                 android:hint="@string/password"
                 android:inputType="textPassword"
                 android:singleLine="true"
-                android:textColorHint="@android:color/darker_gray" />
+                android:textColorHint="@color/caputMortuum" />
         </LinearLayout>
     </RelativeLayout>
 
