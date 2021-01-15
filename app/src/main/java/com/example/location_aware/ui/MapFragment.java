@@ -314,6 +314,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
             newPosition.setPosition(newMarker);
             map.getOverlays().remove(currentLocationMarker);
             currentLocationMarker = newPosition;
+            currentLocationMarker.setIcon(context.getDrawable(R.drawable.location_current_user));
             //TODO check if we can change: you are here to a dynamic string that changes depending on device language
             currentLocationMarker.setTitle("You are here");
             map.getOverlays().add(newPosition);
@@ -431,7 +432,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         if(userHashMap.containsKey(userName)){
             if(!userHashMap.get(userName).equals(userLocation)){
                 if((mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),userLat,userLon) < 300) && (map != null)) {
-                    streetMaps.drawMarker(map, userLocation, userName);
+                    streetMaps.drawMarker(map, userLocation, userName, context.getDrawable(R.drawable.location_other_user));
                 }
             }
         }

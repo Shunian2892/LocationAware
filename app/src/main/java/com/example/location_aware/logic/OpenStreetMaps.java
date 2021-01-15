@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 
+import com.example.location_aware.R;
 import com.example.location_aware.data.Data;
 import com.example.location_aware.logic.OpenRouteService;
 
@@ -99,12 +100,14 @@ public class OpenStreetMaps {
      * @param point location where the marker has to be set
      * @param userName user name to set as marker title
      */
-    public void drawMarker(MapView mapView, GeoPoint point, String userName){
+    public void drawMarker(MapView mapView, GeoPoint point, String userName, Drawable otherUser){
         if(mapView != null){
             Marker marker = new Marker(mapView);
             marker.setPosition(point);
+            marker.setIcon(otherUser);
             mapView.getOverlays().remove(oldMarker);
             oldMarker = marker;
+            oldMarker.setIcon(otherUser);
             oldMarker.setTitle(userName);
             mapView.getOverlays().add(marker);
         }
