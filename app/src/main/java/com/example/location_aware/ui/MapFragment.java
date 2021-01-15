@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -47,6 +49,7 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateListener {
@@ -206,18 +209,19 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         //Set OnClickListeners
         //Set clicked boolean on true and draw route
         startRoute.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
                 clicked = true;
                 String startLocation = startLocationInput.getText().toString();
 
-                //Check if input from start location is the same as one of the saved suggestions, if so, then set the startLocation on current location
-                for(String myLoc : myLocation){
-                    if(startLocation.equals(myLoc)){
-                        startPoint = Data.getInstance().getCurrentLocation();
-                    } else {
-                        startPoint = streetMaps.createGeoPoint(getContext(), startLocation);
-                    }
+                //Check if the input says one of the defined string in the myLocation array
+                boolean contains = Arrays.stream(myLocation).anyMatch(startLocation::equals);
+
+                if(contains){
+                    startPoint = Data.getInstance().getCurrentLocation();
+                } else {
+                    startPoint = streetMaps.createGeoPoint(getContext(), startLocation);
                 }
 
                 if(startPoint == null){
