@@ -140,6 +140,8 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         geofenceSetup.setUpGeofencing();
 
         mapHelper = new MapHelper();
+        setRetainInstance(true);
+
         return v;
     }
 

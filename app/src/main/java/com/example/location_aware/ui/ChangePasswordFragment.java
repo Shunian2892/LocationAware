@@ -60,6 +60,7 @@ public class ChangePasswordFragment extends Fragment {
         newPass = v.findViewById(R.id.change_password_newPass);
         repeatNewPass = v.findViewById(R.id.change_password_newPass_validate);
         progressBar = v.findViewById(R.id.change_password_progressBar);
+        setRetainInstance(true);
 
         return v;
     }

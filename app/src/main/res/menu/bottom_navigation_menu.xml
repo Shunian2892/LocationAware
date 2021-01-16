@@ -14,7 +14,7 @@
         android:icon="@drawable/route"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/menu_makeRoute"
+        android:id="@+id/menu_settings"
         android:enabled="true"
         android:title="@string/settings"
         android:icon="@drawable/build"

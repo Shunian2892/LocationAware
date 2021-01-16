@@ -3,6 +3,7 @@ package com.example.location_aware.ui.launcher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,10 +16,10 @@ import android.widget.Toast;
 import com.example.location_aware.data.Data;
 import com.example.location_aware.ui.LoginScreen;
 import com.example.location_aware.ui.MapFragment;
-import com.example.location_aware.ui.OwnRouteFragment;
 import com.example.location_aware.R;
 import com.example.location_aware.ui.SettingsFragment;
 import com.example.location_aware.logic.routeRecyclerView.*;
+import com.example.location_aware.ui.UIViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,35 +41,43 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
     private RouteRV routeRV;
+    private UIViewModel viewModel;
 
     private SettingsFragment settingsFragment;
 
     private ArrayList<Route> routeList;
-    private HashMap<String,ArrayList<String>> nameList;
+    private HashMap<String, ArrayList<String>> nameList;
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
-        //Change fragments based on which button the user clicks
+                //Change fragments based on which button the user clicks
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.menu_map:
-                            fragmentManager.beginTransaction().show(mapFragment).commit();
-                            fragmentManager.beginTransaction().hide(routeRV).commit();
-                            fragmentManager.beginTransaction().hide(settingsFragment).commit();
-                            break;
-                        case R.id.menu_list:
-                            fragmentManager.beginTransaction().show(routeRV).commit();
-                            fragmentManager.beginTransaction().hide(mapFragment).commit();
-                            fragmentManager.beginTransaction().hide(settingsFragment).commit();
-                            break;
-                        case R.id.menu_makeRoute:
-                            fragmentManager.beginTransaction().show(settingsFragment).commit();
-                            fragmentManager.beginTransaction().hide(routeRV).commit();
-                            fragmentManager.beginTransaction().hide(mapFragment).commit();
-                            break;
-                    }
+//                    switch (item.getItemId()) {
+//                        case R.id.menu_map:
+//                            fragmentManager.beginTransaction().show(mapFragment).commit();
+//                            fragmentManager.beginTransaction().hide(routeRV).commit();
+//                            fragmentManager.beginTransaction().hide(settingsFragment).commit();
+//                            break;
+//                        case R.id.menu_list:
+//                            fragmentManager.beginTransaction().show(routeRV).commit();
+//                            fragmentManager.beginTransaction().hide(mapFragment).commit();
+//                            fragmentManager.beginTransaction().hide(settingsFragment).commit();
+//                            break;
+//                        case R.id.menu_makeRoute:
+//                            fragmentManager.beginTransaction().show(settingsFragment).commit();
+//                            fragmentManager.beginTransaction().hide(routeRV).commit();
+//                            fragmentManager.beginTransaction().hide(mapFragment).commit();
+//                            break;
+//                    }
+//                    return true;
+//                }
+                    int currentFragment = item.getItemId();
+                    viewModel.setCurrentFragment(currentFragment);
+                    item.setChecked(true);
+                    setDisplayFragment(currentFragment);
                     return true;
                 }
+
             };
 
     private FirebaseAuth auth;
@@ -81,15 +90,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        viewModel = new ViewModelProvider(this).get(UIViewModel.class);
+        viewModel.init(R.id.menu_map);
 
         //Load shared preferences data
         loadData();
-
-        //Set the different fragments
-        fragmentManager = getSupportFragmentManager();
-        setMapFragment();
-        setRouteFragment();
-        setSettingsFragment();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
@@ -97,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Initialize authentication listener for Firebase Database
         auth = FirebaseAuth.getInstance();
+
+        setDisplayFragment(viewModel.getCurrentFragment().getValue());
     }
 
     @Override
@@ -105,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         mapFragment.clearMap();
         user = auth.getCurrentUser();
 
-        if(user != null){
+        if (user != null) {
             currentUser = user.getEmail().split(Pattern.quote("@"));
             userPathSubstring = currentUser[0];
             Data.getInstance().setCurrentUser(userPathSubstring);
@@ -115,62 +122,103 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void setDisplayFragment(int item) {
+        fragmentManager = getSupportFragmentManager();
+        switch (item) {
+            case R.id.map_fragment:
+                setMapFragment(fragmentManager);
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, mapFragment).addToBackStack(null).commit();
+                break;
+            case R.id.route_rv_fragment:
+                setRouteFragment(fragmentManager);
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, routeRV).addToBackStack(null).commit();
+                break;
+            case R.id.settings_fragment:
+                setSettingsFragment(fragmentManager);
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, settingsFragment).addToBackStack(null).commit();
+        }
+
+    }
+
     /**
      * Checks if there is a map fragment. If there isn't, then make a new MapFragment and commit
      */
-    public void setMapFragment(){
+    public void setMapFragment(FragmentManager fragmentManager) {
         if(fragmentManager.findFragmentById(R.id.map_fragment) == null){
-            mapFragment= new MapFragment();
-            fragmentManager.beginTransaction().add(R.id.fragment_container, mapFragment).commit();
+            mapFragment = new MapFragment();
         } else {
             mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
         }
 
         Data.getInstance().setMapFragment(mapFragment);
-        fragmentManager.beginTransaction().show(mapFragment).commit();
+//        if (fragmentManager.findFragmentById(R.id.map_fragment) == null) {
+//            mapFragment = new MapFragment();
+//            fragmentManager.beginTransaction().add(R.id.fragment_container, mapFragment).commit();
+//        } else {
+//            mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
+//        }
+//
+//        Data.getInstance().setMapFragment(mapFragment);
+//        fragmentManager.beginTransaction().show(mapFragment).commit();
     }
 
     /**
      * Checks if there is a route recyclerview fragment. If there isn't, then make a new RouteRV and commit
      */
-    public void setRouteFragment(){
+    public void setRouteFragment(FragmentManager fragmentManager) {
         if(fragmentManager.findFragmentById(R.id.route_rv_fragment) == null){
             routeRV = new RouteRV();
-            routeRV.setRoute(mapFragment.getSetRoute());
-            fragmentManager.beginTransaction().add(R.id.fragment_container,routeRV).commit();
         } else {
             routeRV = (RouteRV) fragmentManager.findFragmentById(R.id.route_rv_fragment);
         }
+
         Data.getInstance().setRouteRV(routeRV);
-        fragmentManager.beginTransaction().hide(routeRV).commit();
+//        if (fragmentManager.findFragmentById(R.id.route_rv_fragment) == null) {
+//            routeRV = new RouteRV();
+//            routeRV.setRoute(mapFragment.getSetRoute());
+//            fragmentManager.beginTransaction().add(R.id.fragment_container, routeRV).commit();
+//        } else {
+//            routeRV = (RouteRV) fragmentManager.findFragmentById(R.id.route_rv_fragment);
+//        }
+//        Data.getInstance().setRouteRV(routeRV);
+//        fragmentManager.beginTransaction().hide(routeRV).commit();
     }
 
     /**
      * Checks if there is a settings fragment. If there isn't, then make a new SettingsFragment and commit
      */
-    public void setSettingsFragment(){
+    public void setSettingsFragment(FragmentManager fragmentManager) {
         if(fragmentManager.findFragmentById(R.id.settings_fragment) == null){
             settingsFragment = new SettingsFragment();
-            fragmentManager.beginTransaction().add(R.id.fragment_container,settingsFragment).commit();
         } else {
             settingsFragment = (SettingsFragment) fragmentManager.findFragmentById(R.id.settings_fragment);
         }
 
         Data.getInstance().setSettingsFragment(settingsFragment);
-        fragmentManager.beginTransaction().hide(settingsFragment).commit();
+
+//        if (fragmentManager.findFragmentById(R.id.settings_fragment) == null) {
+//            settingsFragment = new SettingsFragment();
+//            fragmentManager.beginTransaction().add(R.id.fragment_container, settingsFragment).commit();
+//        } else {
+//            settingsFragment = (SettingsFragment) fragmentManager.findFragmentById(R.id.settings_fragment);
+//        }
+//
+//        Data.getInstance().setSettingsFragment(settingsFragment);
+//        fragmentManager.beginTransaction().hide(settingsFragment).commit();
     }
 
     /**
      * Load the saved data from Shared Preferences
      */
-    public void loadData(){
+    public void loadData() {
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", Context.MODE_PRIVATE);
         Gson gson = new Gson();
-        String jsonList = sharedPreferences.getString("route list",null);
-        Type type = new TypeToken<ArrayList<Route>>(){}.getType();
-        routeList = gson.fromJson(jsonList,type);
+        String jsonList = sharedPreferences.getString("route list", null);
+        Type type = new TypeToken<ArrayList<Route>>() {
+        }.getType();
+        routeList = gson.fromJson(jsonList, type);
 
-        if(routeList == null){
+        if (routeList == null) {
             routeList = new ArrayList<>();
         }
 
@@ -179,7 +227,8 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences hmSharedPref = getSharedPreferences("hashmap", Context.MODE_PRIVATE);
         String defValue = new Gson().toJson(new HashMap<String, ArrayList<String>>());
         String jsonNames = hmSharedPref.getString("location name list", defValue);
-        TypeToken<HashMap<String, ArrayList<String>>> nameToken = new TypeToken<HashMap<String, ArrayList<String>>>(){};
+        TypeToken<HashMap<String, ArrayList<String>>> nameToken = new TypeToken<HashMap<String, ArrayList<String>>>() {
+        };
         nameList = new Gson().fromJson(jsonNames, nameToken.getType());
 
         Data.getInstance().setRouteHashMap(nameList);
@@ -187,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * log out method, sign out of the firebase user and return to login screen
+     *
      * @param view
      */
     public void logout(View view) {
@@ -199,9 +249,10 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Make a new toast
+     *
      * @param message id of the string resource such that the text changes depending on the device language
      */
-    private void makeToast(int message){
+    private void makeToast(int message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }

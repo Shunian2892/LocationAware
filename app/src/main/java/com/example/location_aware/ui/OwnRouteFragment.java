@@ -75,6 +75,8 @@ public class OwnRouteFragment extends Fragment {
         addedLocations.setAdapter(adapter);
 
         settingsFragmentButtons = Data.getInstance().getSettingsButtons();
+        setRetainInstance(true);
+
         return v;
     }
 

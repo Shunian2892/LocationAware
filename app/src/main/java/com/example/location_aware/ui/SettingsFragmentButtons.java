@@ -52,6 +52,8 @@ public class SettingsFragmentButtons extends Fragment {
         changePass = v.findViewById(R.id.change_password);
 
         fragmentManager = getFragmentManager();
+        setRetainInstance(true);
+        getActivity().onConfigurationChanged(getActivity().getResources().getConfiguration());
 
         return v;
     }

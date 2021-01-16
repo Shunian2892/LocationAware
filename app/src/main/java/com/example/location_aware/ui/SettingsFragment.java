@@ -1,7 +1,9 @@
 package com.example.location_aware.ui;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -21,6 +23,7 @@ public class SettingsFragment extends Fragment {
     private TextView settingsTv;
     private FragmentManager fragmentManager;
     private SettingsFragmentButtons settingsButtons;
+    private SettingsFragment settingsFragment;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -44,6 +47,8 @@ public class SettingsFragment extends Fragment {
         fragmentManager = getFragmentManager();
         setSettingsButtonsFragment();
         fragmentManager.beginTransaction().replace(R.id.settings_fragment_container, settingsButtons).commit();
+        setRetainInstance(true);
+        settingsFragment = Data.getInstance().getSettingsFragment();
         return v;
     }
 
