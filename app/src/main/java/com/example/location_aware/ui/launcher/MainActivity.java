@@ -136,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
     public void setMapFragment(){
         if(fragmentManager.findFragmentById(R.id.map_fragment) == null){
             mapFragment= new MapFragment();
-            fragmentManager.beginTransaction().add(R.id.fragment_container, mapFragment).commit();
         } else {
             mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
         }
@@ -152,8 +151,6 @@ public class MainActivity extends AppCompatActivity {
     public void setRouteFragment(){
         if(fragmentManager.findFragmentById(R.id.route_rv_fragment) == null){
             routeRV = new RouteRV();
-
-            fragmentManager.beginTransaction().add(R.id.fragment_container,routeRV).commit();
         } else {
             routeRV = (RouteRV) fragmentManager.findFragmentById(R.id.route_rv_fragment);
         }
@@ -167,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
     public void setSettingsFragment(){
         if(fragmentManager.findFragmentById(R.id.settings_fragment) == null){
             settingsFragment = new SettingsFragment();
-            fragmentManager.beginTransaction().add(R.id.fragment_container,settingsFragment).commit();
         } else {
             settingsFragment = (SettingsFragment) fragmentManager.findFragmentById(R.id.settings_fragment);
         }

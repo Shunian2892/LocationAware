@@ -53,7 +53,6 @@ public class SettingsFragment extends Fragment {
     private void setSettingsButtonsFragment(){
         if(fragmentManager.findFragmentById(R.id.settings_buttons_fragment) == null){
             settingsButtons = new SettingsFragmentButtons();
-            fragmentManager.beginTransaction().add(R.id.settings_fragment_container, settingsButtons).commit();
         } else {
             settingsButtons = (SettingsFragmentButtons) fragmentManager.findFragmentById(R.id.settings_buttons_fragment);
         }
