@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ashGray"
+    android:background="@drawable/backgroundsplash"
     tools:context=".data.firebase.Registration">
 
     <ImageButton
@@ -28,6 +28,7 @@
         android:layout_marginTop="260dp"
         android:gravity="center"
         android:text="@string/register_new_user"
+        android:textSize="25sp"
         android:textStyle="bold"/>
 
     <RelativeLayout

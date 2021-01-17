@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ashGray"
+    android:background="@drawable/backgroundsplash"
     tools:context=".data.firebase.Registration">
     <ImageButton
         android:id="@+id/registration_backButton"
@@ -27,6 +27,7 @@
         android:layout_marginTop="72dp"
         android:gravity="center"
         android:text="@string/register_new_user"
+        android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -57,7 +58,7 @@
                 android:hint="@string/e_mail_address"
                 android:inputType="textEmailAddress"
                 android:singleLine="true"
-                android:textColorHint="@android:color/darker_gray" />
+                android:textColorHint="@color/caputMortuum"/>
 
             <EditText
                 android:id="@+id/password_registration"
@@ -66,7 +67,7 @@
                 android:hint="@string/password"
                 android:inputType="textPassword"
                 android:singleLine="true"
-                android:textColorHint="@android:color/darker_gray" />
+                android:textColorHint="@color/caputMortuum"/>
         </LinearLayout>
     </RelativeLayout>
 
