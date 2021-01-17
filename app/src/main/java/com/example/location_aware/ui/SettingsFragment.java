@@ -43,8 +43,10 @@ public class SettingsFragment extends Fragment {
         settingsTv = v.findViewById(R.id.settings_tv);
 
         fragmentManager = getFragmentManager();
-        setSettingsButtonsFragment();
-        fragmentManager.beginTransaction().replace(R.id.settings_fragment_container, settingsButtons).commit();
+        if(savedInstanceState == null) {
+            setSettingsButtonsFragment();
+            fragmentManager.beginTransaction().replace(R.id.settings_fragment_container, settingsButtons).commit();
+        }
         return v;
     }
 
