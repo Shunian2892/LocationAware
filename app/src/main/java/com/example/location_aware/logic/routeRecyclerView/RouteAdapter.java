@@ -39,7 +39,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteViewHolder> {
 
         //Set correct route name and a standard icon
         holder.routeName.setText(route.getName());
-        holder.routeImage.setImageResource(R.drawable.location);
+        holder.routeImage.setImageResource(R.mipmap.ic_launcher_round);
 
         if(route.equals(routeClicked)){
             System.out.println("ROUTES ARE EQUAL !!!!!!!!!!!!!! NAME: " + route.getName());

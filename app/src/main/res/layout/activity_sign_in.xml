@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ashGray"
+    android:background="@drawable/backgroundsplash"
     tools:context=".data.firebase.SignIn">
 
     <ImageButton
@@ -28,6 +28,7 @@
         android:layout_marginTop="260dp"
         android:gravity="center"
         android:text="@string/sign_in_existing_user"
+        android:textSize="25sp"
         android:textStyle="bold"/>
 
     <RelativeLayout
@@ -51,7 +52,7 @@
                 android:hint="@string/e_mail_address"
                 android:inputType="textEmailAddress"
                 android:singleLine="true"
-                android:textColorHint="@android:color/darker_gray" />
+                android:textColorHint="@color/caputMortuum" />
 
             <EditText
                 android:id="@+id/password_sign_in"
@@ -60,7 +61,7 @@
                 android:hint="@string/password"
                 android:inputType="textPassword"
                 android:singleLine="true"
-                android:textColorHint="@android:color/darker_gray" />
+                android:textColorHint="@color/caputMortuum" />
         </LinearLayout>
     </RelativeLayout>
 

@@ -23,7 +23,7 @@
     <string name="your_location">Hier bent u</string>
     <string name="toast_choose_valid_route">Kies een valide route, alstublieft</string>
     <string name="toast_stopping_route">Route aan het stoppen! Een ongenblik geduld...</string>
-    <string name="toast_starting_route">Rotue aan het starten! Een ongenblik geduld...</string>
+    <string name="toast_starting_route">Route aan het starten! Een ongenblik geduld...</string>
     <string name="toast_valid_location">Vul alstublieft een (geldig) punt in!</string>
     <string name="toast_logged_out">U bent uitgelogd!</string>
     <string name="toast_logged_in">U bent ingelogd!</string>
@@ -40,12 +40,12 @@
     <string name="map">Map</string>
     <string name="log_out">Log uit</string>
     <string name="create_own_route">Creëer eigen route</string>
-    <string name="change_password">Verander wachtwoord</string>
+    <string name="change_password">Wijzig wachtwoord</string>
     <string name="set_new_password">Zet nieuw wachtwoord:</string>
     <string name="repeat_new_password">Herhaal nieuw wachtwoord:</string>
     <string name="enter_new_password">Vul nieuw wachtwoord in:</string>
     <string name="confirm_new_password">Bevestig</string>
-    <string name="toast_changePassword">Gebruikers wachtwoord veranderd</string>
+    <string name="toast_changePassword">Gebruikers wachtwoord gewijzigd</string>
     <string name="toast_changePassword_failed">Wachtwoorden komen niet overeen</string>
     <string name="toast_geofence_enter">U gaat een honden park/bos binnen</string>
     <string name="toast_geofence_dwell">U bevindt zich in een honden park/bos</string>

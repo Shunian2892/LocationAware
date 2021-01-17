@@ -10,13 +10,15 @@
 
     <Button
         android:id="@+id/logout"
-        android:layout_width="142dp"
+        android:layout_width="145dp"
         android:layout_height="110dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="64dp"
         android:background="@drawable/dog_paw"
         android:text="@string/log_out"
-        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:gravity="center_horizontal|bottom"
+        android:textColor="@color/ashGray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,26 +26,30 @@
 
     <Button
         android:id="@+id/create_own_route"
-        android:layout_width="142dp"
+        android:layout_width="145dp"
         android:layout_height="110dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="128dp"
         android:background="@drawable/dog_paw"
         android:text="@string/create_own_route"
-        android:textColor="@color/black"
+        android:textSize="11sp"
+        android:gravity="center_horizontal|bottom"
+        android:textColor="@color/ashGray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/change_password"
-        android:layout_width="142dp"
+        android:layout_width="145dp"
         android:layout_height="110dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="64dp"
         android:background="@drawable/dog_paw"
         android:text="@string/change_password"
-        android:textColor="@color/black"
+        android:textSize="13sp"
+        android:gravity="center_horizontal|bottom"
+        android:textColor="@color/ashGray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/create_own_route" />
