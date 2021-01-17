@@ -140,6 +140,10 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         geofenceSetup.setUpGeofencing();
 
         mapHelper = new MapHelper();
+
+        if(Data.getInstance().getRoute() != null){
+            setRouteCoord(Data.getInstance().getRoute());
+        }
         return v;
     }
 
@@ -367,6 +371,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         firstLocationSet = false;
 
         routeService = new OpenRouteService(map);
+        //routeService.getRoute(Data.getInstance().getRoute().getGeoPoints(),"walking","en");
 
         //Check for GPS permission on first use
         if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(),
