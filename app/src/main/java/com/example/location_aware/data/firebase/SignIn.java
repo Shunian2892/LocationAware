@@ -9,9 +9,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.location_aware.ui.LoginScreen;
 import com.example.location_aware.ui.launcher.MainActivity;
 import com.example.location_aware.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,6 +32,7 @@ public class SignIn extends AppCompatActivity {
     private EditText email, password;
     private Button signIn;
     private ProgressBar progressBar;
+    private ImageButton backButton;
 
     private final String TAG = "SIGN IN CLASS";
 
@@ -42,9 +45,21 @@ public class SignIn extends AppCompatActivity {
         password = findViewById(R.id.password_sign_in);
         signIn = findViewById(R.id.sign_in_user_button);
         progressBar = findViewById(R.id.sign_in_progress_bar);
+        backButton = findViewById(R.id.sign_in_backButton);
 
         //Instantiate Firebase Authenticator and listener
         auth = FirebaseAuth.getInstance();
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent goToLogIn = new Intent(getApplicationContext(), LoginScreen.class);
+                startActivity(goToLogIn);
+
+                //Close Registration activity
+                finish();
+            }
+        });
 
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
