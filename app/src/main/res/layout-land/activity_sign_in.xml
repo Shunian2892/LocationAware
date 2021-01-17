@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     android:background="@color/ashGray"
     tools:context=".data.firebase.SignIn">
+    <ImageButton
+        android:id="@+id/sign_in_backButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="fitCenter"
+        android:background="@android:color/transparent"
+        android:src="@drawable/back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.043"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/sign_in_user_tv"

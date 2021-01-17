@@ -7,6 +7,19 @@
     android:background="@color/ashGray"
     tools:context=".data.firebase.SignIn">
 
+    <ImageButton
+        android:id="@+id/sign_in_backButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/back" />
+
     <TextView
         android:id="@+id/sign_in_user_tv"
         android:layout_width="match_parent"

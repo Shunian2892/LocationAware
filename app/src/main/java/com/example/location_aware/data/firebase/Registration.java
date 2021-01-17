@@ -8,10 +8,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.location_aware.R;
+import com.example.location_aware.ui.LoginScreen;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -25,6 +27,7 @@ public class Registration extends AppCompatActivity {
     private EditText newEmail, newPassword;
     private Button register;
     private ProgressBar progressBar;
+    private ImageButton backButton;
 
     private final String TAG = "REGISTRATION CLASS";
 
@@ -37,9 +40,21 @@ public class Registration extends AppCompatActivity {
         newEmail = findViewById(R.id.email_address_registration);
         newPassword = findViewById(R.id.password_registration);
         progressBar = findViewById(R.id.registration_progress_bar);
+        backButton = findViewById(R.id.registration_backButton);
 
         //Get Firebase authenticator
         auth = FirebaseAuth.getInstance();
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent goToLogIn = new Intent(getApplicationContext(), LoginScreen.class);
+                startActivity(goToLogIn);
+
+                //Close Registration activity
+                finish();
+            }
+        });
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
