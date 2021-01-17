@@ -50,7 +50,7 @@ public class RouteRV extends Fragment implements OnItemClickListener {
         Data.getInstance().setRouteAdapter(routeAdapter);
         this.routeRv.setLayoutManager(new LinearLayoutManager(this.context));
         this.routeRv.setAdapter(this.routeAdapter);
-
+        
         return v;
     }
 

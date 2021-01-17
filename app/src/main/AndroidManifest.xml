@@ -21,14 +21,15 @@
         android:theme="@style/Theme.Location_Aware"
         android:usesCleartextTraffic="true">
 
-        <activity android:name=".ui.launcher.SplashScreen">
+        <activity android:name=".ui.launcher.SplashScreen"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.launcher.MainActivity"/>
+        <activity android:name=".ui.launcher.MainActivity" android:configChanges="orientation|screenSize"/>
         <activity android:name=".ui.LoginScreen"/>
         <activity android:name=".data.firebase.SignIn" />
         <activity android:name=".data.firebase.Registration" />
