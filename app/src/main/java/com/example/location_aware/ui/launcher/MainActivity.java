@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
         Data.getInstance().setRouteHashMap(new HashMap<>());
 
+        Data.getInstance().setClicked(false);
         //Initialize authentication listener for Firebase Database
         auth = FirebaseAuth.getInstance();
     }

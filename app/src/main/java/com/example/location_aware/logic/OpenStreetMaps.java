@@ -48,7 +48,7 @@ public class OpenStreetMaps {
      * Clear existing route from map
      */
     public void clearRoute(){
-        mapView.getOverlayManager().remove(route);
+        mapView.getOverlayManager().remove(Data.getInstance().getRouteLine());
     }
 
     /**
