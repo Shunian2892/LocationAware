@@ -12,7 +12,7 @@
         android:id="@+id/topPanel"
         android:layout_width="170dp"
         android:layout_height="409dp"
-        android:background="#7FFFD4"
+        android:background="@color/darkSeaGreen"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -21,8 +21,8 @@
 
     <org.osmdroid.views.MapView
         android:id="@+id/osm_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,18 +39,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.954" />
-
-    <!--    <EditText-->
-<!--        android:id="@+id/start_location"-->
-<!--        android:layout_width="150dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginLeft="16dp"-->
-<!--        android:hint="@string/start_location"-->
-<!--        android:inputType="text"-->
-<!--        android:scrollHorizontally="true"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
     <Spinner
         android:id="@+id/spinner"
@@ -98,6 +86,7 @@
         android:hint="@string/start_location"
         android:inputType="text"
         android:scrollHorizontally="true"
+        android:textColorHint="@color/caputMortuum"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -115,11 +104,11 @@
         android:id="@+id/to_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="15dp"
         android:text="@string/to"
         app:layout_constraintEnd_toEndOf="@+id/topPanel"
         app:layout_constraintHorizontal_bias="0.479"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/topPanel" />
+        app:layout_constraintTop_toBottomOf="@+id/start_location" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

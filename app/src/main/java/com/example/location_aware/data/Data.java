@@ -34,7 +34,7 @@ public class Data {
     private Polyline routeLine;
     private OpenStreetMaps streetMaps;
     private OpenRouteService routeService;
-    private Route route;
+    private Route route, spinnerRoute;
     private RouteAdapter routeAdapter;
     private ArrayList<Route> routeList;
     private HashMap<String, ArrayList<String>> routeHashMap;
@@ -47,6 +47,7 @@ public class Data {
     private SettingsFragment settingsFragment;
     private SettingsFragmentButtons settingsButtons;
     private IMarkerUpdateListener markerUpdateListener;
+    private boolean clicked;
 
     public static Data getInstance(){
         if(data == null){
@@ -131,6 +132,10 @@ public class Data {
 
     public void setRouteLine(Polyline routeLine) {
         this.routeLine = routeLine;
+    }
+
+    public Polyline getRouteLine() {
+        return routeLine;
     }
 
     public OpenStreetMaps getStreetMaps() {
@@ -235,5 +240,21 @@ public class Data {
 
     public void setMarkerUpdateListener(IMarkerUpdateListener markerUpdateListener) {
         this.markerUpdateListener = markerUpdateListener;
+    }
+
+    public Route getSpinnerRoute() {
+        return spinnerRoute;
+    }
+
+    public void setSpinnerRoute(Route spinnerRoute) {
+        this.spinnerRoute = spinnerRoute;
+    }
+
+    public boolean isClicked() {
+        return clicked;
+    }
+
+    public void setClicked(boolean clicked) {
+        this.clicked = clicked;
     }
 }

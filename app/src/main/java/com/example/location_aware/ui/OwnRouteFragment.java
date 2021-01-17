@@ -147,8 +147,7 @@ public class OwnRouteFragment extends Fragment {
         ibBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fragmentManager.beginTransaction().show(settingsFragmentButtons).commit();
-                fragmentManager.beginTransaction().hide(Data.getInstance().getOwnRouteFragment()).commit();
+                fragmentManager.beginTransaction().replace(R.id.settings_fragment_container, settingsFragmentButtons).commit();
             }
         });
     }

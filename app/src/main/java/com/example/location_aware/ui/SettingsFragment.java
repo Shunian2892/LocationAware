@@ -35,13 +35,15 @@ public class SettingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
         View v = inflater.inflate(R.layout.fragment_settings, container, false);
 
         settingsTv = v.findViewById(R.id.settings_tv);
 
         fragmentManager = getFragmentManager();
         setSettingsButtonsFragment();
-
+        fragmentManager.beginTransaction().replace(R.id.settings_fragment_container, settingsButtons).commit();
         return v;
     }
 
@@ -57,7 +59,5 @@ public class SettingsFragment extends Fragment {
         }
         Data.getInstance().setSettingsButtons(settingsButtons);
 
-        fragmentManager.beginTransaction().show(settingsButtons).commit();
     }
-
 }

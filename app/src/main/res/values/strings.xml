@@ -30,6 +30,7 @@
         <item>mijn locatie</item>
         <item>huidige locatie</item>
     </string-array>
+
     <string name="toast_stopping_route">Stopping route! A moment please...</string>
     <string name="toast_starting_route">Starting route! A moment please...</string>
     <string name="toast_valid_location">Please type in a (valid) point!</string>

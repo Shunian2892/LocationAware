@@ -52,8 +52,6 @@ public class SettingsFragmentButtons extends Fragment {
         changePass = v.findViewById(R.id.change_password);
 
         fragmentManager = getFragmentManager();
-        setCreateRouteFragment();
-        setPasswordFragment();
 
         return v;
     }
@@ -77,8 +75,8 @@ public class SettingsFragmentButtons extends Fragment {
         createRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fragmentManager.beginTransaction().show(ownRouteFragment).commit();
-                fragmentManager.beginTransaction().hide(changePasswordFragment).commit();
+                setCreateRouteFragment();
+                fragmentManager.beginTransaction().replace(R.id.settings_fragment_container, ownRouteFragment).commit();
             }
         });
 
@@ -86,8 +84,8 @@ public class SettingsFragmentButtons extends Fragment {
         changePass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fragmentManager.beginTransaction().show(changePasswordFragment).commit();
-                fragmentManager.beginTransaction().hide(ownRouteFragment).commit();
+                setPasswordFragment();
+                fragmentManager.beginTransaction().replace(R.id.settings_fragment_container, changePasswordFragment).commit();
             }
         });
     }
@@ -103,7 +101,6 @@ public class SettingsFragmentButtons extends Fragment {
             changePasswordFragment = (ChangePasswordFragment) fragmentManager.findFragmentById(R.id.change_password_fragment);
         }
         Data.getInstance().setChangePasswordFragment(changePasswordFragment);
-        fragmentManager.beginTransaction().hide(changePasswordFragment).commit();
     }
 
     /**
@@ -116,10 +113,7 @@ public class SettingsFragmentButtons extends Fragment {
         } else {
             ownRouteFragment = (OwnRouteFragment) fragmentManager.findFragmentById(R.id.ownRouteFragment);
         }
-
         Data.getInstance().setOwnRouteFragment(ownRouteFragment);
-        fragmentManager.beginTransaction().hide(ownRouteFragment).commit();
-
     }
 
     /**

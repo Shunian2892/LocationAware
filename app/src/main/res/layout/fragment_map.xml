@@ -5,14 +5,14 @@
     android:id="@+id/map_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".uiMapFragment">
+    tools:context=".ui.MapFragment">
 
 
     <ImageView
         android:id="@+id/topPanel"
         android:layout_width="match_parent"
         android:layout_height="110dp"
-        android:background="#7FFFD4"
+        android:background="@color/darkSeaGreen"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
