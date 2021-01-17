@@ -2,6 +2,7 @@ package com.example.location_aware.ui;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -42,10 +43,21 @@ public class SettingsFragment extends Fragment {
         settingsTv = v.findViewById(R.id.settings_tv);
 
         fragmentManager = getFragmentManager();
-        setSettingsButtonsFragment();
-        fragmentManager.beginTransaction().replace(R.id.settings_fragment_container, settingsButtons).commit();
+        if(savedInstanceState == null) {
+            setSettingsButtonsFragment();
+            fragmentManager.beginTransaction().replace(R.id.settings_fragment_container, settingsButtons).commit();
+        }
         return v;
     }
+
+    /*@Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState != null){
+            //Data.getInstance().getSettingsFragment();
+            fragmentManager.beginTransaction().replace(R.id.fragment_container, Data.getInstance().getSettingsFragment());
+        }
+    }*/
 
     /**
      * Checks if there is a settings buttons fragment. If there isn't, then make a new SettingsButtonsFragment and commit

@@ -2,12 +2,15 @@ package com.example.location_aware.ui.launcher;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Spinner;
@@ -41,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
     private RouteRV routeRV;
-
     private SettingsFragment settingsFragment;
+    private Fragment currentFragment;
 
     private ArrayList<Route> routeList;
     private HashMap<String,ArrayList<String>> nameList;
@@ -51,18 +54,22 @@ public class MainActivity extends AppCompatActivity {
         //Change fragments based on which button the user clicks
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    currentFragment = null;
                     switch (item.getItemId()) {
                         case R.id.menu_map:
                             setMapFragment();
                             fragmentManager.beginTransaction().replace(R.id.fragment_container,mapFragment).commit();
+                            currentFragment = mapFragment;
                             break;
                         case R.id.menu_list:
                             setRouteFragment();
                             fragmentManager.beginTransaction().replace(R.id.fragment_container,routeRV).commit();
+                            currentFragment = routeRV;
                             break;
                         case R.id.menu_makeRoute:
                             setSettingsFragment();
                             fragmentManager.beginTransaction().replace(R.id.fragment_container, settingsFragment).commit();
+                            currentFragment = settingsFragment;
                             break;
                     }
                     return true;
@@ -87,8 +94,12 @@ public class MainActivity extends AppCompatActivity {
 
         //Set the different fragments
         fragmentManager = getSupportFragmentManager();
-        setMapFragment();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container,mapFragment).commit();
+        if(savedInstanceState == null){
+            setMapFragment();
+            fragmentManager.beginTransaction().replace(R.id.fragment_container,mapFragment).commit();
+        }
+
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
@@ -114,10 +125,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*@Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+            if(currentFragment == mapFragment){
+                Log.e("CONFCHANEDMAIN", "mapfragment");
+                setMapFragment();
+                fragmentManager.beginTransaction().replace(R.id.fragment_container,mapFragment).commit();
+            }else if(currentFragment == settingsFragment){
+                setSettingsFragment();
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, settingsFragment).commit();
+            }else if(currentFragment == routeRV){
+                setRouteFragment();
+                fragmentManager.beginTransaction().replace(R.id.fragment_container,routeRV).commit();
+            }
+
+    }*/
+
     @Override
     protected void onStart() {
         super.onStart();
-        mapFragment.clearMap();
+        if(mapFragment != null) {
+            mapFragment.clearMap();
+        }
         user = auth.getCurrentUser();
 
         if(user != null){
