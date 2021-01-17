@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.location_aware.data.Data;
@@ -74,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
     private String[] currentUser;
     private String userPathSubstring;
 
+    private Spinner methodChoices, dogParkChoices;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         setMapFragment();
 
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
         Data.getInstance().setRouteHashMap(new HashMap<>());
@@ -93,6 +97,21 @@ public class MainActivity extends AppCompatActivity {
         Data.getInstance().setClicked(false);
         //Initialize authentication listener for Firebase Database
         auth = FirebaseAuth.getInstance();
+    }
+
+    private void loadSpinnerPref() {
+        SharedPreferences sharedPref = getSharedPreferences("FileName",MODE_PRIVATE);
+        int spinnerValue = sharedPref.getInt("methodSpinner",-1);
+        if(spinnerValue != -1) {
+            // set the selected value of the spinner
+            Data.getInstance().getMethodChoices().setSelection(spinnerValue);
+        }
+        SharedPreferences sharedPrefPark = getSharedPreferences("FileName",MODE_PRIVATE);
+        int spinnerValuePark = sharedPrefPark.getInt("parkSpinner",-1);
+        if(spinnerValuePark != -1) {
+            // set the selected value of the spinner
+            Data.getInstance().getDogParkChoices().setSelection(spinnerValue);
+        }
     }
 
     @Override
@@ -124,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
         Data.getInstance().setMapFragment(mapFragment);
         fragmentManager.beginTransaction().replace(R.id.fragment_container,mapFragment).commit();
+        //loadSpinnerPref();
     }
 
     /**
