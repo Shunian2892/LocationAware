@@ -62,7 +62,8 @@ public class RouteRV extends Fragment implements OnItemClickListener {
     public void OnItemClick(int clickedPosition) {
         Route route = routeList.get(clickedPosition);
         Data.getInstance().getStreetMaps().clearRoute();
+        Data.getInstance().setSpinnerRoute(null);
         Data.getInstance().setRoute(route);
-        setRoute.setRouteCoord(route);
+        //setRoute.setRouteCoord(route);
     }
 }

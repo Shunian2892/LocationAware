@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,11 +119,16 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         createMap(v);
         streetMaps = Data.getInstance().getStreetMaps();
 
-        clicked = false;
         //Initialize buttons
         startRoute = v.findViewById(R.id.start_route_button);
+        startRoute.setEnabled(!Data.getInstance().isClicked());
         stopRoute = v.findViewById(R.id.stop_route_button);
-        stopRoute.setEnabled(false);
+        stopRoute.setEnabled(Data.getInstance().isClicked());
+
+        if(Data.getInstance().isClicked()) {
+            startRoute.setImageResource(R.drawable.start_route_disabled);
+            stopRoute.setImageResource(R.drawable.stop_route);
+        }
         setCenter = v.findViewById(R.id.centerMap);
 
         //Initialize EditText box
@@ -140,7 +146,18 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         geofenceSetup.setUpGeofencing();
 
         mapHelper = new MapHelper();
+
+        if(Data.getInstance().getRoute() != null){
+            setRouteCoord(Data.getInstance().getRoute());
+        }
         return v;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        streetMaps.clearRoute();
+        Log.e("MAPFRAGMENTSTOP", "stop mapfragment");
     }
 
     @Override
@@ -163,23 +180,23 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
                 switch (clickedItemName){
                     case "Walking":
                         Data.getInstance().setRouteMethod("foot-walking");
-                        if(clicked){
+                        if(Data.getInstance().isClicked()){
                             streetMaps.clearRoute();
-                            drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
+                            drawRoute(Data.getInstance().getSpinnerRoute().getStart(), Data.getInstance().getSpinnerRoute().getEnd(), Data.getInstance().getRouteMethod());
                         }
                         break;
                     case "Cycling":
                         Data.getInstance().setRouteMethod("cycling-regular");
-                        if(clicked){
+                        if(Data.getInstance().isClicked()){
                             streetMaps.clearRoute();
-                            drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
+                            drawRoute(Data.getInstance().getSpinnerRoute().getStart(),  Data.getInstance().getSpinnerRoute().getEnd(), Data.getInstance().getRouteMethod());
                         }
                         break;
                     case "Driving":
                         Data.getInstance().setRouteMethod("driving-car");
-                        if(clicked){
+                        if(Data.getInstance().isClicked()){
                             streetMaps.clearRoute();
-                            drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
+                            drawRoute(Data.getInstance().getSpinnerRoute().getStart(),  Data.getInstance().getSpinnerRoute().getEnd(), Data.getInstance().getRouteMethod());
                         }
                         break;
                 }
@@ -213,6 +230,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
             @Override
             public void onClick(View view) {
                 clicked = true;
+                Data.getInstance().setClicked(true);
                 String startLocation = startLocationInput.getText().toString();
 
                 //Check if the input says one of the defined string in the myLocation array
@@ -228,10 +246,11 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
                     makeToast(R.string.toast_valid_location);
                 } else {
                     streetMaps.clearRoute();
+                    Data.getInstance().setRoute(null);
                     drawRoute(startPoint, endPoint, Data.getInstance().getRouteMethod());
-                    startRoute.setEnabled(false);
+                    startRoute.setEnabled(!Data.getInstance().isClicked());
                     startRoute.setImageResource(R.drawable.start_route_disabled);
-                    stopRoute.setEnabled(true);
+                    stopRoute.setEnabled(Data.getInstance().isClicked());
                     stopRoute.setImageResource(R.drawable.stop_route);
                     makeToast(R.string.toast_starting_route);
                 }
@@ -243,10 +262,12 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
             @Override
             public void onClick(View view) {
                 clicked = false;
+                Data.getInstance().setClicked(false);
                 streetMaps.clearRoute();
-                stopRoute.setEnabled(false);
+                Data.getInstance().setSpinnerRoute(null);
+                stopRoute.setEnabled(Data.getInstance().isClicked());
                 stopRoute.setImageResource(R.drawable.stop_route_disabled);
-                startRoute.setEnabled(true);
+                startRoute.setEnabled(!Data.getInstance().isClicked());
                 startRoute.setImageResource(R.drawable.start_route);
                 makeToast(R.string.toast_stopping_route);
             }
@@ -367,6 +388,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         firstLocationSet = false;
 
         routeService = new OpenRouteService(map);
+        //routeService.getRoute(Data.getInstance().getRoute().getGeoPoints(),"walking","en");
 
         //Check for GPS permission on first use
         if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(),
@@ -383,7 +405,9 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
      * @param method method used: walking, cycling, or driving
      */
     public void drawRoute(GeoPoint start, GeoPoint end, String method){
-        routeService.getRoute(start, end, method);
+        Route route = new Route(start, end, method);
+        Data.getInstance().setSpinnerRoute(route);
+        routeService.getRoute(Data.getInstance().getSpinnerRoute().getStart(), Data.getInstance().getSpinnerRoute().getEnd(),Data.getInstance().getSpinnerRoute().getMethod());
     }
 
     /**

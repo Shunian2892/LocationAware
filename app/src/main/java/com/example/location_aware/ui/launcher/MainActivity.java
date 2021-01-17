@@ -52,19 +52,16 @@ public class MainActivity extends AppCompatActivity {
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.menu_map:
-                            fragmentManager.beginTransaction().show(mapFragment).commit();
-                            fragmentManager.beginTransaction().hide(routeRV).commit();
-                            fragmentManager.beginTransaction().hide(settingsFragment).commit();
+                            setMapFragment();
+                            fragmentManager.beginTransaction().replace(R.id.fragment_container,mapFragment).commit();
                             break;
                         case R.id.menu_list:
-                            fragmentManager.beginTransaction().show(routeRV).commit();
-                            fragmentManager.beginTransaction().hide(mapFragment).commit();
-                            fragmentManager.beginTransaction().hide(settingsFragment).commit();
+                            setRouteFragment();
+                            fragmentManager.beginTransaction().replace(R.id.fragment_container,routeRV).commit();
                             break;
                         case R.id.menu_makeRoute:
-                            fragmentManager.beginTransaction().show(settingsFragment).commit();
-                            fragmentManager.beginTransaction().hide(routeRV).commit();
-                            fragmentManager.beginTransaction().hide(mapFragment).commit();
+                            setSettingsFragment();
+                            fragmentManager.beginTransaction().replace(R.id.fragment_container, settingsFragment).commit();
                             break;
                     }
                     return true;
@@ -88,13 +85,12 @@ public class MainActivity extends AppCompatActivity {
         //Set the different fragments
         fragmentManager = getSupportFragmentManager();
         setMapFragment();
-        setRouteFragment();
-        setSettingsFragment();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
         Data.getInstance().setRouteHashMap(new HashMap<>());
 
+        Data.getInstance().setClicked(false);
         //Initialize authentication listener for Firebase Database
         auth = FirebaseAuth.getInstance();
     }
@@ -127,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Data.getInstance().setMapFragment(mapFragment);
-        fragmentManager.beginTransaction().show(mapFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container,mapFragment).commit();
     }
 
     /**
@@ -136,13 +132,13 @@ public class MainActivity extends AppCompatActivity {
     public void setRouteFragment(){
         if(fragmentManager.findFragmentById(R.id.route_rv_fragment) == null){
             routeRV = new RouteRV();
-            routeRV.setRoute(mapFragment.getSetRoute());
+
             fragmentManager.beginTransaction().add(R.id.fragment_container,routeRV).commit();
         } else {
             routeRV = (RouteRV) fragmentManager.findFragmentById(R.id.route_rv_fragment);
         }
+//        routeRV.setRoute(mapFragment.getSetRoute());
         Data.getInstance().setRouteRV(routeRV);
-        fragmentManager.beginTransaction().hide(routeRV).commit();
     }
 
     /**
@@ -157,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Data.getInstance().setSettingsFragment(settingsFragment);
-        fragmentManager.beginTransaction().hide(settingsFragment).commit();
     }
 
     /**
