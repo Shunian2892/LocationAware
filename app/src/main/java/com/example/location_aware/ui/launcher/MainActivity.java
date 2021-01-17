@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         //Set the different fragments
         fragmentManager = getSupportFragmentManager();
         setMapFragment();
-
+        fragmentManager.beginTransaction().replace(R.id.fragment_container,mapFragment).commit();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener);
@@ -141,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Data.getInstance().setMapFragment(mapFragment);
-        fragmentManager.beginTransaction().replace(R.id.fragment_container,mapFragment).commit();
         //loadSpinnerPref();
     }
 
