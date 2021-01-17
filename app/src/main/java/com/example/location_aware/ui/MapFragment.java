@@ -2,6 +2,7 @@ package com.example.location_aware.ui;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -53,6 +54,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateListener {
     private Context context;
 
@@ -77,6 +80,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
     private Spinner methodChoices, dogParkChoices;
     private ArrayList<MethodItem> methods;
     private ArrayList<DogWalkingItem> dogParks;
+    private int currentMethodItem;
 
     private OpenStreetMaps streetMaps;
     private IMapController mapController;
@@ -137,15 +141,18 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         startLocationInput.setAdapter(new ArrayAdapter<String>(context, R.layout.autocomplete_list_item, myLocation));
 
         //Initialise arraylist with different methods
-        initSpinnerList();
-        methodChoices = v.findViewById(R.id.spinner);
+
+        methodChoices =  v.findViewById(R.id.spinner);
         dogParkChoices = v.findViewById(R.id.end_location);
+        initSpinnerList();
 
         //Initialize Geofence setup
         geofenceSetup = new GeofenceSetup(getActivity().getApplicationContext(), getActivity());
         geofenceSetup.setUpGeofencing();
 
         mapHelper = new MapHelper();
+
+
 
         if(Data.getInstance().getRoute() != null){
             setRouteCoord(Data.getInstance().getRoute());
@@ -160,6 +167,38 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         Log.e("MAPFRAGMENTSTOP", "stop mapfragment");
     }
 
+    private void saveMethodItem(int position){
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("method",MODE_PRIVATE);
+        SharedPreferences.Editor prefEditor = sharedPref.edit();
+        prefEditor.putInt("methodSpinner", position);
+        prefEditor.apply();
+        prefEditor.commit();
+    }
+    private void saveParkItem(int position){
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("park",MODE_PRIVATE);
+        SharedPreferences.Editor prefEditor = sharedPref.edit();
+        prefEditor.putInt("parkSpinner",position);
+        prefEditor.apply();
+        prefEditor.commit();
+    }
+
+    private void getSharedPrefMethod(){
+
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("method",MODE_PRIVATE);
+        int spinnerMethodValue = sharedPref.getInt("methodSpinner",-1);
+        if(spinnerMethodValue != -1){
+            methodChoices.setSelection(spinnerMethodValue);
+        }
+
+    }
+    private void getSharedPrefPark(){
+        SharedPreferences sharedPrefPark = getActivity().getSharedPreferences("park",MODE_PRIVATE);
+        int spinnerValuePark = sharedPrefPark.getInt("parkSpinner",-1);
+        if(spinnerValuePark != -1) {
+            dogParkChoices.setSelection(spinnerValuePark);
+        }
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -170,6 +209,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         //Set adapter to the spinner and a setOnItemSelectedListener.
         methodAdapter = new MethodAdapter(getContext(), methods);
         methodChoices.setAdapter(methodAdapter);
+        getSharedPrefMethod();
         methodChoices.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
@@ -180,23 +220,29 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
                 switch (clickedItemName){
                     case "Walking":
                         Data.getInstance().setRouteMethod("foot-walking");
+                        saveMethodItem(0);
                         if(Data.getInstance().isClicked()){
                             streetMaps.clearRoute();
                             drawRoute(Data.getInstance().getSpinnerRoute().getStart(), Data.getInstance().getSpinnerRoute().getEnd(), Data.getInstance().getRouteMethod());
+
                         }
                         break;
                     case "Cycling":
                         Data.getInstance().setRouteMethod("cycling-regular");
+                        saveMethodItem(1);
                         if(Data.getInstance().isClicked()){
                             streetMaps.clearRoute();
                             drawRoute(Data.getInstance().getSpinnerRoute().getStart(),  Data.getInstance().getSpinnerRoute().getEnd(), Data.getInstance().getRouteMethod());
+
                         }
                         break;
                     case "Driving":
                         Data.getInstance().setRouteMethod("driving-car");
+                        saveMethodItem(2);
                         if(Data.getInstance().isClicked()){
                             streetMaps.clearRoute();
                             drawRoute(Data.getInstance().getSpinnerRoute().getStart(),  Data.getInstance().getSpinnerRoute().getEnd(), Data.getInstance().getRouteMethod());
+
                         }
                         break;
                 }
@@ -210,11 +256,13 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
 
         dogWalkingAdapter = new DogWalkingAdapter(getContext(), dogParks);
         dogParkChoices.setAdapter(dogWalkingAdapter);
+        getSharedPrefPark();
         dogParkChoices.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 DogWalkingItem clickedItem = (DogWalkingItem) adapterView.getItemAtPosition(position);
                 endPoint = clickedItem.getLocation();
+                saveParkItem(position);
             }
 
             @Override

@@ -1,5 +1,7 @@
 package com.example.location_aware.data;
 
+import android.widget.Spinner;
+
 import com.example.location_aware.ui.ChangePasswordFragment;
 import com.example.location_aware.logic.IMarkerUpdateListener;
 import com.example.location_aware.ui.MapFragment;
@@ -48,6 +50,7 @@ public class Data {
     private SettingsFragmentButtons settingsButtons;
     private IMarkerUpdateListener markerUpdateListener;
     private boolean clicked;
+    private Spinner methodChoices, dogParkChoices;
 
     public static Data getInstance(){
         if(data == null){
@@ -256,5 +259,21 @@ public class Data {
 
     public void setClicked(boolean clicked) {
         this.clicked = clicked;
+    }
+
+    public Spinner getMethodChoices() {
+        return methodChoices;
+    }
+
+    public void setMethodChoices(Spinner methodChoices) {
+        this.methodChoices = methodChoices;
+    }
+
+    public Spinner getDogParkChoices() {
+        return dogParkChoices;
+    }
+
+    public void setDogParkChoices(Spinner dogParkChoices) {
+        this.dogParkChoices = dogParkChoices;
     }
 }
