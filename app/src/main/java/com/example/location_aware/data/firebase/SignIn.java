@@ -33,6 +33,7 @@ public class SignIn extends AppCompatActivity {
     private Button signIn, forgotPassword;
     private ProgressBar progressBar;
     private ImageButton backButton;
+    private String emailAddress;
 
     private final String TAG = "SIGN IN CLASS";
 
@@ -65,7 +66,7 @@ public class SignIn extends AppCompatActivity {
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String emailAddress = email.getText().toString();
+                emailAddress = email.getText().toString();
                 String pass = password.getText().toString();
                 //Show progressbar
                 progressBar.setVisibility(View.VISIBLE);
@@ -112,11 +113,20 @@ public class SignIn extends AppCompatActivity {
         forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent goToMainActivity = new Intent(getApplicationContext(), ForgotPassword.class);
-                startActivity(goToMainActivity);
-
-                //Close Sign in activity
-                finish();
+                emailAddress = email.getText().toString();
+                if(!emailAddress.equals("")){
+                    auth.sendPasswordResetEmail(emailAddress)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        makeToast(R.string.toast_signIn_reset_password);
+                                        Log.d(TAG, "Email sent.");
+                                    }
+                                }
+                            });
+                } else
+                    makeToast(R.string.toast_signIn_invalid_email);
             }
         });
     }

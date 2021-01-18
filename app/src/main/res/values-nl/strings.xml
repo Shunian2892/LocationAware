@@ -51,4 +51,6 @@
     <string name="toast_geofence_dwell">U bevindt zich in een honden park/bos</string>
     <string name="toast_geofence_exit">U verlaat een honden park/bos</string>
     <string name="toast_signIn_verify_email">Verifiëer uw e-mail adres!</string>
+    <string name="toast_signIn_reset_password">Een email is verzonden!</string>
+    <string name="forgot_password">Wachtwoord vergeten</string>
 </resources>

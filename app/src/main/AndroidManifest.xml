@@ -18,7 +18,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Location_Aware"
         android:usesCleartextTraffic="true">
-        <activity android:name=".data.firebase.ForgotPassword"></activity>
         <activity
             android:name=".ui.launcher.SplashScreen"
             android:screenOrientation="portrait">

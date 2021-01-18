@@ -61,4 +61,5 @@
     <string name="toast_geofence_exit">You are exiting a dog park/forrest</string>
     <string name="toast_signIn_verify_email">Please verify your e-mail address!</string>
     <string name="forgot_password">Forgot password</string>
+    <string name="toast_signIn_reset_password">An email has been sent!</string>
 </resources>
