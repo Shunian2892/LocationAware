@@ -91,7 +91,7 @@
         android:id="@+id/sign_in_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/sign_in_user_button"
+        android:layout_below="@id/sign_in_forgot_password"
         android:visibility="gone"
         android:layout_centerHorizontal="true"/>
 </RelativeLayout>
