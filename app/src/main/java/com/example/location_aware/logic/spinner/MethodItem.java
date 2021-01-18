@@ -1,7 +1,7 @@
 package com.example.location_aware.logic.spinner;
 
 /**
- * Makes a new MethodItem object which can be put as an item in the combobox.
+ * Makes a new MethodItem object which can be put as an item in the combobox for the methods.
  */
 public class MethodItem {
     private String methodName;

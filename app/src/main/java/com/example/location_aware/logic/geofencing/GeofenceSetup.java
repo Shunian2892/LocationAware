@@ -41,7 +41,7 @@ public class GeofenceSetup {
     public void setUpGeofencing(){
         checkFineLocationPermission();
 
-        Log.d("GeofenceSetup", "setUp geofencing.......");
+        Log.d("GEOFENCESETUP", "setUp geofencing.......");
 
         geofencingClient = LocationServices.getGeofencingClient(context);
         geofenceHelper = new GeofenceHelper(context);
@@ -51,7 +51,7 @@ public class GeofenceSetup {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 addFences();
             } else {
-                //Permission is not granted!! Need to request it..
+                //Permission is not granted. Need to request it
                 if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
                     //We show a dialog and ask for permission
                     ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_ACCESS_REQUEST_CODE);
@@ -90,7 +90,7 @@ public class GeofenceSetup {
         geofencingClient.addGeofences(geofencingRequest,pendingIntent).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Log.d("GeofencingSetup", "/////////////////////////Geofence "+ geofence.getRequestId() + " is added");
+                Log.d("GeofencingSetup", "Geofence "+ geofence.getRequestId() + " is added");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

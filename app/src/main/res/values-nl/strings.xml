@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Location_Aware</string>
+    <string name="app_name">Fetch!</string>
     <string name="walking">Lopen</string>
     <string name="cycling">Fietsen</string>
     <string name="driving">Rijden</string>
@@ -24,6 +24,8 @@
     <string name="toast_choose_valid_route">Kies een valide route, alstublieft</string>
     <string name="toast_stopping_route">Route aan het stoppen! Een ongenblik geduld...</string>
     <string name="toast_starting_route">Route aan het starten! Een ongenblik geduld...</string>
+    <string name="toast_starting_route_part1"></string>
+    <string name="toast_starting_route_part2">aan het starten ga naar de map...</string>
     <string name="toast_valid_location">Vul alstublieft een (geldig) punt in!</string>
     <string name="toast_logged_out">U bent uitgelogd!</string>
     <string name="toast_logged_in">U bent ingelogd!</string>
@@ -53,4 +55,5 @@
     <string name="toast_signIn_verify_email">Verifiëer uw e-mail adres!</string>
     <string name="toast_signIn_reset_password">Een email is verzonden!</string>
     <string name="forgot_password">Wachtwoord vergeten</string>
+    <string name="you_are_here">Jij bent hier</string>
 </resources>

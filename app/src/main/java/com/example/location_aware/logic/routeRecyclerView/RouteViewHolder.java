@@ -1,6 +1,5 @@
 package com.example.location_aware.logic.routeRecyclerView;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,7 +13,7 @@ import com.example.location_aware.R;
  * This class creates new recyclerviewer items and sets the correct name, image and clicklistener
  */
 class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    public TextView routeName, places;
+    public TextView routeName;
     public ImageView routeImage;
     public OnItemClickListener clickListener;
 
@@ -22,7 +21,6 @@ class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
         super(itemView);
         routeImage = itemView.findViewById(R.id.route_list_item_image);
         routeName = itemView.findViewById(R.id.route_list_item_name);
-        places = itemView.findViewById(R.id.route_list_item_places);
         clickListener = listener;
         itemView.setOnClickListener(this);
     }
@@ -34,6 +32,5 @@ class RouteViewHolder extends RecyclerView.ViewHolder implements View.OnClickLis
     @Override
     public void onClick(View view) {
         clickListener.OnItemClick(getAdapterPosition());
-        Log.d("ROUTEVH clicklistener", getAdapterPosition()+"");
     }
 }

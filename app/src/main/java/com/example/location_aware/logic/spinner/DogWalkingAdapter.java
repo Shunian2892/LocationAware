@@ -16,7 +16,7 @@ import com.example.location_aware.R;
 import java.util.ArrayList;
 
 /**
- * Adapter for handling (clicked) items in the combobox in the MainActivity.
+ * Adapter for handling (clicked) items in the combobox for the dog parks/forests in the MainActivity.
  */
 public class DogWalkingAdapter extends ArrayAdapter<DogWalkingItem> {
 
@@ -24,7 +24,9 @@ public class DogWalkingAdapter extends ArrayAdapter<DogWalkingItem> {
         super(context, 0, parkList);
     }
 
-    //getView and getDropDownView both need to return the same view. Therefor a new method "initView" which returns the desired view such that the getView and getDropDownView only need to cal initView.
+    //getView and getDropDownView both need to return the same view.
+    // Therefor is a new method "initView" which returns the desired view such that the getView and getDropDownView only need to cal initView.
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -49,6 +51,7 @@ public class DogWalkingAdapter extends ArrayAdapter<DogWalkingItem> {
 
         DogWalkingItem currentItem = getItem(position);
 
+        //check if current item is not null
         if(currentItem != null){
             methodImage.setImageResource(currentItem.getImage());
             methodText.setText(currentItem.getName());

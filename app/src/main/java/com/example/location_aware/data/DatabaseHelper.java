@@ -1,5 +1,7 @@
 package com.example.location_aware.data;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.example.location_aware.ui.MapFragment;
@@ -19,7 +21,6 @@ public class DatabaseHelper {
     private FirebaseAuth auth;
     private HashMap<String, Object> userNameAndLocation;
     private User user;
-    private String[] currentUser;
     private String userPathSubstring;
 
     public DatabaseHelper() {
@@ -75,7 +76,7 @@ public class DatabaseHelper {
                             Data.getInstance().getMarkerUpdateListener().onMarkerUpdate(user);
                         }
                     } else {
-                        System.out.println("MAPFRAGMENT IS NULL");
+                        Log.d("DATABASEHELPER", "mapfragment is null");
                     }
                 }
             }

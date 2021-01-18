@@ -16,7 +16,7 @@ import com.example.location_aware.R;
 import java.util.ArrayList;
 
 /**
- * Adapter for handling (clicked) items in the combobox in the MainActivity.
+ * Adapter for handling (clicked) items in the combobox for the methods in the MainActivity.
  */
 public class MethodAdapter extends ArrayAdapter<MethodItem> {
 
@@ -24,7 +24,8 @@ public class MethodAdapter extends ArrayAdapter<MethodItem> {
         super(context, 0, methodList);
     }
 
-    //getView and getDropDownView both need to return the same view. Therefor a new method "initView" which returns the desired view such that the getView and getDropDownView only need to cal initView.
+    //getView and getDropDownView both need to return the same view.
+    // Therefor is a new method "initView" which returns the desired view such that the getView and getDropDownView only need to cal initView.
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

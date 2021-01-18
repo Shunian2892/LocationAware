@@ -14,6 +14,10 @@ import com.example.location_aware.R;
 
 public class SplashScreen extends AppCompatActivity {
 
+    /**
+     * creates a splashscreen with animation for 3 seconds
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

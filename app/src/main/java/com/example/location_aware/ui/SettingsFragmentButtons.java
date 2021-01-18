@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.location_aware.R;
-import com.example.location_aware.data.Data;
 import com.google.firebase.auth.FirebaseAuth;
 
 /**
@@ -27,16 +26,6 @@ public class SettingsFragmentButtons extends Fragment {
     private FragmentManager fragmentManager;
     private ChangePasswordFragment changePasswordFragment;
     private OwnRouteFragment ownRouteFragment;
-
-    public SettingsFragmentButtons() {
-        // Required empty public constructor
-    }
-
-    public static SettingsFragmentButtons newInstance(String param1, String param2) {
-        SettingsFragmentButtons fragment = new SettingsFragmentButtons();
-
-        return fragment;
-    }
 
 
     @Override
@@ -91,29 +80,25 @@ public class SettingsFragmentButtons extends Fragment {
     }
 
     /**
-     * Checks if there is a change password fragment. If there isn't, then make a new ChangePasswordFragment and commit
+     * Checks if there is a change password fragment. If there isn't, then make a new ChangePasswordFragment
      */
     private void setPasswordFragment() {
         if(fragmentManager.findFragmentById(R.id.change_password_fragment) == null){
             changePasswordFragment = new ChangePasswordFragment();
-            fragmentManager.beginTransaction().add(R.id.settings_fragment_container, changePasswordFragment).commit();
         } else {
             changePasswordFragment = (ChangePasswordFragment) fragmentManager.findFragmentById(R.id.change_password_fragment);
         }
-        Data.getInstance().setChangePasswordFragment(changePasswordFragment);
     }
 
     /**
-     * Checks if there is a create route fragment. If there isn't, then make a new OwnRouteFragment and commit
+     * Checks if there is a create route fragment. If there isn't, then make a new OwnRouteFragment
      */
     private void setCreateRouteFragment() {
         if(fragmentManager.findFragmentById(R.id.ownRouteFragment) == null){
             ownRouteFragment = new OwnRouteFragment();
-            fragmentManager.beginTransaction().add(R.id.settings_fragment_container,ownRouteFragment).commit();
         } else {
             ownRouteFragment = (OwnRouteFragment) fragmentManager.findFragmentById(R.id.ownRouteFragment);
         }
-        Data.getInstance().setOwnRouteFragment(ownRouteFragment);
     }
 
     /**

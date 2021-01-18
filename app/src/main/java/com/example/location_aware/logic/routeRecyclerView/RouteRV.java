@@ -13,7 +13,7 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.location_aware.data.Data;
 import com.example.location_aware.R;
@@ -30,11 +30,6 @@ public class RouteRV extends Fragment implements OnItemClickListener {
     private ArrayList<Route> routeList;
     private RouteAdapter routeAdapter;
     private Context context;
-    private SetRoute setRoute;
-
-    public void setRoute(SetRoute setRoute){
-        this.setRoute = setRoute;
-    }
 
     @Nullable
     @Override
@@ -64,6 +59,7 @@ public class RouteRV extends Fragment implements OnItemClickListener {
         Data.getInstance().getStreetMaps().clearRoute();
         Data.getInstance().setSpinnerRoute(null);
         Data.getInstance().setRoute(route);
-        //setRoute.setRouteCoord(route);
+        Toast.makeText(context, getResources().getString(R.string.toast_starting_route_part1) + " " + route.getName()
+                + " " + getResources().getString(R.string.toast_starting_route_part2), Toast.LENGTH_LONG).show();
     }
 }

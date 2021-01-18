@@ -64,18 +64,6 @@
         app:layout_constraintTop_toBottomOf="@+id/end_location"
         app:srcCompat="@drawable/start_route" />
 
-    <!--    <EditText-->
-<!--        android:id="@+id/start_location"-->
-<!--        android:layout_width="150dp"-->
-<!--        android:layout_height="50dp"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginLeft="16dp"-->
-<!--        android:hint="@string/start_location"-->
-<!--        android:inputType="text"-->
-<!--        android:scrollHorizontally="true"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
     <ImageButton
         android:id="@+id/stop_route_button"
         android:layout_width="40dp"

@@ -3,7 +3,7 @@ package com.example.location_aware.logic.spinner;
 import org.osmdroid.util.GeoPoint;
 
 /**
- * Makes a new DogWalkingItem object which can be put as an item in the combobox.
+ * Makes a new DogWalkingItem object which can be put as an item in the combobox for dog parks/forests.
  */
 public class DogWalkingItem {
     private String name;

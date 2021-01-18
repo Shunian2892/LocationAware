@@ -23,15 +23,6 @@ public class SettingsFragment extends Fragment {
     private FragmentManager fragmentManager;
     private SettingsFragmentButtons settingsButtons;
 
-    public SettingsFragment() {
-        // Required empty public constructor
-    }
-
-    public static SettingsFragment newInstance(String param1, String param2) {
-        SettingsFragment fragment = new SettingsFragment();
-
-        return fragment;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,15 +40,6 @@ public class SettingsFragment extends Fragment {
         }
         return v;
     }
-
-    /*@Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if(savedInstanceState != null){
-            //Data.getInstance().getSettingsFragment();
-            fragmentManager.beginTransaction().replace(R.id.fragment_container, Data.getInstance().getSettingsFragment());
-        }
-    }*/
 
     /**
      * Checks if there is a settings buttons fragment. If there isn't, then make a new SettingsButtonsFragment and commit
