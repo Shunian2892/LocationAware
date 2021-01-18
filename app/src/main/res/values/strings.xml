@@ -15,8 +15,8 @@
     <string name="start_location">Start location</string>
     <string name="to">to:</string>
     <string name="sign_in_existing_user">Sign in existing user</string>
-    <string name="e_mail_address">E-mail address</string>
-    <string name="password">Password</string>
+    <string name="e_mail_address">E-mail address:</string>
+    <string name="password">Password:</string>
     <string name="sign_in">Sign in</string>
     <string name="register">Register</string>
     <string name="register_new_user">Register new user</string>
@@ -36,13 +36,13 @@
     <string name="toast_valid_location">Please type in a (valid) point!</string>
     <string name="toast_logged_out">You are successfully logged out!</string>
     <string name="toast_logged_in">You are successfully logged in!</string>
-    <string name="toast_register_new">Registration successful!</string>
+    <string name="toast_register_new">Registration successful! Please check your e-mail for verification link!</string>
     <string name="toast_register_new_failed">Registration was unsuccesfull...</string>
     <string name="toast_register_new_fields">Please fill in all the fields!</string>
     <string name="toast_ownRoute_name">Please type in a name for the route!</string>
     <string name="toast_ownRoute_multiple_locations">Please add multiple locations!</string>
     <string name="toast_ownRoute_created">Route is created!</string>
-    <string name="toast_signIn_invalid_email">Invalid/non existing e-mail address!</string>
+    <string name="toast_signIn_invalid_email">Invalid / non existing e-mail address!</string>
     <string name="toast_signIn_invalid_password">Invalid password!</string>
     <string name="map">Map</string>
     <string name="routes">Routes</string>
@@ -59,4 +59,7 @@
     <string name="toast_geofence_enter">You are entering a dog park/forrest</string>
     <string name="toast_geofence_dwell">You are in a dog park/forest</string>
     <string name="toast_geofence_exit">You are exiting a dog park/forrest</string>
+    <string name="toast_signIn_verify_email">Please verify your e-mail address!</string>
+    <string name="forgot_password">Forgot password</string>
+    <string name="toast_signIn_reset_password">An email has been sent!</string>
 </resources>

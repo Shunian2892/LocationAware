@@ -30,9 +30,10 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 public class SignIn extends AppCompatActivity {
     private FirebaseAuth auth;
     private EditText email, password;
-    private Button signIn;
+    private Button signIn, forgotPassword;
     private ProgressBar progressBar;
     private ImageButton backButton;
+    private String emailAddress;
 
     private final String TAG = "SIGN IN CLASS";
 
@@ -44,6 +45,7 @@ public class SignIn extends AppCompatActivity {
         email = findViewById(R.id.email_address_sign_in);
         password = findViewById(R.id.password_sign_in);
         signIn = findViewById(R.id.sign_in_user_button);
+        forgotPassword = findViewById(R.id.sign_in_forgot_password);
         progressBar = findViewById(R.id.sign_in_progress_bar);
         backButton = findViewById(R.id.sign_in_backButton);
 
@@ -64,11 +66,12 @@ public class SignIn extends AppCompatActivity {
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String emailAddress = email.getText().toString();
+                emailAddress = email.getText().toString();
                 String pass = password.getText().toString();
                 //Show progressbar
                 progressBar.setVisibility(View.VISIBLE);
 
+                //Check if fields aren't empty
                 if(!emailAddress.equals("") && !pass.equals("")){
                     auth.signInWithEmailAndPassword(emailAddress, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
@@ -86,18 +89,44 @@ public class SignIn extends AppCompatActivity {
                                     Log.d(TAG, "onComplete: " + e.getMessage());
                                 }
                             } else {
-                                //Go to main activity
-                                Intent goToMainActivity = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(goToMainActivity);
+                                //Check if email is verified
+                                if(!auth.getCurrentUser().isEmailVerified()){
+                                    makeToast(R.string.toast_signIn_verify_email);
+                                } else {
+                                    makeToast(R.string.toast_logged_in);
+                                    //Go to main activity
+                                    Intent goToMainActivity = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(goToMainActivity);
 
-                                //Close Sign in activity
-                                finish();
+                                    //Close Sign in activity
+                                    finish();
+                                }
                             }
                         }
                     });
                 } else  {
                     makeToast(R.string.toast_register_new_fields);
                 }
+            }
+        });
+
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                emailAddress = email.getText().toString();
+                if(!emailAddress.equals("")){
+                    auth.sendPasswordResetEmail(emailAddress)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        makeToast(R.string.toast_signIn_reset_password);
+                                        Log.d(TAG, "Email sent.");
+                                    }
+                                }
+                            });
+                } else
+                    makeToast(R.string.toast_signIn_invalid_email);
             }
         });
     }
