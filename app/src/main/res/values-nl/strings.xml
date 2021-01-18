@@ -14,8 +14,8 @@
     <string name="start_location">Start locatie</string>
     <string name="to">naar:</string>
     <string name="sign_in_existing_user">Inloggen bestaande gebruiker</string>
-    <string name="e_mail_address">E-mail adres</string>
-    <string name="password">Wachtwoord</string>
+    <string name="e_mail_address">E-mail adres:</string>
+    <string name="password">Wachtwoord:</string>
     <string name="sign_in">Log in</string>
     <string name="register">Registreer</string>
     <string name="register_new_user">Registreer nieuwe gebruiker</string>
@@ -27,7 +27,7 @@
     <string name="toast_valid_location">Vul alstublieft een (geldig) punt in!</string>
     <string name="toast_logged_out">U bent uitgelogd!</string>
     <string name="toast_logged_in">U bent ingelogd!</string>
-    <string name="toast_register_new">Registratie geslaagd!</string>
+    <string name="toast_register_new">Registratie geslaagd! Check uw e-mail voor de verificatie link!</string>
     <string name="toast_register_new_failed">Registratie is niet gelukt...</string>
     <string name="toast_register_new_fields">Vul alstublieft alle velden in!</string>
     <string name="toast_ownRoute_name">Vul alstublieft een routenaam in!</string>
@@ -50,4 +50,5 @@
     <string name="toast_geofence_enter">U gaat een honden park/bos binnen</string>
     <string name="toast_geofence_dwell">U bevindt zich in een honden park/bos</string>
     <string name="toast_geofence_exit">U verlaat een honden park/bos</string>
+    <string name="toast_signIn_verify_email">Verifiëer uw e-mail adres!</string>
 </resources>

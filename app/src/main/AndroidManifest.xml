@@ -3,12 +3,10 @@
     package="com.example.location_aware">
     <!-- Offline tile provider and storing tiles -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- Location provider -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Location provider -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <!-- Internet access -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> <!-- Internet access -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -20,17 +18,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Location_Aware"
         android:usesCleartextTraffic="true">
-
-        <activity android:name=".ui.launcher.SplashScreen"
+        <activity android:name=".data.firebase.ForgotPassword"></activity>
+        <activity
+            android:name=".ui.launcher.SplashScreen"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".ui.launcher.MainActivity"/>
-        <activity android:name=".ui.LoginScreen"/>
+        <activity android:name=".ui.launcher.MainActivity" />
+        <activity android:name=".ui.LoginScreen" />
         <activity android:name=".data.firebase.SignIn" />
         <activity android:name=".data.firebase.Registration" />
 
