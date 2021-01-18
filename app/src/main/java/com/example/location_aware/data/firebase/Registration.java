@@ -72,20 +72,28 @@ public class Registration extends AppCompatActivity {
                             //Hide progressbar after registration completion
                             progressBar.setVisibility(View.GONE);
                             if(task.isSuccessful()){
-                                makeToast(R.string.toast_register_new);
-//                                Log.d(TAG, "createUserWithEmail:success");
-                                newEmail.setText("");
-                                newPassword.setText("");
+                                //Send verification email to user
+                                auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            makeToast(R.string.toast_register_new);
+                                            newEmail.setText("");
+                                            newPassword.setText("");
 
-                                //Go to main activity
-                                Intent goToSignIn = new Intent(getApplicationContext(), SignIn.class);
-                                startActivity(goToSignIn);
+                                            //Go to main activity
+                                            Intent goToSignIn = new Intent(getApplicationContext(), SignIn.class);
+                                            startActivity(goToSignIn);
 
-                                //Close Registration activity
-                                finish();
+                                            //Close Registration activity
+                                            finish();
+                                        } else {
+                                            makeToast(R.string.toast_register_new_failed);
+                                        }
+                                    }
+                                });
                             } else {
                                 makeToast(R.string.toast_register_new_failed);
-//                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             }
                         }
                     });
