@@ -95,4 +95,16 @@ public class OpenStreetMaps {
             mapView.getOverlays().add(marker);
         }
     }
+
+    public void drawMarker(MapView mapView, Marker marker, Drawable otherUser){
+        if(mapView != null){
+            marker.setPosition(marker.getPosition());
+            marker.setIcon(otherUser);
+            mapView.getOverlays().remove(oldMarker);
+            oldMarker = marker;
+            oldMarker.setIcon(otherUser);
+            oldMarker.setTitle(marker.getTitle());
+            mapView.getOverlays().add(marker);
+        }
+    }
 }

@@ -53,6 +53,8 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -480,11 +482,26 @@ public class MapFragment extends Fragment implements IMarkerUpdateListener {
         if(userHashMap.containsKey(userName)){
             if(!userHashMap.get(userName).equals(userLocation)){
                 if((mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),userLat,userLon) < 300) && (map != null)) {
-                    streetMaps.drawMarker(map, userLocation, userName, context.getDrawable(R.drawable.location_other_user));
+                    drawOtherUsers(userLocation, userName);
                 }
             }
         }
         userHashMap.put(userName,userLocation);
+    }
+
+    public void drawOtherUsers(GeoPoint userLocation, String userName){
+        Iterator hmIterator = userHashMap.entrySet().iterator();
+
+        while (hmIterator.hasNext()) {
+            Map.Entry mapElement = (Map.Entry)hmIterator.next();
+            GeoPoint newGeoPoint = (GeoPoint) mapElement.getValue();
+            Marker marker = new Marker(map);
+            marker.setPosition(newGeoPoint);
+            streetMaps.drawMarker(map, marker, context.getDrawable(R.drawable.location_other_user));
+
+            Log.d("draw other user markers", "drawOtherUsers: mapElement" + mapElement);
+
+        }
     }
 
     /**

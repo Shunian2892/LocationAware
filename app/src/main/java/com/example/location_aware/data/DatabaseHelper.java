@@ -14,6 +14,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 public class DatabaseHelper {
     private FirebaseDatabase database;
@@ -21,7 +22,8 @@ public class DatabaseHelper {
     private FirebaseAuth auth;
     private HashMap<String, Object> userNameAndLocation;
     private User user;
-    private String userPathSubstring;
+    private String userPathSubstring, currentUser;
+    private String[] userPathName;
 
     public DatabaseHelper() {
         userNameAndLocation = new HashMap<>();
@@ -35,11 +37,19 @@ public class DatabaseHelper {
     public String getCurrentUserDatabase() {
         userPathSubstring = Data.getInstance().getCurrentUser();
 
-        //Go to the subbranch of this specific user
-        dbRef = database.getReference("Location Aware").child("User").child(userPathSubstring);
-        userNameAndLocation.put("name", userPathSubstring);
+        if(userPathSubstring.contains(".")){
+            userPathName = userPathSubstring.split(Pattern.quote("."));
+            currentUser = userPathName[0] + userPathName[1];
+            Data.getInstance().setCurrentUser(currentUser);
+        }
 
-        return userPathSubstring;
+        currentUser = Data.getInstance().getCurrentUser();
+
+        //Go to the subbranch of this specific user
+        dbRef = database.getReference("Location Aware").child("User").child(currentUser);
+        userNameAndLocation.put("name", currentUser);
+
+        return currentUser;
     }
 
     /**
