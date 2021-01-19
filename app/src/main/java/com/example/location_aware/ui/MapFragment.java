@@ -99,6 +99,8 @@ public class MapFragment extends Fragment implements IMarkerUpdateListener {
     private MapHelper mapHelper;
     private HashMap<String, GeoPoint> userHashMap;
 
+    private Boolean noMap;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //Load/initialise osmdroid configuration
@@ -114,6 +116,7 @@ public class MapFragment extends Fragment implements IMarkerUpdateListener {
 
         //Create mapView and draw marker on current location
         createMap(v);
+        noMap = false;
         streetMaps = Data.getInstance().getStreetMaps();
 
         //Initialize buttons
@@ -159,6 +162,7 @@ public class MapFragment extends Fragment implements IMarkerUpdateListener {
         super.onStop();
         //when the mapfragment stops clear the route
         streetMaps.clearRoute();
+        noMap = true;
     }
 
     /**
@@ -481,16 +485,22 @@ public class MapFragment extends Fragment implements IMarkerUpdateListener {
 
         if(userHashMap.containsKey(userName)){
             if(!userHashMap.get(userName).equals(userLocation)){
-                if((mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),userLat,userLon) < 300) && (map != null)) {
-                    drawOtherUsers(userLocation, userName);
+                if(!noMap)
+                    drawOtherUsers();
                 }
             }
-        }
         userHashMap.put(userName,userLocation);
     }
 
-    public void drawOtherUsers(GeoPoint userLocation, String userName){
-        Iterator hmIterator = userHashMap.entrySet().iterator();
+    public void drawOtherUsers(){
+        for(Map.Entry<String, GeoPoint> entry : userHashMap.entrySet()){
+               Marker marker = new Marker(map);
+               marker.setPosition(entry.getValue());
+               streetMaps.drawMarker(map, marker, context.getDrawable(R.drawable.location_other_user));
+
+               Log.d("draw other user markers", "drawOtherUsers: mapElement" + entry);
+        }
+       /* Iterator hmIterator = userHashMap.entrySet().iterator();
 
         while (hmIterator.hasNext()) {
             Map.Entry mapElement = (Map.Entry)hmIterator.next();
@@ -501,7 +511,7 @@ public class MapFragment extends Fragment implements IMarkerUpdateListener {
 
             Log.d("draw other user markers", "drawOtherUsers: mapElement" + mapElement);
 
-        }
+        }*/
     }
 
     /**
