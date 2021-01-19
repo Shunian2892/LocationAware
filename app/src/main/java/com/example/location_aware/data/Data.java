@@ -1,7 +1,5 @@
 package com.example.location_aware.data;
 
-import android.widget.Spinner;
-
 import com.example.location_aware.logic.IMarkerUpdateListener;
 import com.example.location_aware.ui.MapFragment;
 import com.example.location_aware.logic.OpenStreetMaps;
