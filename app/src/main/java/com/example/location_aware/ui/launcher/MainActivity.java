@@ -8,9 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Spinner;
@@ -19,7 +17,6 @@ import android.widget.Toast;
 import com.example.location_aware.data.Data;
 import com.example.location_aware.ui.LoginScreen;
 import com.example.location_aware.ui.MapFragment;
-import com.example.location_aware.ui.OwnRouteFragment;
 import com.example.location_aware.R;
 import com.example.location_aware.ui.SettingsFragment;
 import com.example.location_aware.logic.routeRecyclerView.*;
@@ -39,7 +36,7 @@ import java.util.regex.Pattern;
  * When this activity is called, it will get the current user from the firebase database based on the email that was used to sign in, and the current username is set in the Data singleton.
  */
 public class MainActivity extends AppCompatActivity {
-    private String TAG = "MAINACTIVITY CLASS";
+    private String TAG = "MAINACTIVITY";
 
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
@@ -47,11 +44,21 @@ public class MainActivity extends AppCompatActivity {
     private SettingsFragment settingsFragment;
     private Fragment currentFragment;
 
+    private FirebaseAuth auth;
+    private FirebaseUser user;
+
+    private String[] currentUser;
+    private String userPathSubstring;
+
     private ArrayList<Route> routeList;
     private HashMap<String,ArrayList<String>> nameList;
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
-        //Change fragments based on which button the user clicks
+                /**
+                 * Change fragments based on which button the user clicks
+                 * @param item the item on teh bottomnav that is clicked
+                 * @return
+                 */
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     currentFragment = null;
@@ -75,15 +82,6 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             };
-
-    private FirebaseAuth auth;
-    private FirebaseUser user;
-
-    private String[] currentUser;
-    private String userPathSubstring;
-
-    private Spinner methodChoices, dogParkChoices;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,41 +108,10 @@ public class MainActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
     }
 
-    private void loadSpinnerPref() {
-        SharedPreferences sharedPref = getSharedPreferences("FileName",MODE_PRIVATE);
-        int spinnerValue = sharedPref.getInt("methodSpinner",-1);
-        if(spinnerValue != -1) {
-            // set the selected value of the spinner
-            Data.getInstance().getMethodChoices().setSelection(spinnerValue);
-        }
-        SharedPreferences sharedPrefPark = getSharedPreferences("FileName",MODE_PRIVATE);
-        int spinnerValuePark = sharedPrefPark.getInt("parkSpinner",-1);
-        if(spinnerValuePark != -1) {
-            // set the selected value of the spinner
-            Data.getInstance().getDogParkChoices().setSelection(spinnerValue);
-        }
-    }
-
-    /*@Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-            if(currentFragment == mapFragment){
-                Log.e("CONFCHANEDMAIN", "mapfragment");
-                setMapFragment();
-                fragmentManager.beginTransaction().replace(R.id.fragment_container,mapFragment).commit();
-            }else if(currentFragment == settingsFragment){
-                setSettingsFragment();
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, settingsFragment).commit();
-            }else if(currentFragment == routeRV){
-                setRouteFragment();
-                fragmentManager.beginTransaction().replace(R.id.fragment_container,routeRV).commit();
-            }
-
-    }*/
-
     @Override
     protected void onStart() {
         super.onStart();
+        //if the mapfragment is not null clear the map when mapfragment starts
         if(mapFragment != null) {
             mapFragment.clearMap();
         }
@@ -155,13 +122,11 @@ public class MainActivity extends AppCompatActivity {
             userPathSubstring = currentUser[0];
             Data.getInstance().setCurrentUser(userPathSubstring);
             makeToast(R.string.toast_logged_in);
-        } else {
-            //TODO finish this if/else statement. doenst have to do anything tbh...
         }
     }
 
     /**
-     * Checks if there is a map fragment. If there isn't, then make a new MapFragment and commit
+     * Checks if there is a map fragment. If there isn't, then make a new MapFragment
      */
     public void setMapFragment(){
         if(fragmentManager.findFragmentById(R.id.map_fragment) == null){
@@ -169,13 +134,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
         }
-
         Data.getInstance().setMapFragment(mapFragment);
-        //loadSpinnerPref();
     }
 
     /**
-     * Checks if there is a route recyclerview fragment. If there isn't, then make a new RouteRV and commit
+     * Checks if there is a route recyclerview fragment. If there isn't, then make a new RouteRV
      */
     public void setRouteFragment(){
         if(fragmentManager.findFragmentById(R.id.route_rv_fragment) == null){
@@ -183,12 +146,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             routeRV = (RouteRV) fragmentManager.findFragmentById(R.id.route_rv_fragment);
         }
-//        routeRV.setRoute(mapFragment.getSetRoute());
-        Data.getInstance().setRouteRV(routeRV);
     }
 
     /**
-     * Checks if there is a settings fragment. If there isn't, then make a new SettingsFragment and commit
+     * Checks if there is a settings fragment. If there isn't, then make a new SettingsFragment
      */
     public void setSettingsFragment(){
         if(fragmentManager.findFragmentById(R.id.settings_fragment) == null){
@@ -196,8 +157,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             settingsFragment = (SettingsFragment) fragmentManager.findFragmentById(R.id.settings_fragment);
         }
-
-        Data.getInstance().setSettingsFragment(settingsFragment);
     }
 
     /**
@@ -223,18 +182,6 @@ public class MainActivity extends AppCompatActivity {
         nameList = new Gson().fromJson(jsonNames, nameToken.getType());
 
         Data.getInstance().setRouteHashMap(nameList);
-    }
-
-    /**
-     * log out method, sign out of the firebase user and return to login screen
-     * @param view
-     */
-    public void logout(View view) {
-        auth.signOut();
-        Intent goToLoginScreen = new Intent(getApplicationContext(), LoginScreen.class);
-        startActivity(goToLoginScreen);
-        finish();
-        makeToast(R.string.toast_logged_out);
     }
 
     /**

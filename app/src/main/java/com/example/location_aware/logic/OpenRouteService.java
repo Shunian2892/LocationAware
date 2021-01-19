@@ -9,7 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,23 +26,21 @@ import okhttp3.Response;
  * This class handles the api request to the openstreetmaps site for getting directions form one location to another location
  */
 public class OpenRouteService {
-    private final String apiKey = "5b3ce3597851110001cf624838f723c4a0944307a267699df56fb5e8";
+    private final String APIKEY = "5b3ce3597851110001cf624838f723c4a0944307a267699df56fb5e8";
     private OkHttpClient client;
 
     public boolean isConnected;
 
     private OpenStreetMaps openStreetMaps;
-    private MapView mapView;
     private GeometryDecoder decoder;
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    public OpenRouteService(MapView mapView) {
+    public OpenRouteService() {
         this.client = new OkHttpClient();
         this.isConnected = false;
         this.openStreetMaps = new OpenStreetMaps();
         Data.getInstance().setStreetMaps(openStreetMaps);
-        this.mapView = mapView;
         this.decoder = new GeometryDecoder();
         Connect();
     }
@@ -60,7 +57,7 @@ public class OpenRouteService {
      */
     private Request createGetRequest(String method, String url) {
         Request request = new Request.Builder().url("\n" +
-                "https://api.openrouteservice.org/v2/directions/" + method + "?api_key=" + this.apiKey + url).build();
+                "https://api.openrouteservice.org/v2/directions/" + method + "?api_key=" + this.APIKEY + url).build();
         return request;
     }
 
@@ -123,7 +120,7 @@ public class OpenRouteService {
     private Request createPostRequest(String method, String json) {
         RequestBody requestBody = RequestBody.create(json, JSON);
         Request request = new Request.Builder().url("https://api.openrouteservice.org/v2/directions/" + method).
-                post(requestBody).addHeader("Authorization", apiKey).build();
+                post(requestBody).addHeader("Authorization", APIKEY).build();
         return request;
     }
 

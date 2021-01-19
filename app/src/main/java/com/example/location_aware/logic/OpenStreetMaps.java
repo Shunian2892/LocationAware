@@ -5,9 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 
-import com.example.location_aware.R;
 import com.example.location_aware.data.Data;
-import com.example.location_aware.logic.OpenRouteService;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -25,12 +23,10 @@ import java.util.Locale;
 public class OpenStreetMaps {
     private Polyline route;
     private MapView mapView;
-    private OpenRouteService routeService;
     private Marker oldMarker;
 
     public OpenStreetMaps(){
         this.mapView = Data.getInstance().getMapView();
-        this.routeService = Data.getInstance().getRouteService();
     }
 
     /**
@@ -79,19 +75,6 @@ public class OpenStreetMaps {
             return newPoint;
         }
         return newPoint;
-    }
-
-    /**
-     * Draw a marker with a custom icon on the map
-     * @param mapView map on which to draw
-     * @param point location where the marker has to be set
-     * @param icon icon to use as marker
-     */
-    public void drawMarker(MapView mapView, GeoPoint point, Drawable icon){
-        Marker marker = new Marker(mapView);
-        marker.setPosition(point);
-        marker.setIcon(icon);
-        mapView.getOverlays().add(marker);
     }
 
     /**

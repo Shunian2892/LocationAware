@@ -35,15 +35,6 @@ public class ChangePasswordFragment extends Fragment {
     private FirebaseUser user;
     private ProgressBar progressBar;
 
-    public ChangePasswordFragment() {
-        // Required empty public constructor
-    }
-
-    public static ChangePasswordFragment newInstance(String param1, String param2) {
-        ChangePasswordFragment fragment = new ChangePasswordFragment();
-
-        return fragment;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

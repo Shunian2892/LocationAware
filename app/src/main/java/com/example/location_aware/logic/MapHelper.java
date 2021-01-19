@@ -8,6 +8,14 @@ public class MapHelper {
         return degrees*Math.PI/180;
     }
 
+    /**
+     * Calculate the distance between two coords
+     * @param lat1 the latitude of the first coord
+     * @param lon1 the longtitude of the first coord
+     * @param lat2 the latitude of the second coord
+     * @param lon2 the longtitude of the second coord
+     * @return difference between the coords in meters
+     */
     public double distanceCoords(double lat1, double lon1, double lat2, double lon2){
         int earthRadius = 6371;
 

@@ -1,6 +1,5 @@
 <resources>
-    <!-- TODO: change app name!!!!! -->
-    <string name="app_name">Location_Aware</string>
+    <string name="app_name">Fetch!</string>
 
     <string name="walking">Walking</string>
     <string name="cycling">Cycling</string>
@@ -33,6 +32,8 @@
 
     <string name="toast_stopping_route">Stopping route! A moment please...</string>
     <string name="toast_starting_route">Starting route! A moment please...</string>
+    <string name="toast_starting_route_part1">Starting</string>
+    <string name="toast_starting_route_part2">go to the map...</string>
     <string name="toast_valid_location">Please type in a (valid) point!</string>
     <string name="toast_logged_out">You are successfully logged out!</string>
     <string name="toast_logged_in">You are successfully logged in!</string>
@@ -62,4 +63,5 @@
     <string name="toast_signIn_verify_email">Please verify your e-mail address!</string>
     <string name="forgot_password">Forgot password</string>
     <string name="toast_signIn_reset_password">An email has been sent!</string>
+    <string name="you_are_here">You are here</string>
 </resources>

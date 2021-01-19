@@ -56,7 +56,10 @@ import java.util.HashMap;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateListener {
+/**
+ * This class handles the map and the points and routes that are going to be drawn on the map
+ */
+public class MapFragment extends Fragment implements IMarkerUpdateListener {
     private Context context;
 
     private MapView map;
@@ -64,7 +67,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
     private LocationManager manager;
     private LocationListener listener;
 
-    private Marker currentLocationMarker, oldMarker, otherUserMarker;
+    private Marker currentLocationMarker;
     private GpsMyLocationProvider myLocationProvider;
     private MyLocationNewOverlay myLocationNewOverlay;
 
@@ -74,13 +77,11 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
     private boolean firstLocationSet;
     private ImageButton startRoute, stopRoute;
     private FloatingActionButton setCenter;
-//    private EditText startLocationInput;
     private AutoCompleteTextView startLocationInput;
     private String[] myLocation;
     private Spinner methodChoices, dogParkChoices;
     private ArrayList<MethodItem> methods;
     private ArrayList<DogWalkingItem> dogParks;
-    private int currentMethodItem;
 
     private OpenStreetMaps streetMaps;
     private IMapController mapController;
@@ -95,16 +96,6 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
 
     private MapHelper mapHelper;
     private HashMap<String, GeoPoint> userHashMap;
-
-    public MapFragment() {
-        // Required empty public constructor
-    }
-
-    public static MapFragment newInstance(String param1, String param2) {
-        MapFragment fragment = new MapFragment();
-
-        return fragment;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -154,6 +145,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
 
 
 
+        //when the map is created and there is a route in the data instance, draw this route
         if(Data.getInstance().getRoute() != null){
             setRouteCoord(Data.getInstance().getRoute());
         }
@@ -163,10 +155,14 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
     @Override
     public void onStop() {
         super.onStop();
+        //when the mapfragment stops clear the route
         streetMaps.clearRoute();
-        Log.e("MAPFRAGMENTSTOP", "stop mapfragment");
     }
 
+    /**
+     * Save the chosen position from the method spinner with shared prefrences
+     * @param position the position of the item on the spinner
+     */
     private void saveMethodItem(int position){
         SharedPreferences sharedPref = getActivity().getSharedPreferences("method",MODE_PRIVATE);
         SharedPreferences.Editor prefEditor = sharedPref.edit();
@@ -174,6 +170,11 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         prefEditor.apply();
         prefEditor.commit();
     }
+
+    /**
+     * Save the chosen position from the dog park/forest spinner with shared prefrences
+     * @param position the position of the item on the spinner
+     */
     private void saveParkItem(int position){
         SharedPreferences sharedPref = getActivity().getSharedPreferences("park",MODE_PRIVATE);
         SharedPreferences.Editor prefEditor = sharedPref.edit();
@@ -182,8 +183,10 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         prefEditor.commit();
     }
 
+    /**
+     * get the saved position of the item in the method spinner and set the methodspinner on that position
+     */
     private void getSharedPrefMethod(){
-
         SharedPreferences sharedPref = getActivity().getSharedPreferences("method",MODE_PRIVATE);
         int spinnerMethodValue = sharedPref.getInt("methodSpinner",-1);
         if(spinnerMethodValue != -1){
@@ -191,6 +194,9 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         }
 
     }
+    /**
+     * get the saved position of the item in the dog park/forest spinner and set the dog park/forest spinner on that position
+     */
     private void getSharedPrefPark(){
         SharedPreferences sharedPrefPark = getActivity().getSharedPreferences("park",MODE_PRIVATE);
         int spinnerValuePark = sharedPrefPark.getInt("parkSpinner",-1);
@@ -216,35 +222,22 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
                 MethodItem clickedMethod = (MethodItem) adapterView.getItemAtPosition(position);
                 String clickedItemName = clickedMethod.getMethodName();
 
-                //TODO make cases dynamic such that text change depending on device language
-                switch (clickedItemName){
-                    case "Walking":
-                        Data.getInstance().setRouteMethod("foot-walking");
-                        saveMethodItem(0);
-                        if(Data.getInstance().isClicked()){
-                            streetMaps.clearRoute();
-                            drawRoute(Data.getInstance().getSpinnerRoute().getStart(), Data.getInstance().getSpinnerRoute().getEnd(), Data.getInstance().getRouteMethod());
-
-                        }
-                        break;
-                    case "Cycling":
-                        Data.getInstance().setRouteMethod("cycling-regular");
-                        saveMethodItem(1);
-                        if(Data.getInstance().isClicked()){
-                            streetMaps.clearRoute();
-                            drawRoute(Data.getInstance().getSpinnerRoute().getStart(),  Data.getInstance().getSpinnerRoute().getEnd(), Data.getInstance().getRouteMethod());
-
-                        }
-                        break;
-                    case "Driving":
-                        Data.getInstance().setRouteMethod("driving-car");
-                        saveMethodItem(2);
-                        if(Data.getInstance().isClicked()){
-                            streetMaps.clearRoute();
-                            drawRoute(Data.getInstance().getSpinnerRoute().getStart(),  Data.getInstance().getSpinnerRoute().getEnd(), Data.getInstance().getRouteMethod());
-
-                        }
-                        break;
+                //set the method based on the item name on the method spinner
+                if(clickedItemName.equals(getResources().getString(R.string.walking))){
+                    Data.getInstance().setRouteMethod("foot-walking");
+                }else if(clickedItemName.equals(getResources().getString(R.string.cycling))) {
+                    Data.getInstance().setRouteMethod("cycling-regular");
+                }else if(clickedItemName.equals(getResources().getString(R.string.driving))) {
+                    Data.getInstance().setRouteMethod("driving-car");
+                }
+                //save the chosen position
+                saveMethodItem(position);
+                //if the spinner route isn't null and a route is clicked, clear the map first and then draw the route
+                if(Data.getInstance().getSpinnerRoute() != null){
+                    if(Data.getInstance().isClicked()){
+                        streetMaps.clearRoute();
+                        drawRoute(Data.getInstance().getSpinnerRoute().getStart(), Data.getInstance().getSpinnerRoute().getEnd(), Data.getInstance().getRouteMethod());
+                    }
                 }
             }
 
@@ -336,18 +329,18 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
      */
     private void initSpinnerList(){
         methods = new ArrayList<>();
-        methods.add(new MethodItem("Walking", R.drawable.walking));
-        methods.add(new MethodItem("Cycling", R.drawable.bike));
-        methods.add(new MethodItem("Driving", R.drawable.car));
+        methods.add(new MethodItem(getResources().getString(R.string.walking), R.drawable.walking));
+        methods.add(new MethodItem(getResources().getString(R.string.cycling), R.drawable.bike));
+        methods.add(new MethodItem(getResources().getString(R.string.driving), R.drawable.car));
 
         dogParks = new ArrayList<>();
         dogParks.add(new DogWalkingItem("Mastbos", R.drawable.forrest, new GeoPoint(51.56134525467572, 4.767793972942238)));
-        dogParks.add(new DogWalkingItem("Liesbos", R.drawable.forrest, new GeoPoint(51.58769, 4.7105)));
+        dogParks.add(new DogWalkingItem("Liesbos", R.drawable.forrest, new GeoPoint(51.584596746744424, 4.694465396860606)));
         dogParks.add(new DogWalkingItem("Somerweide", R.drawable.dog_park, new GeoPoint(51.61157, 4.74524)));
         dogParks.add(new DogWalkingItem("Melkpad", R.drawable.dog_park, new GeoPoint(51.609804, 4.729187)));
         dogParks.add(new DogWalkingItem("Johansberg", R.drawable.dog_park, new GeoPoint(51.6152369049874, 4.72776872907537)));
         dogParks.add(new DogWalkingItem("Cadetten kamp", R.drawable.forrest, new GeoPoint(51.6039713573722, 4.83417502727798)));
-        dogParks.add(new DogWalkingItem("Klein Ardennen", R.drawable.dog_park, new GeoPoint(51.61157, 4.7808913298782100)));
+        dogParks.add(new DogWalkingItem("Klein Ardennen", R.drawable.dog_park, new GeoPoint(51.606064, 4.781162)));
         dogParks.add(new DogWalkingItem("Loopakker", R.drawable.dog_park, new GeoPoint(51.60618999687, 4.737446)));
 
         Data.getInstance().setDogWalkingItems(dogParks);
@@ -388,8 +381,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
             map.getOverlays().remove(currentLocationMarker);
             currentLocationMarker = newPosition;
             currentLocationMarker.setIcon(context.getDrawable(R.drawable.location_current_user));
-            //TODO check if we can change: you are here to a dynamic string that changes depending on device language
-            currentLocationMarker.setTitle("You are here");
+            currentLocationMarker.setTitle(getResources().getString(R.string.you_are_here));
             map.getOverlays().add(newPosition);
         };
 
@@ -410,8 +402,7 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         map.setTileSource(TileSourceFactory.MAPNIK);
         Data.getInstance().setMapView(map);
 
-        routeService = new OpenRouteService(map);
-        Data.getInstance().setRouteService(routeService);
+        routeService = new OpenRouteService();
 
         //Set mapcontroller
         controller = map.getController();
@@ -429,14 +420,12 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
         myLocationNewOverlay = new MyLocationNewOverlay(myLocationProvider, map);
         myLocationNewOverlay.enableMyLocation();
         myLocationNewOverlay.disableFollowLocation();
-        Data.getInstance().setMyLocationNewOverlay(myLocationNewOverlay);
 
         points = new ArrayList<>();
         osm = new OpenStreetMaps();
         firstLocationSet = false;
 
-        routeService = new OpenRouteService(map);
-        //routeService.getRoute(Data.getInstance().getRoute().getGeoPoints(),"walking","en");
+        routeService = new OpenRouteService();
 
         //Check for GPS permission on first use
         if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(),
@@ -460,29 +449,12 @@ public class MapFragment extends Fragment implements SetRoute, IMarkerUpdateList
 
     /**
      * Gets a route from the recyclerviewer that contains multiple locations and draws this on the map
-     * @param route
+     * @param route the route that is going to be drawn
      */
-    @Override
     public void setRouteCoord(Route route) {
-        ArrayList<GeoPoint> geoPoints = new ArrayList<>();
-
-        if(!route.isOwnMade()){
-            if(geoPoints == null){
-                makeToast(R.string.toast_choose_valid_route);
-            } else {
-                for (int i =0; i<route.getPlaces().length;i++) {
-                    geoPoints.add(streetMaps.createGeoPoint(context, route.getPlaces()[i]));
-                }
-            }
-        } else {
-            geoPoints = route.getGeoPoints();
-        }
+        ArrayList<GeoPoint> geoPoints = route.getGeoPoints();
         streetMaps.clearRoute();
         routeService.getRoute(geoPoints, Data.getInstance().getRouteMethod(), "en");
-    }
-
-    public SetRoute getSetRoute(){
-        return this;
     }
 
     /**

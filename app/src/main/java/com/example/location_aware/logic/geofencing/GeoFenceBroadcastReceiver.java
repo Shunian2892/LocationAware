@@ -10,8 +10,6 @@ import com.example.location_aware.R;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
-import static android.content.ContentValues.TAG;
-
 /**
  * This class handles the different transition types when entering, exiting or dwelling in a set geofence radius. For each transition type, the user will get a toast message.
  */
@@ -22,7 +20,7 @@ public class GeoFenceBroadcastReceiver extends BroadcastReceiver {
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
 
         if (geofencingEvent.hasError()) {
-            Log.d(TAG, "onReceive BrCastReceiver Error ");
+            Log.d("GEOFENCERECEIVER", "onReceive BrCastReceiver Error ");
             return;
         }
 
