@@ -24,9 +24,12 @@ public class OpenStreetMaps {
     private Polyline route;
     private MapView mapView;
     private Marker oldMarker;
+    private ArrayList<Marker> oldMarkers;
 
     public OpenStreetMaps(){
+
         this.mapView = Data.getInstance().getMapView();
+        oldMarkers = new ArrayList<>();
     }
 
     /**
@@ -80,19 +83,25 @@ public class OpenStreetMaps {
     /**
      * Draw a marker on the map and set the title with the given username
      * @param mapView map on which to draw
-     * @param point location where the marker has to be set
-     * @param userName user name to set as marker title
+     * @param markers other user markers
+     * @param otherUser icon for other users
      */
-    public void drawMarker(MapView mapView, GeoPoint point, String userName, Drawable otherUser){
-        if(mapView != null){
-            Marker marker = new Marker(mapView);
-            marker.setPosition(point);
-            marker.setIcon(otherUser);
-            mapView.getOverlays().remove(oldMarker);
-            oldMarker = marker;
-            oldMarker.setIcon(otherUser);
-            oldMarker.setTitle(userName);
-            mapView.getOverlays().add(marker);
+    public void drawMarkers(MapView mapView, ArrayList<Marker> markers, Drawable otherUser){
+        if(mapView!= null){
+            for (int i = 0; i < markers.size(); i++) {
+                Marker marker = markers.get(i);
+                marker.setPosition(marker.getPosition());
+                marker.setIcon(otherUser);
+                if(oldMarkers.size() >= markers.size()) {
+                    mapView.getOverlays().remove(oldMarkers.get(i));
+                    oldMarkers.set(i, marker);
+                }else{
+                    oldMarkers.add(marker);
+                }
+                oldMarkers.get(i).setIcon(otherUser);
+                oldMarkers.get(i).setTitle(marker.getTitle());
+                mapView.getOverlays().add(marker);
+            }
         }
     }
 }

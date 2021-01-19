@@ -53,6 +53,8 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -97,6 +99,8 @@ public class MapFragment extends Fragment implements IMarkerUpdateListener {
     private MapHelper mapHelper;
     private HashMap<String, GeoPoint> userHashMap;
 
+    private Boolean noMap;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //Load/initialise osmdroid configuration
@@ -112,6 +116,7 @@ public class MapFragment extends Fragment implements IMarkerUpdateListener {
 
         //Create mapView and draw marker on current location
         createMap(v);
+        noMap = false;
         streetMaps = Data.getInstance().getStreetMaps();
 
         //Initialize buttons
@@ -157,6 +162,7 @@ public class MapFragment extends Fragment implements IMarkerUpdateListener {
         super.onStop();
         //when the mapfragment stops clear the route
         streetMaps.clearRoute();
+        noMap = true;
     }
 
     /**
@@ -479,12 +485,22 @@ public class MapFragment extends Fragment implements IMarkerUpdateListener {
 
         if(userHashMap.containsKey(userName)){
             if(!userHashMap.get(userName).equals(userLocation)){
-                if((mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),userLat,userLon) < 300) && (map != null)) {
-                    streetMaps.drawMarker(map, userLocation, userName, context.getDrawable(R.drawable.location_other_user));
+                if((!noMap) && (mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),userLat,userLon) < 300) )
+                    drawOtherUsers(userName);
                 }
             }
-        }
         userHashMap.put(userName,userLocation);
+    }
+
+    public void drawOtherUsers(String username){
+        ArrayList<Marker> markers = new ArrayList<>();
+        for(Map.Entry<String, GeoPoint> entry : userHashMap.entrySet()){
+               Marker marker = new Marker(map);
+               marker.setPosition(entry.getValue());
+               marker.setTitle(username);
+               markers.add(marker);
+        }
+        streetMaps.drawMarkers(map, markers, context.getDrawable(R.drawable.location_other_user));
     }
 
     /**
