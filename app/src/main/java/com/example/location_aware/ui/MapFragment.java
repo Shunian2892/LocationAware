@@ -485,33 +485,22 @@ public class MapFragment extends Fragment implements IMarkerUpdateListener {
 
         if(userHashMap.containsKey(userName)){
             if(!userHashMap.get(userName).equals(userLocation)){
-                if(!noMap)
-                    drawOtherUsers();
+                if((!noMap) && (mapHelper.distanceCoords(Data.getInstance().getCurrentLocation().getLatitude(),Data.getInstance().getCurrentLocation().getLongitude(),userLat,userLon) < 300) )
+                    drawOtherUsers(userName);
                 }
             }
         userHashMap.put(userName,userLocation);
     }
 
-    public void drawOtherUsers(){
+    public void drawOtherUsers(String username){
+        ArrayList<Marker> markers = new ArrayList<>();
         for(Map.Entry<String, GeoPoint> entry : userHashMap.entrySet()){
                Marker marker = new Marker(map);
                marker.setPosition(entry.getValue());
-               streetMaps.drawMarker(map, marker, context.getDrawable(R.drawable.location_other_user));
-
-               Log.d("draw other user markers", "drawOtherUsers: mapElement" + entry);
+               marker.setTitle(username);
+               markers.add(marker);
         }
-       /* Iterator hmIterator = userHashMap.entrySet().iterator();
-
-        while (hmIterator.hasNext()) {
-            Map.Entry mapElement = (Map.Entry)hmIterator.next();
-            GeoPoint newGeoPoint = (GeoPoint) mapElement.getValue();
-            Marker marker = new Marker(map);
-            marker.setPosition(newGeoPoint);
-            streetMaps.drawMarker(map, marker, context.getDrawable(R.drawable.location_other_user));
-
-            Log.d("draw other user markers", "drawOtherUsers: mapElement" + mapElement);
-
-        }*/
+        streetMaps.drawMarkers(map, markers, context.getDrawable(R.drawable.location_other_user));
     }
 
     /**
