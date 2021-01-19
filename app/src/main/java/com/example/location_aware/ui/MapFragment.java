@@ -335,12 +335,12 @@ public class MapFragment extends Fragment implements IMarkerUpdateListener {
 
         dogParks = new ArrayList<>();
         dogParks.add(new DogWalkingItem("Mastbos", R.drawable.forrest, new GeoPoint(51.56134525467572, 4.767793972942238)));
-        dogParks.add(new DogWalkingItem("Liesbos", R.drawable.forrest, new GeoPoint(51.58769, 4.7105)));
+        dogParks.add(new DogWalkingItem("Liesbos", R.drawable.forrest, new GeoPoint(51.584596746744424, 4.694465396860606)));
         dogParks.add(new DogWalkingItem("Somerweide", R.drawable.dog_park, new GeoPoint(51.61157, 4.74524)));
         dogParks.add(new DogWalkingItem("Melkpad", R.drawable.dog_park, new GeoPoint(51.609804, 4.729187)));
         dogParks.add(new DogWalkingItem("Johansberg", R.drawable.dog_park, new GeoPoint(51.6152369049874, 4.72776872907537)));
         dogParks.add(new DogWalkingItem("Cadetten kamp", R.drawable.forrest, new GeoPoint(51.6039713573722, 4.83417502727798)));
-        dogParks.add(new DogWalkingItem("Klein Ardennen", R.drawable.dog_park, new GeoPoint(51.61157, 4.7808913298782100)));
+        dogParks.add(new DogWalkingItem("Klein Ardennen", R.drawable.dog_park, new GeoPoint(51.606064, 4.781162)));
         dogParks.add(new DogWalkingItem("Loopakker", R.drawable.dog_park, new GeoPoint(51.60618999687, 4.737446)));
 
         Data.getInstance().setDogWalkingItems(dogParks);
